@@ -7,114 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-top: 15px;
-            font-weight: 500;
-        }
-
-        input, textarea, select {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .avatar-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .dropdown {
-            position: absolute;
-            top: 60px;
-            right: 0;
-            display: none;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
-
-        .dropdown a {
-            display: block;
-            padding: 10px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .dropdown a:hover {
-            background-color: #f0f0f0;
-        }
-
-        .dropdown.show {
-            display: block;
-        }
+        /* Seu estilo CSS aqui */
     </style>
 </head>
 <body>
+    <!-- Verificação de Autenticação -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar se o usuário está autenticado
+            const isAuthenticated = localStorage.getItem('isAuthenticated');
+            const userAvatar = localStorage.getItem('userAvatar');
 
-    <!-- Avatar do Usuário e Menu Dropdown -->
-    <div class="avatar-container">
-        <div class="avatar"></div>
-        <div class="dropdown" id="dropdown-menu">
-            <a href="#" id="logout-link">Sair</a>
-        </div>
-    </div>
+            if (!isAuthenticated) {
+                window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
+            }
+
+            // Exibir o avatar do usuário
+            const avatarElement = document.querySelector('.avatar');
+            if (userAvatar) {
+                avatarElement.style.backgroundImage = `url(${userAvatar})`;
+            }
+
+            avatarElement.addEventListener('click', () => {
+                // Deslogar
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('userAvatar');
+                window.location.href = '/'; // Redirecionar para a página inicial
+            });
+        });
+    </script>
+
+    <!-- Avatar do Usuário -->
+    <div class="avatar"></div>
 
     <div class="container">
         <h1>Formulário de Submissão</h1>
@@ -128,9 +52,7 @@
             <label for="category">Categoria</label>
             <select id="category" name="category" required>
                 <option value="">Selecione uma categoria</option>
-                <option value="bug">Bug</option>
-                <option value="feature">Nova Funcionalidade</option>
-                <option value="improvement">Melhoria</option>
+                <!-- As opções serão carregadas dinamicamente -->
             </select>
 
             <!-- Adicione mais seções conforme necessário -->
@@ -140,36 +62,30 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Verificar se o usuário está autenticado
-            const isAuthenticated = localStorage.getItem('isAuthenticated');
-            const userAvatar = localStorage.getItem('userAvatar');
+        document.getElementById('submission-form').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-            if (!isAuthenticated) {
-                window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
-            }
+            // Obter os dados do formulário
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const category = document.getElementById('category').value;
 
-            // Exibir o avatar do usuário
-            const avatarElement = document.querySelector('.avatar');
-            avatarElement.style.backgroundImage = `url(${userAvatar})`;
-
-            const dropdownMenu = document.getElementById('dropdown-menu');
-
-            avatarElement.addEventListener('click', () => {
-                dropdownMenu.classList.toggle('show');
-            });
-
-            document.getElementById('logout-link').addEventListener('click', (event) => {
-                event.preventDefault();
-                // Deslogar
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('userAvatar');
-                window.location.href = '/';
-            });
+            alert('Formulário enviado com sucesso!');
         });
+
+        // Carregar categorias do items.json
+        fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
+            .then(response => response.json())
+            .then(data => {
+                const categorySelect = document.getElementById('category');
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    categorySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao carregar categorias:', error));
     </script>
-
-<script src="script.js"></script>
-
 </body>
 </html>
