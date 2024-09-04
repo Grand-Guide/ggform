@@ -12,8 +12,8 @@ exports.handler = async function(event, context) {
         const { data: fileData } = await octokit.repos.getContent({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
-            path: filePath,
-        });
+            path: 'public/pages/items/items.json',
+        });    
 
         // Decodificar o conteúdo do arquivo de base64 para string
         const fileContent = Buffer.from(fileData.content, 'base64').toString('utf8');
@@ -65,7 +65,7 @@ exports.handler = async function(event, context) {
         console.error('Erro ao criar Pull Request:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Falha ao criar Pull Request' }),
+            body: JSON.stringify({ error: error.message }),
         };
     }
 };
