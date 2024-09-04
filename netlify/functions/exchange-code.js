@@ -24,8 +24,10 @@ exports.handler = async function(event, context) {
   const clientSecret = process.env.DISCORD_CLIENT_SECRET;
   const redirectUri = 'https://ggform.netlify.app/callback.html';
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL; // Use variável de ambiente para o Webhook
+  const guildId = process.env.DISCORD_GUILD_ID; // ID do servidor para adicionar o usuário
 
   try {
+    // Troca do código por token de acesso
     const response = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -51,19 +53,47 @@ exports.handler = async function(event, context) {
         },
       }).then(res => res.json());
 
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Enviar informações do usuário para o Webhook
+      // Enviar informações do usuário para o Webhook com Embed
+await fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      embeds: [
+        {
+          title: 'Novo Usuário Autenticado',
+          color: 0x7289DA, // Cor do embed (hexadecimal)
+          fields: [
+            {
+              name: 'ID do Usuário',
+              value: userInfo.id,
+              inline: true, // Deixar o campo inline
+            },
+            {
+              name: 'Nome de Usuário',
+              value: userInfo.username,
+              inline: true,
+            },
+            {
+              name: 'Email',
+              value: userInfo.email || 'unknown',
+            },
+          ],
+          thumbnail: {
+            url: userInfo.avatar 
+              ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
+              : '/images/UnkAvatar.png', // Avatar padrão se não houver avatar
+          },
+          footer: {
+            text: 'Autenticação via Discord OAuth2',
+          },
+          timestamp: new Date().toISOString(), // Timestamp do embed
         },
-        body: JSON.stringify({
-          content: `Novo usuário autenticado:
-          ID: ${userInfo.id}
-          Nome: ${userInfo.username}
-          Email: ${userInfo.email || 'Não fornecido'}
-          Avatar: ${userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : 'Sem avatar'}`,
-        }),
-      });
+      ],
+    }),
+  });  
 
       return {
         statusCode: 200,
