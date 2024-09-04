@@ -1,81 +1,96 @@
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Fonte e fundo da página */
+/* Estilos Gerais */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    padding: 20px;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
-/* Contêiner principal */
 .container {
     max-width: 800px;
     margin: 0 auto;
-    background: #fff;
     padding: 20px;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Cabeçalhos */
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
-}
-
-/* Estilização do formulário */
-form {
-    display: flex;
-    flex-direction: column;
+    color: #333;
 }
 
 label {
-    margin-bottom: 5px;
-    font-weight: 500;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #333;
 }
 
 input, textarea, select {
-    margin-bottom: 15px;
+    width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    margin-top: 5px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
+    box-sizing: border-box;
 }
 
 textarea {
     resize: vertical;
 }
 
-/* Botão de envio */
 button {
     background-color: #007bff;
     color: #fff;
     border: none;
     padding: 10px 20px;
-    border-radius: 4px;
+    margin-top: 20px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    border-radius: 4px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-/* Avatar do Usuário */
-.avatar {
-    width: 50px;
-    height: 50px;
-    background-color: #ddd;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
+/* Menu de Navegação */
+.menu {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
     cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Seções */
+.section {
+    display: none;
+}
+
+#add-item-section {
+    display: block; /* Inicialmente exibe a seção de adicionar item */
+}
+
+#edit-item-section {
+    display: none;
+}
+
+#edit-form-container {
+    margin-top: 20px;
 }
