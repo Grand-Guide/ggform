@@ -34,10 +34,34 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     } else if (code) {
         // Se houver um código, isso indica sucesso na autorização
-        messageDiv.innerHTML = `
-            <p>Autenticação bem-sucedida!</p>
-            <a href="https://example.com/area-restrita" class="button">Acessar Área Restrita</a>
-        `;
+        fetch('/.netlify/functions/exchange-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Armazenar o token no localStorage
+                localStorage.setItem('access_token', data.data.access_token);
+                
+                // Redirecionar para a página do formulário
+                window.location.href = 'formulario.html';
+            } else {
+                messageDiv.innerHTML = `
+                    <p>${data.error || 'Ocorreu um erro ao tentar autenticar.'}</p>
+                    <a href="/">Voltar para a página inicial</a>
+                `;
+            }
+        })
+        .catch(error => {
+            messageDiv.innerHTML = `
+                <p>Ocorreu um erro ao tentar autenticar. Por favor, tente novamente mais tarde.</p>
+                <a href="/">Voltar para a página inicial</a>
+            `;
+        });
     } else {
         // Se não houver parâmetros de erro ou código, exiba uma mensagem padrão
         messageDiv.innerHTML = `

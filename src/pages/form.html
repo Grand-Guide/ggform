@@ -12,6 +12,7 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            position: relative;
         }
 
         .container {
@@ -62,10 +63,13 @@
             background-color: #45a049;
         }
 
-        .avatar {
+        .avatar-container {
             position: absolute;
             top: 20px;
             right: 20px;
+        }
+
+        .avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -73,35 +77,44 @@
             background-size: cover;
             background-position: center;
         }
+
+        .dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Verificação de Autenticação -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Verificar se o usuário está autenticado
-            const isAuthenticated = localStorage.getItem('isAuthenticated');
-            const userAvatar = localStorage.getItem('userAvatar');
-
-            if (!isAuthenticated) {
-                window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
-            }
-
-            // Exibir o avatar do usuário
-            const avatarElement = document.querySelector('.avatar');
-            avatarElement.style.backgroundImage = `url(${userAvatar})`;
-
-            avatarElement.addEventListener('click', () => {
-                // Deslogar
-                localStorage.removeItem('isAuthenticated');
-                window.location.href = '/';
-            });
-        });
-    </script>
-
-    <!-- Avatar do Usuário -->
-    <div class="avatar"></div>
+    <!-- Avatar do Usuário e Menu Dropdown -->
+    <div class="avatar-container">
+        <div class="avatar"></div>
+        <div class="dropdown" id="dropdown-menu">
+            <a href="#" id="logout-link">Sair</a>
+        </div>
+    </div>
 
     <div class="container">
         <h1>Formulário de Submissão</h1>
@@ -127,19 +140,36 @@
     </div>
 
     <script>
-        document.getElementById('submission-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar se o usuário está autenticado
+            const isAuthenticated = localStorage.getItem('isAuthenticated');
+            const userAvatar = localStorage.getItem('userAvatar');
 
-            // Obter os dados do formulário
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const category = document.getElementById('category').value;
+            if (!isAuthenticated) {
+                window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
+            }
 
-            // Montar o pull request e enviar para o GitHub
-            // (Aqui você precisa integrar com a API do GitHub para enviar o pull request)
+            // Exibir o avatar do usuário
+            const avatarElement = document.querySelector('.avatar');
+            avatarElement.style.backgroundImage = `url(${userAvatar})`;
 
-            alert('Formulário enviado com sucesso!');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+
+            avatarElement.addEventListener('click', () => {
+                dropdownMenu.classList.toggle('show');
+            });
+
+            document.getElementById('logout-link').addEventListener('click', (event) => {
+                event.preventDefault();
+                // Deslogar
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('userAvatar');
+                window.location.href = '/';
+            });
         });
     </script>
+
+<script src="script.js"></script>
+
 </body>
 </html>
