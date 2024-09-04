@@ -1,15 +1,22 @@
-exports.handler = async function(event, context) {
-    if (!Octokit) {
-        // Certifique-se de que o Octokit está carregado
-        const octokitModule = await import('@octokit/rest');
-        Octokit = octokitModule.Octokit;
+const { Octokit } = require('@octokit/rest');
+const { Buffer } = require('buffer');
+
+exports.handler = async function(event) {
+    // Certifique-se de que o conteúdo da função é JSON
+    if (event.headers['Content-Type'] !== 'application/json') {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Invalid request format. Content-Type must be application/json.' }),
+        };
     }
 
+    // Parseia o corpo da requisição
+    const { title, content, branchName, filePath } = JSON.parse(event.body);
+
+    // Instancie o Octokit com o token de autenticação
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN,
     });
-
-    const { title, content, branchName, filePath } = JSON.parse(event.body);
 
     try {
         // 1. Obter o conteúdo atual do arquivo items.json
@@ -51,7 +58,7 @@ exports.handler = async function(event, context) {
             sha: fileData.sha,
         });
 
-        // 8. Criar o pull request
+        // 8. Criar o Pull Request
         const { data: pullRequest } = await octokit.pulls.create({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
