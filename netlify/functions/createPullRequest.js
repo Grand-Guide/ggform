@@ -1,17 +1,30 @@
-// backend/server.js
-const express = require('express');
-const { Octokit } = require('@octokit/rest');
-require('dotenv').config(); // Para carregar variáveis de ambiente do arquivo .env
-
-const app = express();
-app.use(express.json()); // Permite receber dados JSON no corpo da requisição
+import { Octokit } from '@octokit/rest';
+import { parse } from 'url';
+import fetch from 'node-fetch';
 
 const octokit = new Octokit({
-    auth: process.env.GITHUB_TOKEN,
+    auth: process.env.GITHUB_TOKEN, // Certifique-se de que a variável de ambiente está definida
 });
 
-app.post('/api/submit-item', async (req, res) => {
-    const { title, cover, description, price, category, quality, update, status, shop, hunting, recipe, videos } = req.body;
+export async function handler(event) {
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Método não permitido' }),
+        };
+    }
+
+    let requestBody;
+    try {
+        requestBody = JSON.parse(event.body);
+    } catch (error) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Corpo da requisição inválido' }),
+        };
+    }
+
+    const { title, cover, description, price, category, quality, update, status, shop, hunting, recipe, videos } = requestBody;
 
     try {
         // 1. Obter o conteúdo atual do arquivo items.json
@@ -21,13 +34,12 @@ app.post('/api/submit-item', async (req, res) => {
             path: 'public/pages/items/items.json',
         });
 
-        // Decodificar o conteúdo do arquivo JSON
-        const fileContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
+        const fileContent = Buffer.from(fileData.content, 'base64').toString('utf8');
         const items = JSON.parse(fileContent);
 
-        // Adicionar o novo item à lista
+        // 2. Adicionar o novo item à lista
         const newItem = {
-            id: Date.now().toString(), // Use um identificador único
+            id: `${Date.now()}`, // Gerar um ID único
             title,
             cover,
             description,
@@ -41,45 +53,58 @@ app.post('/api/submit-item', async (req, res) => {
             recipe,
             videos,
         };
+
         items.push(newItem);
 
-        // 2. Criar uma nova branch para a atualização
+        // 3. Criar o novo conteúdo JSON
+        const newContent = JSON.stringify(items, null, 2);
+
+        // 4. Criar uma nova branch e enviar as alterações
         const branchName = `update-items-${Date.now()}`;
-        const baseBranch = 'main';
+        const baseBranch = 'main'; // Alterar para o branch principal do seu repositório
+
+        // Criar a branch
         await octokit.git.createRef({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
             ref: `refs/heads/${branchName}`,
-            sha: fileData.sha,
+            sha: (await octokit.repos.getBranch({
+                owner: 'Grand-Guide',
+                repo: 'Grand-Guide.github.io',
+                branch: baseBranch,
+            })).data.commit.sha,
         });
 
-        // 3. Atualizar o arquivo JSON com o novo item
+        // Atualizar o arquivo na branch criada
         await octokit.repos.createOrUpdateFileContents({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
             path: 'public/pages/items/items.json',
             message: 'Atualizar items.json com novo item',
-            content: Buffer.from(JSON.stringify(items, null, 2)).toString('base64'),
-            sha: fileData.sha,
+            content: Buffer.from(newContent).toString('base64'),
             branch: branchName,
+            sha: fileData.sha,
         });
 
-        // 4. Criar um Pull Request
-        await octokit.pulls.create({
+        // Criar o Pull Request
+        const { data: pullRequest } = await octokit.pulls.create({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
             title: 'Adicionar novo item',
             head: branchName,
             base: baseBranch,
+            body: 'Adicionando um novo item à lista.',
         });
 
-        res.status(200).json({ message: 'Pull Request criado com sucesso!' });
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Pull Request criado com sucesso!', url: pullRequest.html_url }),
+        };
     } catch (error) {
         console.error('Erro ao criar Pull Request:', error);
-        res.status(500).json({ error: 'Ocorreu um erro ao processar sua solicitação.' });
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Ocorreu um erro ao processar sua solicitação.' }),
+        };
     }
-});
-
-app.listen(3000, () => {
-    console.log('Servidor back-end rodando na porta 3000');
-});
+}
