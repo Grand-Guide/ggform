@@ -56,34 +56,34 @@
             } else if (code) {
                 // Enviar código para a função do Netlify
                 fetch('/.netlify/functions/exchange-code', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ code }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Se a troca foi bem-sucedida, redirecione para a área restrita
-                        messageDiv.innerHTML = `
-                            <p>Autenticação bem-sucedida!</p>
-                            <a href="https://example.com/area-restrita" class="button">Acessar Área Restrita</a>
-                        `;
-                    } else {
-                        // Exiba a mensagem de erro se a troca falhar
-                        messageDiv.innerHTML = `
-                            <p>${data.error || 'Ocorreu um erro ao tentar autenticar.'}</p>
-                            <a href="/">Voltar para a página inicial</a>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    messageDiv.innerHTML = `
-                        <p>Ocorreu um erro ao tentar autenticar. Por favor, tente novamente mais tarde.</p>
-                        <a href="/">Voltar para a página inicial</a>
-                    `;
-                });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code }),
+})
+.then(response => response.json())
+.then(data => {
+    if (data.success) {
+        // Se a troca foi bem-sucedida, redirecione para a área restrita
+        messageDiv.innerHTML = `
+            <p>Autenticação bem-sucedida!</p>
+            <a href="https://example.com/area-restrita" class="button">Acessar Área Restrita</a>
+        `;
+    } else {
+        // Exiba a mensagem de erro se a troca falhar
+        messageDiv.innerHTML = `
+            <p>${data.error || 'Ocorreu um erro ao tentar autenticar.'}</p>
+            <a href="/">Voltar para a página inicial</a>
+        `;
+    }
+})
+.catch(error => {
+    messageDiv.innerHTML = `
+        <p>Ocorreu um erro ao tentar autenticar. Por favor, tente novamente mais tarde.</p>
+        <a href="/">Voltar para a página inicial</a>
+    `;
+});
             } else {
                 // Mensagem padrão se não houver parâmetros
                 messageDiv.innerHTML = `
