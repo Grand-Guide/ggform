@@ -43,6 +43,13 @@ exports.handler = async function(event, context) {
     });
 
     const data = await response.json();
+  
+        const userInfo = await userInfoResponse.json();
+  
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ success: true, userInfo }),
+        };
 
     if (response.ok) {
       // Enviar informações para o canal via Webhook
