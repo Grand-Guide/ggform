@@ -1,6 +1,10 @@
-const { Octokit } = require("@octokit/rest");
-
 exports.handler = async function(event, context) {
+    if (!Octokit) {
+        // Certifique-se de que o Octokit está carregado
+        const octokitModule = await import('@octokit/rest');
+        Octokit = octokitModule.Octokit;
+    }
+
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN,
     });
@@ -13,22 +17,22 @@ exports.handler = async function(event, context) {
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
             path: 'public/pages/items/items.json',
-        });    
+        });
 
-        // Decodificar o conteúdo do arquivo de base64 para string
+        // 2. Decodificar o conteúdo do arquivo de base64 para string
         const fileContent = Buffer.from(fileData.content, 'base64').toString('utf8');
 
-        // Parsear o conteúdo do arquivo para um array JSON
+        // 3. Parsear o conteúdo do arquivo para um array JSON
         const items = JSON.parse(fileContent);
 
-        // 2. Adicionar o novo item ao final da lista
+        // 4. Adicionar o novo item ao final da lista
         const newItem = JSON.parse(content);
         items.push(newItem);
 
-        // 3. Converter o array atualizado de volta para string e codificar em base64
+        // 5. Converter o array atualizado de volta para string e codificar em base64
         const updatedContent = Buffer.from(JSON.stringify(items, null, 2)).toString('base64');
 
-        // 4. Criar uma nova branch
+        // 6. Criar uma nova branch
         await octokit.git.createRef({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
@@ -36,18 +40,18 @@ exports.handler = async function(event, context) {
             sha: fileData.sha,
         });
 
-        // 5. Atualizar o arquivo com o novo conteúdo
+        // 7. Atualizar o arquivo com o novo conteúdo
         await octokit.repos.createOrUpdateFileContents({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
-            path: filePath,
+            path: 'public/pages/items/items.json',
             message: `Adiciona novo item: ${title}`,
             content: updatedContent,
             branch: branchName,
             sha: fileData.sha,
         });
 
-        // 6. Criar o pull request
+        // 8. Criar o pull request
         const { data: pullRequest } = await octokit.pulls.create({
             owner: 'Grand-Guide',
             repo: 'Grand-Guide.github.io',
