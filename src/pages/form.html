@@ -6,37 +6,11 @@
     <title>Formulário de Submissão</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <style>
-        /* Seu estilo CSS aqui */
-    </style>
 </head>
 <body>
     <!-- Verificação de Autenticação -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Verificar se o usuário está autenticado
-            const isAuthenticated = localStorage.getItem('isAuthenticated');
-            const userAvatar = localStorage.getItem('userAvatar');
-
-            if (!isAuthenticated) {
-                window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
-                return; // Adicionar return para garantir que o resto do código não execute
-            }
-
-            // Exibir o avatar do usuário
-            const avatarElement = document.querySelector('.avatar');
-            if (userAvatar) {
-                avatarElement.style.backgroundImage = `url(${userAvatar})`;
-            }
-
-            avatarElement.addEventListener('click', () => {
-                // Deslogar
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('userAvatar');
-                window.location.href = '/'; // Redirecionar para a página inicial
-            });
-        });
-    </script>
+    <!-- Inclusão do script de autenticação -->
+    <script src="/auth.js"></script>
 
     <!-- Avatar do Usuário -->
     <div class="avatar"></div>
@@ -56,8 +30,6 @@
                 <!-- As opções serão carregadas dinamicamente -->
             </select>
 
-            <!-- Adicione mais seções conforme necessário -->
-
             <button type="submit">Enviar</button>
         </form>
     </div>
@@ -70,9 +42,6 @@
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const category = document.getElementById('category').value;
-
-            // Montar o pull request e enviar para o GitHub
-            // (Aqui você precisa integrar com a API do GitHub para enviar o pull request)
 
             alert('Formulário enviado com sucesso!');
         });
