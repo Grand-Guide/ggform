@@ -1,16 +1,52 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Callback de Autenticação</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/callback.js" defer></script>
-</head>
-<body>
-  <div class="container">
-    <h1>Resultado da Autenticação</h1>
-    <div id="message"></div>
-  </div>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const code = urlParams.get('code');
+    const messageDiv = document.getElementById('message');
+
+    if (error) {
+        // Mensagem de erro personalizada
+        messageDiv.innerHTML = `
+            <p>Erro ao tentar autenticar: ${error}</p>
+            <p>${customMessage}</p>
+            <a href="/">Voltar para a página inicial</a>
+        `;
+    } else if (code) {
+        // Enviar código para a função do Netlify
+        fetch('/.netlify/functions/exchange-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Se a troca foi bem-sucedida, redirecione para a área restrita
+                messageDiv.innerHTML = `
+                    <p>Autenticação bem-sucedida!</p>
+                    <a href="https://example.com/area-restrita" class="button">Acessar Área Restrita</a>
+                `;
+            } else {
+                // Exiba a mensagem de erro se a troca falhar
+                messageDiv.innerHTML = `
+                    <p>${data.error || 'Ocorreu um erro ao tentar autenticar.'}</p>
+                    <a href="/">Voltar para a página inicial</a>
+                `;
+            }
+        })
+        .catch(error => {
+            messageDiv.innerHTML = `
+                <p>Ocorreu um erro ao tentar autenticar. Por favor, tente novamente mais tarde.</p>
+                <a href="/">Voltar para a página inicial</a>
+            `;
+        });
+    } else {
+        // Mensagem padrão se não houver parâmetros
+        messageDiv.innerHTML = `
+            <p>Ocorreu um erro inesperado.</p>
+            <a href="/">Voltar para a página inicial</a>
+        `;
+    }
+});
