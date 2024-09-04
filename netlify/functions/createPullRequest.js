@@ -73,10 +73,28 @@ exports.handler = async function(event) {
         };
 
     } catch (error) {
-        console.error('Erro ao criar Pull Request:', error);
+        console.error('Erro ao criar Pull Request:', error); // Imprime o objeto de erro completo
+
+        let errorMessage = 'Ocorreu um erro interno ao processar sua solicitação.'; 
+
+        if (error.status) {
+            switch (error.status) {
+                case 401:
+                    errorMessage = 'Erro de autenticação. Verifique seu token GitHub.';
+                    break;
+                case 404:
+                    errorMessage = 'Arquivo ou repositório não encontrado. Verifique o caminho e as configurações.';
+                    break;
+                case 422:
+                    errorMessage = 'Erro de validação. Verifique se os dados enviados estão corretos.';
+                    break;
+                // Adicione mais casos conforme necessário
+            }
+        }
+
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ error: errorMessage }),
         };
     }
 };
