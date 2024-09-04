@@ -1,12 +1,11 @@
-import { Octokit } from '@octokit/rest';
-import { parse } from 'url';
-import fetch from 'node-fetch';
+const { Octokit } = require('@octokit/rest');
+const fetch = require('node-fetch');
 
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN, // Certifique-se de que a variável de ambiente está definida
 });
 
-export async function handler(event) {
+exports.handler = async function(event) {
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -107,4 +106,4 @@ export async function handler(event) {
             body: JSON.stringify({ error: 'Ocorreu um erro ao processar sua solicitação.' }),
         };
     }
-}
+};
