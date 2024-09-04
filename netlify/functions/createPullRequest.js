@@ -1,59 +1,74 @@
-const { Octokit } = require("@octokit/rest");
-
 exports.handler = async function(event, context) {
-  const { title, content, branchName, filePath } = JSON.parse(event.body);
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-  
-  const [owner, repo] = process.env.GITHUB_REPO.split("/");
-
-  try {
-    // Obter a referência da branch principal
-    const { data: refData } = await octokit.git.getRef({
-      owner,
-      repo,
-      ref: "heads/main"
+    const { Octokit } = await import('@octokit/rest');
+    
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_TOKEN,
     });
 
-    const mainSha = refData.object.sha;
+    try {
+        const branchName = `add-item-${Date.now()}`;
+        const filePath = 'public/pages/items/items.json';  // Substitua pelo caminho correto
 
-    // Criar nova branch a partir da branch principal
-    await octokit.git.createRef({
-      owner,
-      repo,
-      ref: `refs/heads/${branchName}`,
-      sha: mainSha
-    });
+        // Obtenha o conteúdo atual do arquivo JSON no GitHub
+        const { data: fileData } = await octokit.repos.getContent({
+            owner: 'Grand-Guide',
+            repo: 'Grand-Guide.github.io',
+            path: filePath,
+        });
 
-    // Criar ou atualizar o arquivo na nova branch
-    const { data: fileData } = await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: filePath,
-      message: `Update ${filePath} with new content`,
-      content: Buffer.from(content).toString('base64'),
-      branch: branchName
-    });
+        const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString());
 
-    // Criar o Pull Request
-    const { data: prData } = await octokit.pulls.create({
-      owner,
-      repo,
-      title,
-      head: branchName,
-      base: "main",
-      body: "Proposta de atualização enviada através do formulário."
-    });
+        // Adicione o novo item ao conteúdo
+        const newItem = JSON.parse(event.body); // Supondo que o corpo da requisição contenha o novo item em JSON
+        content.push(newItem);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ url: prData.html_url })
-    };
+        // Converta o conteúdo atualizado para base64
+        const updatedContent = Buffer.from(JSON.stringify(content, null, 2)).toString('base64');
 
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Falha ao criar o Pull Request." })
-    };
-  }
+        // Crie um novo branch
+        const { data: mainBranch } = await octokit.git.getRef({
+            owner: 'Grand-Guide',
+            repo: 'Grand-Guide.github.io',
+            ref: 'heads/main'
+        });
+
+        await octokit.git.createRef({
+            owner: 'Grand-Guide',
+            repo: 'Grand-Guide.github.io',
+            ref: `refs/heads/${branchName}`,
+            sha: mainBranch.object.sha
+        });
+
+        // Atualize o arquivo JSON no novo branch
+        await octokit.repos.createOrUpdateFileContents({
+            owner: 'Grand-Guide',
+            repo: 'Grand-Guide.github.io',
+            path: filePath,
+            message: `Add new item: ${newItem.title}`,
+            content: updatedContent,
+            branch: branchName,
+            sha: fileData.sha
+        });
+
+        // Crie o pull request
+        const pullRequest = await octokit.pulls.create({
+            owner: 'Grand-Guide',
+            repo: 'Grand-Guide.github.io',
+            title: `Add new item: ${newItem.title}`,
+            head: branchName,
+            base: 'main',
+            body: `This pull request adds a new item: ${newItem.title}`
+        });
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Pull request criado com sucesso!', pullRequest }),
+        };
+    } catch (error) {
+        console.error('Erro ao criar pull request:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Erro ao criar pull request' }),
+        };
+    }
 };
