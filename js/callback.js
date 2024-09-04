@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         messageDiv.innerHTML = `
             <p>Erro ao tentar autenticar: ${error}</p>
             <p>${customMessage}</p>
-            <p>${errorDescription || ''}</p>
             <a href="/">Voltar para a página inicial</a>
         `;
     } else if (code) {
