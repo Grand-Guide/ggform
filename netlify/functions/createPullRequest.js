@@ -7,7 +7,7 @@ exports.handler = async function(event, context) {
   const [owner, repo] = process.env.GITHUB_REPO.split("/");
 
   try {
-    // Criar nova branch a partir da main
+    // Obter a referência da branch principal
     const { data: refData } = await octokit.git.getRef({
       owner,
       repo,
@@ -16,6 +16,7 @@ exports.handler = async function(event, context) {
 
     const mainSha = refData.object.sha;
 
+    // Criar nova branch a partir da branch principal
     await octokit.git.createRef({
       owner,
       repo,
@@ -33,7 +34,7 @@ exports.handler = async function(event, context) {
       branch: branchName
     });
 
-    // Criar Pull Request
+    // Criar o Pull Request
     const { data: prData } = await octokit.pulls.create({
       owner,
       repo,

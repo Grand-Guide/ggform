@@ -39,6 +39,15 @@
                 <label for="category">Categoria</label>
                 <select id="category" name="category" required>
                     <option value="">Selecione uma categoria</option>
+                    <option value="armas">armas</option>
+                    <option value="armaduras">armaduras</option>
+                    <option value="fantasias">fantasias</option>
+                    <option value="receitas">receitas</option>
+                    <option value="suprimentos">suprimentos</option>
+                    <option value="pedras rúnicas">pedras runicas</option>
+                    <option value="nucleos">nucleos</option>
+                    <option value="montarias">montarias</option>
+                    <option value="tronos">tronos</option>
                     <!-- As opções serão carregadas dinamicamente -->
                 </select>
 
@@ -167,7 +176,7 @@
         const category = document.getElementById('category').value;
         const branchName = `update-item-${Date.now()}`; // Gera um nome de branch único
       
-        const filePath = `path/to/your/json/file.json`; // O caminho para o arquivo que será atualizado
+        const filePath = `https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json`; // O caminho para o arquivo que será atualizado
       
         // Crie o conteúdo do JSON que será enviado
         const content = JSON.stringify({
@@ -198,6 +207,65 @@
         }
       });
       
+      </script>
+
+      <script>
+
+document.getElementById('submission-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+  
+    const title = document.getElementById('title').value;
+    const cover = document.getElementById('cover').value;
+    const description = document.getElementById('description').value;
+    const price = document.getElementById('price').value;
+    const category = document.getElementById('category').value;
+    const quality = document.getElementById('quality').value;
+    const update = document.getElementById('update').value || null;
+    const status = document.getElementById('status').value || null;
+    const shop = document.getElementById('shop').value || null;
+    const hunting = document.getElementById('hunting').value || null;
+    const recipe = document.getElementById('recipe').value || null;
+    const videos = document.getElementById('videos').value || null;
+
+    const branchName = `update-item-${Date.now()}`; // Gera um nome de branch único
+    const filePath = `path/to/your/json/file.json`; // Substitua com o caminho correto no repositório
+
+    const content = JSON.stringify({
+        title,
+        cover,
+        description,
+        price,
+        category,
+        quality,
+        update,
+        status,
+        shop,
+        hunting,
+        recipe,
+        videos
+    }, null, 2);
+
+    try {
+        const response = await fetch('/.netlify/functions/createPullRequest', {
+            method: 'POST',
+            body: JSON.stringify({ title, content, branchName, filePath }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(`Pull Request criado com sucesso! Acesse aqui: ${result.url}`);
+        } else {
+            alert('Falha ao criar o Pull Request. Tente novamente.');
+        }
+
+    } catch (error) {
+        console.error('Erro ao enviar o formulário:', error);
+        alert('Ocorreu um erro ao enviar o formulário.');
+    }
+});
+
       </script>
 </body>
 </html>
