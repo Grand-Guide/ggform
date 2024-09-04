@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
-    const errorDescription = urlParams.get('error_description');
     const code = urlParams.get('code');
     const messageDiv = document.getElementById('message');
+    
+    // Certifique-se de que messageDiv existe
+    if (!messageDiv) {
+        console.error('Elemento com ID "message" não encontrado.');
+        return;
+    }
 
+    // Inicialize customMessage
     let customMessage = '';
 
     if (error) {
@@ -30,10 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
         messageDiv.innerHTML = `
             <p>Erro ao tentar autenticar: ${error}</p>
             <p>${customMessage}</p>
+            <p>${urlParams.get('error_description') || ''}</p>
             <a href="/">Voltar para a página inicial</a>
         `;
     } else if (code) {
-        // Se houver um código, isso indica sucesso na autorização
+        // Enviar código para a função do Netlify
         fetch('/.netlify/functions/exchange-code', {
             method: 'POST',
             headers: {
@@ -44,12 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Armazenar o token no localStorage
-                localStorage.setItem('access_token', data.data.access_token);
-                
-                // Redirecionar para a página do formulário
-                window.location.href = 'formulario.html';
+                // Armazenar autenticação no localStorage
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userAvatar', data.userAvatar); // Ajuste se necessário
+                // Se a troca foi bem-sucedida, redirecione para a área restrita
+                window.location.href = '/src/pages/form.html';
             } else {
+                // Exiba a mensagem de erro se a troca falhar
                 messageDiv.innerHTML = `
                     <p>${data.error || 'Ocorreu um erro ao tentar autenticar.'}</p>
                     <a href="/">Voltar para a página inicial</a>
@@ -63,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
     } else {
-        // Se não houver parâmetros de erro ou código, exiba uma mensagem padrão
+        // Mensagem padrão se não houver parâmetros
         messageDiv.innerHTML = `
             <p>Ocorreu um erro inesperado.</p>
             <a href="/">Voltar para a página inicial</a>

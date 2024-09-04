@@ -20,6 +20,7 @@
 
             if (!isAuthenticated) {
                 window.location.href = '/'; // Redirecionar para a página de login se não estiver autenticado
+                return; // Adicionar return para garantir que o resto do código não execute
             }
 
             // Exibir o avatar do usuário
@@ -69,6 +70,9 @@
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const category = document.getElementById('category').value;
+
+            // Montar o pull request e enviar para o GitHub
+            // (Aqui você precisa integrar com a API do GitHub para enviar o pull request)
 
             alert('Formulário enviado com sucesso!');
         });
