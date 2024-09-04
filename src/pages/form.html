@@ -39,16 +39,15 @@
                 <label for="category">Categoria</label>
                 <select id="category" name="category" required>
                     <option value="">Selecione uma categoria</option>
-                    <option value="armas">armas</option>
-                    <option value="armaduras">armaduras</option>
-                    <option value="fantasias">fantasias</option>
-                    <option value="receitas">receitas</option>
-                    <option value="suprimentos">suprimentos</option>
-                    <option value="pedras rúnicas">pedras runicas</option>
-                    <option value="nucleos">nucleos</option>
-                    <option value="montarias">montarias</option>
-                    <option value="tronos">tronos</option>
-                    <!-- As opções serão carregadas dinamicamente -->
+                    <option value="armas">Armas</option>
+                    <option value="armaduras">Armaduras</option>
+                    <option value="fantasias">Fantasias</option>
+                    <option value="receitas">Receitas</option>
+                    <option value="suprimentos">Suprimentos</option>
+                    <option value="pedras rúnicas">Pedras Rúnicas</option>
+                    <option value="nucleos">Núcleos</option>
+                    <option value="montarias">Montarias</option>
+                    <option value="tronos">Tronos</option>
                 </select>
 
                 <label for="quality">Qualidade</label>
@@ -103,7 +102,7 @@
                 .then(data => {
                     const editFormContainer = document.getElementById('edit-form-container');
                     editFormContainer.innerHTML = `
-                                                <label for="edit-item">Selecionar Item para Editar</label>
+                        <label for="edit-item">Selecionar Item para Editar</label>
                         <select id="edit-item" name="edit-item">
                             <option value="">Selecione um item</option>
                             ${data.map(item => `<option value="${item.id}">${item.name}</option>`).join('')}
@@ -167,105 +166,44 @@
     </script>
 
     <script>
-    
-    document.getElementById('submission-form').addEventListener('submit', async function(event) {
-        event.preventDefault();
-      
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const category = document.getElementById('category').value;
-        const branchName = `update-item-${Date.now()}`; // Gera um nome de branch único
-      
-        const filePath = `https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json`; // O caminho para o arquivo que será atualizado
-      
-        // Crie o conteúdo do JSON que será enviado
-        const content = JSON.stringify({
-          title,
-          description,
-          category
-          // Adicione aqui os outros campos que você deseja enviar
-        }, null, 2);
-      
-        try {
-          const response = await fetch('/.netlify/functions/createPullRequest', {
-            method: 'POST',
-            body: JSON.stringify({ title, content, branchName, filePath }),
-            headers: { 'Content-Type': 'application/json' }
-          });
-      
-          const result = await response.json();
-      
-          if (response.ok) {
-            alert(`Pull Request criado com sucesso! Acesse aqui: ${result.url}`);
-          } else {
-            alert('Falha ao criar o Pull Request. Tente novamente.');
-          }
-      
-        } catch (error) {
-          console.error('Erro ao enviar o formulário:', error);
-          alert('Ocorreu um erro ao enviar o formulário.');
-        }
-      });
-      
-      </script>
+        document.getElementById('submission-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+          
+            const title = document.getElementById('title').value;
+            const cover = document.getElementById('cover').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const category = document.getElementById('category').value;
+            const quality = document.getElementById('quality').value;
+            const update = document.getElementById('update').value;
+            const status = document.getElementById('status').value;
+            const shop = document.getElementById('shop').value;
+            const hunting = document.getElementById('hunting').value;
+            const recipe = document.getElementById('recipe').value;
+            const videos = document.getElementById('videos').value;
+          
+            const newItem = {
+                title,
+                cover,
+                description,
+                price,
+                category,
+                quality,
+                update,
+                status,
+                shop,
+                hunting,
+                recipe,
+                videos,
+            };
 
-      <script>
-
-document.getElementById('submission-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
-  
-    const title = document.getElementById('title').value;
-    const cover = document.getElementById('cover').value;
-    const description = document.getElementById('description').value;
-    const price = document.getElementById('price').value;
-    const category = document.getElementById('category').value;
-    const quality = document.getElementById('quality').value;
-    const update = document.getElementById('update').value || null;
-    const status = document.getElementById('status').value || null;
-    const shop = document.getElementById('shop').value || null;
-    const hunting = document.getElementById('hunting').value || null;
-    const recipe = document.getElementById('recipe').value || null;
-    const videos = document.getElementById('videos').value || null;
-
-    const branchName = `update-item-${Date.now()}`; // Gera um nome de branch único
-    const filePath = `path/to/your/json/file.json`; // Substitua com o caminho correto no repositório
-
-    const content = JSON.stringify({
-        title,
-        cover,
-        description,
-        price,
-        category,
-        quality,
-        update,
-        status,
-        shop,
-        hunting,
-        recipe,
-        videos
-    }, null, 2);
-
-    try {
-        const response = await fetch('/.netlify/functions/createPullRequest', {
-            method: 'POST',
-            body: JSON.stringify({ title, content, branchName, filePath }),
-            headers: { 'Content-Type': 'application/json' }
+            // Código para enviar o novo item como PR para o GitHub
+            try {
+                // Coloque aqui a lógica de envio do PR
+            } catch (error) {
+                console.error('Erro ao enviar o item:', error);
+            }
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(`Pull Request criado com sucesso! Acesse aqui: ${result.url}`);
-        } else {
-            alert('Falha ao criar o Pull Request. Tente novamente.');
-        }
-
-    } catch (error) {
-        console.error('Erro ao enviar o formulário:', error);
-        alert('Ocorreu um erro ao enviar o formulário.');
-    }
-});
-
-      </script>
+    </script>
 </body>
 </html>
