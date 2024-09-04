@@ -39,15 +39,15 @@
                 <label for="category">Categoria</label>
                 <select id="category" name="category" required>
                     <option value="">Selecione uma categoria</option>
-                    <option value="armas">Armas</option>
-                    <option value="armaduras">Armaduras</option>
-                    <option value="fantasias">Fantasias</option>
-                    <option value="receitas">Receitas</option>
-                    <option value="suprimentos">Suprimentos</option>
-                    <option value="pedras rúnicas">Pedras Rúnicas</option>
-                    <option value="nucleos">Núcleos</option>
-                    <option value="montarias">Montarias</option>
-                    <option value="tronos">Tronos</option>
+                    <option value="armas">armas</option>
+                    <option value="armaduras">armaduras</option>
+                    <option value="fantasias">fantasias</option>
+                    <option value="receitas">receitas</option>
+                    <option value="suprimentos">suprimentos</option>
+                    <option value="pedras rúnicas">pedras runicas</option>
+                    <option value="nucleos">nucleos</option>
+                    <option value="montarias">montarias</option>
+                    <option value="tronos">tronos</option>
                 </select>
 
                 <label for="quality">Qualidade</label>
@@ -163,122 +163,58 @@
                 })
                 .catch(error => console.error('Erro ao carregar itens para edição:', error));
         }
-    </script>
 
-    <script>
         document.getElementById('submission-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
+            event.preventDefault();
 
-    const title = document.getElementById('title').value;
-    const cover = document.getElementById('cover').value;
-    const description = document.getElementById('description').value;
-    const price = document.getElementById('price').value;
-    const category = document.getElementById('category').value;
-    const quality = document.getElementById('quality').value;
-    const update = document.getElementById('update').value;
-    const status = document.getElementById('status').value;
-    const shop = document.getElementById('shop').value;
-    const hunting = document.getElementById('hunting').value;
-    const recipe = document.getElementById('recipe').value;
-    const videos = document.getElementById('videos').value;
+            const title = document.getElementById('title').value;
+            const cover = document.getElementById('cover').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const category = document.getElementById('category').value;
+            const quality = document.getElementById('quality').value;
+            const update = document.getElementById('update').value || null;
+            const status = document.getElementById('status').value || null;
+            const shop = document.getElementById('shop').value || null;
+            const hunting = document.getElementById('hunting').value || null;
+            const recipe = document.getElementById('recipe').value || null;
+            const videos = document.getElementById('videos').value || null;
 
-    const newItem = {
-        title,
-        cover,
-        description,
-        price,
-        category,
-        quality,
-        update,
-        status,
-        shop,
-        hunting,
-        recipe,
-        videos
-    };
+            try {
+                const response = await fetch('/api/submit-item', { // Envia os dados para o back-end
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        cover,
+                        description,
+                        price,
+                        category,
+                        quality,
+                        update,
+                        status,
+                        shop,
+                        hunting,
+                        recipe,
+                        videos
+                    })
+                });
 
-    try {
-        const branchName = `add-item-${Date.now()}`;
-        const filePath = 'path/to/your/json/file.json';  // Substitua pelo caminho correto
+                if (response.ok) {
+                    alert('Item enviado com sucesso! O Pull Request será criado em breve.');
+                } else {
+                    const error = await response.json();
+                    console.error('Erro ao enviar o item para o servidor:', error);
+                    alert('Erro ao enviar o item. Por favor, tente novamente mais tarde.');
+                }
 
-        // Obtenha o conteúdo atual do arquivo JSON no GitHub
-        const fileResponse = await fetch(`https://api.github.com/repos/Grand-Guide/Grand-Guide.github.io/contents/${filePath}`, {
-            headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3+json'
+            } catch (error) {
+                console.error('Erro ao enviar o item:', error);
+                alert('Erro ao enviar o item');
             }
         });
-        const fileData = await fileResponse.json();
-        const content = JSON.parse(atob(fileData.content));
-
-        // Adicione o novo item ao conteúdo
-        content.push(newItem);
-
-        // Converta o conteúdo atualizado para base64
-        const updatedContent = btoa(JSON.stringify(content, null, 2));
-
-        // Crie um novo branch
-        const createBranchResponse = await fetch(`https://api.github.com/repos/Grand-Guide/Grand-Guide.github.io/git/refs/heads/main`, {
-            headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3+json'
-            }
-        });
-        const mainBranch = await createBranchResponse.json();
-        const newBranchResponse = await fetch(`https://api.github.com/repos/Grand-Guide/Grand-Guide.github.io/git/refs`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                ref: `refs/heads/${branchName}`,
-                sha: mainBranch.object.sha
-            })
-        });
-
-        // Atualize o arquivo JSON no novo branch
-        const updateFileResponse = await fetch(`https://api.github.com/repos/Grand-Guide/Grand-Guide.github.io/contents/${filePath}`, {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                message: `Add new item: ${title}`,
-                content: updatedContent,
-                branch: branchName,
-                sha: fileData.sha
-            })
-        });
-
-        // Crie o pull request
-        const pullRequestResponse = await fetch(`https://api.github.com/repos/Grand-Guide/Grand-Guide.github.io/pulls`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                Accept: 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                title: `Add new item: ${title}`,
-                head: branchName,
-                base: 'main',
-                body: `This pull request adds a new item: ${title}`
-            })
-        });
-
-        if (pullRequestResponse.ok) {
-            alert('Pull request criado com sucesso!');
-        } else {
-            const error = await pullRequestResponse.json();
-            console.error('Erro ao criar pull request:', error);
-            alert('Erro ao criar pull request');
-        }
-    } catch (error) {
-        console.error('Erro ao enviar o item:', error);
-        alert('Erro ao enviar o item');
-    }
-});
     </script>
 </body>
 </html>
