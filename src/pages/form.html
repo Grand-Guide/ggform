@@ -5,27 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Submissão</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/src/pages/form.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <!-- Verificação de Autenticação -->
     <script src="/auth.js"></script>
 
+    <!-- Avatar do Usuário -->
+    <div class="avatar"></div>
+
     <div class="container">
-        <!-- Menu de Navegação -->
+        <h1>Formulário de Submissão</h1>
+        
         <div class="menu">
-            <button id="add-item" class="button">Adicionar Item</button>
-            <button id="edit-item" class="button">Editar Item</button>
+            <button class="button" id="add-item-btn">Adicionar Item</button>
+            <button class="button" id="edit-item-btn">Editar Item</button>
         </div>
 
-        <!-- Seção de Adicionar Item -->
         <div id="add-item-section" class="section">
-            <h1>Adicionar Novo Item</h1>
             <form id="submission-form">
                 <label for="title">Título</label>
                 <input type="text" id="title" name="title" required>
 
-                <label for="cover">Imagem</label>
+                <label for="cover">Capa</label>
                 <input type="text" id="cover" name="cover" required>
 
                 <label for="description">Descrição</label>
@@ -34,9 +36,16 @@
                 <label for="price">Preço</label>
                 <input type="text" id="price" name="price" required>
 
+                <label for="category">Categoria</label>
+                <select id="category" name="category" required>
+                    <option value="">Selecione uma categoria</option>
+                    <!-- As opções serão carregadas dinamicamente -->
+                </select>
+
                 <label for="quality">Qualidade</label>
                 <input type="text" id="quality" name="quality" required>
 
+                <!-- Campos opcionais -->
                 <label for="update">Atualização</label>
                 <input type="text" id="update" name="update">
 
@@ -59,119 +68,136 @@
             </form>
         </div>
 
-        <!-- Seção de Editar Item -->
-        <div id="edit-item-section" class="section" style="display: none;">
-            <h1>Editar Item</h1>
-            <label for="search">Pesquisar Item</label>
-            <input type="text" id="search" name="search" placeholder="Digite o ID ou nome do item">
-            <button id="search-btn" class="button">Pesquisar</button>
-
-            <div id="edit-form-container" style="display: none;">
-                <!-- O formulário para edição será inserido aqui -->
+        <div id="edit-item-section" class="section">
+            <h2>Editar Item</h2>
+            <div id="edit-form-container">
+                <!-- O formulário de edição será adicionado aqui dinamicamente -->
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const addItemSection = document.getElementById('add-item-section');
-            const editItemSection = document.getElementById('edit-item-section');
-            const addItemButton = document.getElementById('add-item');
-            const editItemButton = document.getElementById('edit-item');
-            const searchButton = document.getElementById('search-btn');
-            const searchInput = document.getElementById('search');
-            const editFormContainer = document.getElementById('edit-form-container');
+        document.getElementById('add-item-btn').addEventListener('click', () => {
+            document.getElementById('add-item-section').style.display = 'block';
+            document.getElementById('edit-item-section').style.display = 'none';
+        });
 
-            addItemButton.addEventListener('click', () => {
-                addItemSection.style.display = 'block';
-                editItemSection.style.display = 'none';
-            });
+        document.getElementById('edit-item-btn').addEventListener('click', () => {
+            document.getElementById('add-item-section').style.display = 'none';
+            document.getElementById('edit-item-section').style.display = 'block';
+            loadEditForm();
+        });
 
-            editItemButton.addEventListener('click', () => {
-                addItemSection.style.display = 'none';
-                editItemSection.style.display = 'block';
-            });
+        function loadEditForm() {
+            fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
+                .then(response => response.json())
+                .then(data => {
+                    const editFormContainer = document.getElementById('edit-form-container');
+                    editFormContainer.innerHTML = `
+                                                <label for="edit-item">Selecionar Item para Editar</label>
+                        <select id="edit-item" name="edit-item">
+                            <option value="">Selecione um item</option>
+                            ${data.map(item => `<option value="${item.id}">${item.name}</option>`).join('')}
+                        </select>
+                    `;
 
-            searchButton.addEventListener('click', () => {
-                const query = searchInput.value;
-
-                // Pesquisar o item
-                fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
-                    .then(response => response.json())
-                    .then(data => {
-                        const item = data.find(item => item.id === query || item.name.toLowerCase() === query.toLowerCase());
-
-                        if (item) {
-                            // Criar e exibir formulário de edição
-                            editFormContainer.innerHTML = `
+                    const editItemSelect = document.getElementById('edit-item');
+                    editItemSelect.addEventListener('change', (event) => {
+                        const selectedItem = data.find(item => item.id === event.target.value);
+                        if (selectedItem) {
+                            editFormContainer.innerHTML += `
                                 <form id="edit-form">
                                     <label for="edit-title">Título</label>
-                                    <input type="text" id="edit-title" name="title" value="${item.name}" required>
+                                    <input type="text" id="edit-title" name="title" value="${selectedItem.name}" required>
 
-                                    <label for="edit-cover">Imagem</label>
-                                    <input type="text" id="edit-cover" name="cover" value="${item.cover}" required>
+                                    <label for="edit-cover">Capa</label>
+                                    <input type="text" id="edit-cover" name="cover" value="${selectedItem.cover}" required>
 
                                     <label for="edit-description">Descrição</label>
-                                    <textarea id="edit-description" name="description" rows="4" required>${item.description}</textarea>
+                                    <textarea id="edit-description" name="description" rows="4" required>${selectedItem.description}</textarea>
 
                                     <label for="edit-price">Preço</label>
-                                    <input type="text" id="edit-price" name="price" value="${item.price}" required>
+                                    <input type="text" id="edit-price" name="price" value="${selectedItem.price}" required>
 
                                     <label for="edit-quality">Qualidade</label>
-                                    <input type="text" id="edit-quality" name="quality" value="${item.quality}" required>
+                                    <input type="text" id="edit-quality" name="quality" value="${selectedItem.quality}" required>
 
+                                    <!-- Campos opcionais -->
                                     <label for="edit-update">Atualização</label>
-                                    <input type="text" id="edit-update" name="update" value="${item.update}">
+                                    <input type="text" id="edit-update" name="update" value="${selectedItem.update}">
 
                                     <label for="edit-status">Status</label>
-                                    <input type="text" id="edit-status" name="status" value="${item.status}">
+                                    <input type="text" id="edit-status" name="status" value="${selectedItem.status}">
 
                                     <label for="edit-shop">Loja</label>
-                                    <input type="text" id="edit-shop" name="shop" value="${item.shop}">
+                                    <input type="text" id="edit-shop" name="shop" value="${selectedItem.shop}">
 
                                     <label for="edit-hunting">Caça</label>
-                                    <input type="text" id="edit-hunting" name="hunting" value="${item.hunting}">
+                                    <input type="text" id="edit-hunting" name="hunting" value="${selectedItem.hunting}">
 
                                     <label for="edit-recipe">Receita</label>
-                                    <input type="text" id="edit-recipe" name="recipe" value="${item.recipe}">
+                                    <input type="text" id="edit-recipe" name="recipe" value="${selectedItem.recipe}">
 
                                     <label for="edit-videos">Vídeos</label>
-                                    <input type="text" id="edit-videos" name="videos" value="${item.videos}">
+                                    <input type="text" id="edit-videos" name="videos" value="${selectedItem.videos}">
 
-                                    <button type="submit">Atualizar</button>
+                                    <button type="submit">Atualizar Item</button>
                                 </form>
                             `;
-                            document.getElementById('edit-form').addEventListener('submit', function(event) {
-                                event.preventDefault();
-
-                                // Obter os dados do formulário
-                                const updatedItem = {
-                                    id: item.id,
-                                    name: document.getElementById('edit-title').value,
-                                    cover: document.getElementById('edit-cover').value,
-                                    description: document.getElementById('edit-description').value,
-                                    price: document.getElementById('edit-price').value,
-                                    quality: document.getElementById('edit-quality').value,
-                                    update: document.getElementById('edit-update').value,
-                                    status: document.getElementById('edit-status').value,
-                                    shop: document.getElementById('edit-shop').value,
-                                    hunting: document.getElementById('edit-hunting').value,
-                                    recipe: document.getElementById('edit-recipe').value,
-                                    videos: document.getElementById('edit-videos').value
-                                };
-
-                                // Atualizar o item no GitHub (aqui você deve integrar com a API do GitHub para atualizar o item)
-                                console.log('Item atualizado:', updatedItem);
-
-                                alert('Item atualizado com sucesso!');
-                            });
-                        } else {
-                            alert('Item não encontrado.');
                         }
-                    })
-                    .catch(error => console.error('Erro ao carregar itens:', error));
-            });
-        });
+                    });
+
+                    // Lógica para envio do formulário de edição
+                    editFormContainer.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        // Coloque aqui o código para manipular a atualização do item e o envio do pull request
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar itens para edição:', error));
+        }
     </script>
+
+    <script>
+    
+    document.getElementById('submission-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+      
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const category = document.getElementById('category').value;
+        const branchName = `update-item-${Date.now()}`; // Gera um nome de branch único
+      
+        const filePath = `path/to/your/json/file.json`; // O caminho para o arquivo que será atualizado
+      
+        // Crie o conteúdo do JSON que será enviado
+        const content = JSON.stringify({
+          title,
+          description,
+          category
+          // Adicione aqui os outros campos que você deseja enviar
+        }, null, 2);
+      
+        try {
+          const response = await fetch('/.netlify/functions/createPullRequest', {
+            method: 'POST',
+            body: JSON.stringify({ title, content, branchName, filePath }),
+            headers: { 'Content-Type': 'application/json' }
+          });
+      
+          const result = await response.json();
+      
+          if (response.ok) {
+            alert(`Pull Request criado com sucesso! Acesse aqui: ${result.url}`);
+          } else {
+            alert('Falha ao criar o Pull Request. Tente novamente.');
+          }
+      
+        } catch (error) {
+          console.error('Erro ao enviar o formulário:', error);
+          alert('Ocorreu um erro ao enviar o formulário.');
+        }
+      });
+      
+      </script>
 </body>
 </html>

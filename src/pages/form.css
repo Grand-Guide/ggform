@@ -7,33 +7,36 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 28px;
     margin-bottom: 20px;
     color: #333;
+    text-align: center;
 }
 
 label {
     font-weight: bold;
-    margin-top: 10px;
     color: #333;
+    display: block;
+    margin-top: 20px;
 }
 
 input, textarea, select {
-    width: 100%;
-    padding: 10px;
+    width: calc(100% - 20px);
+    padding: 12px;
     margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     box-sizing: border-box;
+    font-size: 16px;
 }
 
 textarea {
@@ -44,38 +47,50 @@ button {
     background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 20px;
     margin-top: 20px;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    font-size: 18px;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button:active {
+    background-color: #004494;
+    transform: translateY(0);
 }
 
 /* Menu de Navegação */
 .menu {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 .button {
     background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 20px;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    font-size: 18px;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.button:active {
+    background-color: #004494;
+    transform: translateY(0);
 }
 
 /* Seções */
@@ -92,5 +107,16 @@ button:hover {
 }
 
 #edit-form-container {
-    margin-top: 20px;
+    margin-top: 30px;
+}
+
+/* Estilos do Avatar */
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ccc;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
 }
