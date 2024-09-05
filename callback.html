@@ -8,77 +8,46 @@
 </head>
 <body>
     <div class="container">
-        <h1>Aguardando Resultado...</h1>
+        <h1>Resultado da Autenticação</h1>
         <div id="message"></div>
-        <div id="error-actions" style="display: none;">
-            <p>Se você cancelou a autorização, pode voltar à página inicial clicando no botão abaixo.</p>
-            <button id="go-home" style="padding: 10px 20px; font-size: 16px;">Voltar à Página Inicial</button>
-        </div>
     </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const error = urlParams.get('error');
-            const code = urlParams.get('code');
-            const messageDiv = document.getElementById('message');
-            const errorActions = document.getElementById('error-actions');
-            const goHomeButton = document.getElementById('go-home');
-            
-            goHomeButton.addEventListener('click', () => {
-                window.location.href = '/'; // Redirecionar para a página inicial
-            });
-
-            if (error) {
-                // Exibir mensagem de erro e ações
-                messageDiv.innerHTML = `<p>Erro: ${error}</p>`;
-                errorActions.style.display = 'block';
-                // Redirecionar automaticamente para a página inicial após 5 segundos
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 5000);
-            } else if (code) {
-                // Enviar código para a função do Netlify
-                fetch('/.netlify/functions/exchange-code', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na resposta da autenticação');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Armazenar autenticação e redirecionar
-                        localStorage.setItem('isAuthenticated', 'true');
-                        localStorage.setItem('userAvatar', data.avatar_url);
-                        window.location.href = '/src/pages/form.html'; // Redirecionar ao formulário
-                    } else {
-                        messageDiv.innerHTML = `<p>${data.error}</p>`;
-                        errorActions.style.display = 'block';
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 5000);
-                    }
-                })
-                .catch(error => {
-                    messageDiv.innerHTML = `<p>Erro: ${error.message}</p>`;
-                    errorActions.style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 5000);
-                });
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const code = urlParams.get('code');
+    const messageDiv = document.getElementById('message');
+    
+    if (error) {
+        // Exibir mensagem de erro
+        messageDiv.innerHTML = `<p>Erro: ${error}</p>`;
+    } else if (code) {
+        // Enviar código para a função do Netlify
+        fetch('/.netlify/functions/exchange-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Armazenar autenticação e redirecionar
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userAvatar', data.avatar_url);
+                window.location.href = '/src/pages/form.html';
             } else {
-                messageDiv.innerHTML = `<p>Erro inesperado.</p>`;
-                errorActions.style.display = 'block';
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 5000);
+                messageDiv.innerHTML = `<p>${data.error}</p>`;
             }
+        })
+        .catch(error => {
+            messageDiv.innerHTML = `<p>Erro: ${error.message}</p>`;
         });
+    } else {
+        messageDiv.innerHTML = `<p>Erro inesperado.</p>`;
+    }
+});
+
     </script>
 </body>
 </html>
