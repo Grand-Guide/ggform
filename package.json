@@ -3,13 +3,13 @@
     "version": "1.0.1",
     "description": "",
     "main": "index.js",
-        "scripts": {
-          "prestart": "npm run build",
-          "start": "node dist/server.js",
-          "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
-          "prebuild": "rm -rf node_modules && rm -f package-lock.json && rm -rf dist && npm i",
-          "build": "babel src --out-dir dist --extensions \".ts\" --copy-files"
-        },
+    "scripts": {
+        "prestart": "npm run build",
+        "start": "node dist/server.js",
+        "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
+        "prebuild": "rm -rf node_modules && rm -f package-lock.json && rm -rf dist && npm i",
+        "build": "babel src --out-dir dist --extensions \".ts\" --copy-files"
+    },
     "keywords": [
         "discord",
         "oauth2"
@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@octokit/rest": "^21.0.2",
-        "axios": "^0.20.0",
+        "axios": "^1.7.7",
         "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",

@@ -44,17 +44,21 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta da autenticação');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         // Armazenar autenticação e redirecionar
                         localStorage.setItem('isAuthenticated', 'true');
                         localStorage.setItem('userAvatar', data.avatar_url);
-                        window.location.href = '/src/pages/form.html';
+                        window.location.href = '/src/pages/form.html'; // Redirecionar ao formulário
                     } else {
                         messageDiv.innerHTML = `<p>${data.error}</p>`;
                         errorActions.style.display = 'block';
-                        // Redirecionar automaticamente para a página inicial após 5 segundos
                         setTimeout(() => {
                             window.location.href = '/';
                         }, 5000);
@@ -63,7 +67,6 @@
                 .catch(error => {
                     messageDiv.innerHTML = `<p>Erro: ${error.message}</p>`;
                     errorActions.style.display = 'block';
-                    // Redirecionar automaticamente para a página inicial após 5 segundos
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 5000);
@@ -71,7 +74,6 @@
             } else {
                 messageDiv.innerHTML = `<p>Erro inesperado.</p>`;
                 errorActions.style.display = 'block';
-                // Redirecionar automaticamente para a página inicial após 5 segundos
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 5000);
