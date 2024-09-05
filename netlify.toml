@@ -3,7 +3,7 @@
 
 [build.environment]
   # Variável de ambiente para o URL da função de notificação
-  DEV_NOTIFICATION = "https://ggnotif.netlify.app/.netlify.app/.netlify/functions/send-discord-notification"
+  DEV_NOTIFICATION = "https://ggnotif.netlify.app/.netlify/functions/send-discord-notification"
 
 [build.processing]
   command = "curl -X POST '$DEV_NOTIFICATION?status=initializing'"
