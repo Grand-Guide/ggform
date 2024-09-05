@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Itens</title>
+    <link rel="stylesheet" href="public/assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="user-info">
+            <img src="public/assets/img/avatar.png" alt="User Avatar" class="user-avatar">
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h1>Formulário de Itens</h1>
+        <form id="itemForm">
+            <label for="name">Nome do Item:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="cover">URL da Imagem:</label>
+            <input type="url" id="cover" name="cover" required>
+
+            <label for="description">Descrição:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label for="price">Preço:</label>
+            <input type="text" id="price" name="price" required>
+
+            <button type="submit" class="btn submit-btn">Enviar</button>
+        </form>
+    </div>
+
+    <script src="public/scripts/oauth.js"></script>
+</body>
+</html>
