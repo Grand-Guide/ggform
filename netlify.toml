@@ -1,10 +1,5 @@
 [build]
-  command = "npm run notify-initializing && npm run build && npm run notify-building"
-
-[[plugins]]
-  package = "@netlify/plugin-run-functions"
-  [plugins.inputs]
-    functions = "functions"
+  command = "npm run notify-initializing && npm run build && npm run notify-building && npm run notify-deploying && npm run notify-cleanup && npm run notify-post-processing"
 
 [build.processing]
   command = "npm run notify-deploying"
