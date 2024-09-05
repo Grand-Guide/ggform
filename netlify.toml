@@ -1,0 +1,24 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  # Variável de ambiente para o URL da função de notificação
+  DEV_NOTIFICATION = "https://ggnotif.netlify.app/.netlify.app/.netlify/functions/send-discord-notification"
+
+[build.processing]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=initializing'"
+
+[build.deploy]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=building'"
+
+[build.cleanup]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=deploying'"
+
+[build.post-processing]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=cleanup'"
+
+[build.done]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=post-processing'"
+
+[build.failed]
+  command = "curl -X POST '$DEV_NOTIFICATION?status=failure'"
