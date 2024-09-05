@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 
+let messageId = null; // Armazena o ID da mensagem para atualizações
+
 // Função para enviar ou atualizar uma mensagem no Discord
 async function sendOrUpdateWebhook(webhookUrl, messageId, status, color, description) {
   const body = JSON.stringify({
@@ -43,50 +45,50 @@ async function sendOrUpdateWebhook(webhookUrl, messageId, status, color, descrip
 exports.handler = async function(event, context) {
   const webhookUrl = process.env.DEV_NOTIFICATION;
   const status = event.queryStringParameters.status;
-  const messageId = event.queryStringParameters.messageId;
-
+  
+  // Define o status e a cor de acordo com a etapa
   let description;
   let color;
 
-  // Define o status e a cor de acordo com a etapa
   switch (status) {
     case 'initializing':
       description = 'Deploy iniciado...';
-      color = 0xFFFF00;
+      color = 0xFFFF00; // Amarelo
       break;
     case 'building':
       description = 'Construindo o projeto...';
-      color = 0xFFFF00;
+      color = 0xFFFF00; // Amarelo
       break;
     case 'deploying':
       description = 'Enviando para produção...';
-      color = 0xFFFF00;
+      color = 0xFFFF00; // Amarelo
       break;
     case 'cleanup':
       description = 'Limpando...';
-      color = 0xFFFF00;
+      color = 0xFFFF00; // Amarelo
       break;
     case 'post-processing':
       description = 'Processamento final...';
-      color = 0xFFFF00;
+      color = 0xFFFF00; // Amarelo
       break;
     case 'success':
       description = 'Deploy concluído com sucesso!';
-      color = 0x00FF00;
+      color = 0x00FF00; // Verde
       break;
     case 'failure':
       description = 'Erro durante o deploy.';
-      color = 0xFF0000;
+      color = 0xFF0000; // Vermelho
       break;
     default:
       description = 'Status desconhecido.';
-      color = 0xCCCCCC;
+      color = 0xCCCCCC; // Cinza
   }
 
-  const messageIdReturned = await sendOrUpdateWebhook(webhookUrl, messageId, status, color, description);
+  // Enviar ou atualizar a mensagem no Discord
+  messageId = await sendOrUpdateWebhook(webhookUrl, messageId, status, color, description);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ success: true, messageId: messageIdReturned }),
+    body: JSON.stringify({ success: true, messageId }),
   };
 };
