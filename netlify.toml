@@ -1,0 +1,28 @@
+[build]
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-run-functions"
+  [plugins.inputs]
+    functions = "functions"
+
+[build.environment]
+  DEV_NOTIFICATION = "https://ggform.netlify.app/.netlify/functions/send-discord-notification"
+
+[build.processing]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=initializing'"
+
+[build.deploy]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=building'"
+
+[build.cleanup]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=deploying'"
+
+[build.post-processing]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=cleanup'"
+
+[build.done]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=post-processing'"
+
+[build.failed]
+  command = "curl -X POST 'https://ggform.netlify.app/.netlify/functions/deploy-status-notification?status=failure'"
