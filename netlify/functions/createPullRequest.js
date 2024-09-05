@@ -94,7 +94,7 @@ exports.handler = async function(event) {
             base: baseBranch,
             body: 'Adicionando um novo item à lista.',
         });
-
+        
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Pull Request criado com sucesso!', url: pullRequest.html_url }),

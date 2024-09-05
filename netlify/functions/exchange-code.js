@@ -1,6 +1,27 @@
 // functions/exchange-code.js
 const fetch = require('node-fetch');
 
+// Função para converter o ID Snowflake em data
+function snowflakeToDate(snowflake) {
+  const timestamp = (snowflake >> 22) + 1420070400000; // Data inicial do Snowflake
+  return new Date(timestamp);
+}
+
+// Mapeamento de flags para URLs de imagens
+const flagImages = {
+  1: 'https://static.wikia.nocookie.net/discord/images/9/95/DiscordPartnerBadge.svg/revision/latest?cb=20220807112925',
+  2: 'https://static.wikia.nocookie.net/discord/images/c/c4/HypeSquad_Event_Badge.png/revision/latest?cb=20210804155645',
+  4: 'https://static.wikia.nocookie.net/discord/images/0/08/Bug_hunter_badge.png/revision/latest/scale-to-width-down/25?cb=20210611054806',
+  8: 'https://static.wikia.nocookie.net/discord/images/3/31/Hypesquad_bravery_badge.png/revision/latest/scale-to-width-down/25?cb=20210611054025',
+  16: 'https://static.wikia.nocookie.net/discord/images/2/27/Hypesquad_brilliance_badge.png/revision/latest/scale-to-width-down/25?cb=20210611054026',
+  32: 'https://static.wikia.nocookie.net/discord/images/c/ca/Hypesquad_balance_badge.png/revision/latest/scale-to-width-down/25?cb=20210611054027',
+  64: 'https://static.wikia.nocookie.net/discord/images/7/70/Early_supporter_badge.png/revision/latest/scale-to-width-down/25?cb=20210611053519',
+  128: 'https://static.wikia.nocookie.net/discord/images/8/8b/Discord-staff.png/revision/latest/scale-to-width-down/25?cb=20221111200951',
+  256: 'https://static.wikia.nocookie.net/discord/images/0/07/Verified_developer_badge.png/revision/latest/scale-to-width-down/25?cb=20210611053520',
+  512: 'https://static.wikia.nocookie.net/discord/images/e/e6/Bug_buster_badge.png/revision/latest/scale-to-width-down/25?cb=20210611054804',
+  1024: 'https://static.wikia.nocookie.net/discord/images/0/07/Verified_developer_badge.png/revision/latest/scale-to-width-down/25?cb=20210611053520',
+};
+
 exports.handler = async function(event, context) {
   let code;
   try {
@@ -45,7 +66,7 @@ exports.handler = async function(event, context) {
     const data = await response.json();
 
     if (response.ok) {
-      // Enviar informações para o canal via Webhook
+      // Obter informações do usuário
       const userInfo = await fetch('https://discord.com/api/v10/users/@me', {
         method: 'GET',
         headers: {
@@ -53,47 +74,63 @@ exports.handler = async function(event, context) {
         },
       }).then(res => res.json());
 
+      // Converter ID Snowflake para data de criação
+      const creationDate = snowflakeToDate(BigInt(userInfo.id));
+
+      // Decodificar flags
+      const userFlags = [];
+      for (const [flagValue, imageUrl] of Object.entries(flagImages)) {
+        if (userInfo.flags & flagValue) {
+          userFlags.push(imageUrl);
+        }
+      }
+
       // Enviar informações do usuário para o Webhook
-      // Enviar informações do usuário para o Webhook com Embed
-await fetch(webhookUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      embeds: [
-        {
-          title: 'Novo Usuário Autenticado',
-          color: 0x7289DA, // Cor do embed (hexadecimal)
-          fields: [
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          embeds: [
             {
-              name: 'ID do Usuário',
-              value: userInfo.id,
-              inline: true, // Deixar o campo inline
-            },
-            {
-              name: 'Nome de Usuário',
-              value: userInfo.username,
-              inline: true,
-            },
-            {
-              name: 'Email',
-              value: userInfo.email || 'unknown',
+              title: 'Novo Usuário Autenticado',
+              color: 0x7289DA, // Cor do embed (hexadecimal)
+              fields: [
+                {
+                  name: 'ID do Usuário',
+                  value: userInfo.id,
+                  inline: true,
+                },
+                {
+                  name: 'Nome de Usuário',
+                  value: userInfo.username,
+                  inline: true,
+                },
+                {
+                  name: 'Flags',
+                  value: userFlags.length ? userFlags.join('\n') : 'Nenhuma',
+                  inline: false,
+                },
+                {
+                  name: 'Data de Criação',
+                  value: creationDate.toISOString(),
+                  inline: true,
+                },
+              ],
+              thumbnail: {
+                url: userInfo.avatar 
+                  ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
+                  : '/images/UnkAvatar.png',
+              },
+              footer: {
+                text: 'Autenticação via Discord OAuth2',
+              },
+              timestamp: new Date().toISOString(),
             },
           ],
-          thumbnail: {
-            url: userInfo.avatar 
-              ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
-              : '/images/UnkAvatar.png', // Avatar padrão se não houver avatar
-          },
-          footer: {
-            text: 'Autenticação via Discord OAuth2',
-          },
-          timestamp: new Date().toISOString(), // Timestamp do embed
-        },
-      ],
-    }),
-  });  
+        }),
+      });
 
       return {
         statusCode: 200,

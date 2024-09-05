@@ -34,7 +34,7 @@
             if (data.success) {
                 // Armazenar autenticação e redirecionar
                 localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('userAvatar', data.avatar_url); // Exemplo, ajuste conforme necessário
+                localStorage.setItem('userAvatar', data.avatar_url);
                 window.location.href = '/src/pages/form.html';
             } else {
                 messageDiv.innerHTML = `<p>${data.error}</p>`;
