@@ -9,7 +9,7 @@
           "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
           "prebuild": "rm -rf node_modules && rm -f package-lock.json && rm -rf dist && npm i",
           "build": "babel src --out-dir dist --extensions \".ts\" --copy-files",
-          
+
           "notify-initializing": "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=initializing'",
           "notify-building": "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=building'",
           "notify-deploying": "curl -X POST 'https://ggform.netlify.app/.netlify/functions/send-discord-notification?status=deploying'",
@@ -22,7 +22,6 @@
         "oauth2"
     ],
     "author": "GrandGuide",
-    "license": "MIT",
     "devDependencies": {
         "@babel/cli": "^7.11.6",
         "@babel/core": "^7.11.6",
