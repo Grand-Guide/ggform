@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Carregar categorias do arquivo JSON
-    fetch('/.netlify/functions/fetch-categories')
+    fetch('/netlify/functions/fetch-categories')
         .then(response => response.json())
         .then(data => {
             const categorySelect = document.getElementById('category');

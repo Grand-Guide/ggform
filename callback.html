@@ -24,7 +24,7 @@
         messageDiv.innerHTML = `<p>Erro: ${error}</p>`;
     } else if (code) {
         // Enviar código para a função do Netlify
-        fetch('/.netlify/functions/exchange-code', {
+        fetch('/netlify/functions/exchange-code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code })

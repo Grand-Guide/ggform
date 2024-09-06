@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="/">Voltar para a página inicial</a>
         `;
     } else if (code) {
-        fetch('/.netlify/functions/exchange-code', {
+        fetch('/netlify/functions/exchange-code', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

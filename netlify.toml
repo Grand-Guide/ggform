@@ -2,7 +2,7 @@
   command = "npm run build"
 
 [build.environment]
-  DEV_NOTIFICATION = "https://ggnotif.netlify.app/.netlify/functions/send-discord-notification"
+  DEV_NOTIFICATION = "https://ggnotif.netlify.app/netlify/functions/send-discord-notification"
 
 [build.processing]
   command = "curl -X POST '$DEV_NOTIFICATION?status=initializing'"
