@@ -1,22 +1,33 @@
-<!-- protected.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Página Protegida</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Page</title>
+    <style>
+        .container {
+            display: none;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            // Verifica se o authToken está presente no sessionStorage
+            const authToken = sessionStorage.getItem('authToken');
+
+            if (authToken) {
+                // Se o token estiver presente, exibe o conteúdo da página
+                document.querySelector('.container').style.display = 'block';
+            } else {
+                // Se o token não estiver presente, redireciona para a página inicial
+                window.location.href = '/';
+            }
+        };
+    </script>
 </head>
 <body>
-    <div class="container" style="display:none;">
-        <h1>Conteúdo Protegido</h1>
-        <p>Você está autorizado a acessar este conteúdo.</p>
+    <div class="container">
+        <h1>Protected Page</h1>
+        <p>Welcome to the protected content!</p>
     </div>
-
-    <div class="error-message" style="display:none;">
-        <h1>Acesso Negado</h1>
-        <p>Falha na autorização. Redirecionando para o login...</p>
-    </div>
-
-    <script src="validate.js"></script>
 </body>
 </html>
