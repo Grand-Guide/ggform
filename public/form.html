@@ -4,48 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Itens</title>
-
-    <!-- Link para o CSS -->
     <link rel="stylesheet" href="/css/style.css">
-
-    <!-- Fonte personalizada -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-    <!-- Ícone -->
-    <link rel="icon" href="/public/assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="container">
         <div class="form-box">
-            <div class="header">
-                <!-- Ícone do usuário e botão de logout -->
-                <img id="userIcon" src="" alt="User Icon" class="user-icon">
-                <a href="/netlify/functions/logout" id="logoutBtn" class="btn logout-btn">Logout</a>
-            </div>
             <h1>Adicionar Item</h1>
-
-            <!-- Formulário para adicionar/editar item -->
             <form id="itemForm">
                 <div class="form-group">
                     <label for="name">Nome do Item:</label>
                     <input type="text" id="name" name="name" required>
                 </div>
-
                 <div class="form-group">
                     <label for="description">Descrição:</label>
                     <textarea id="description" name="description" rows="4" required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label for="price">Preço:</label>
                     <input type="text" id="price" name="price" required>
                 </div>
-
                 <button type="submit" class="btn">Enviar</button>
             </form>
+            <div class="header">
+                <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                <a href="/logout" id="logoutBtn" class="btn logout-btn">Logout</a>
+            </div>
         </div>
     </div>
-
-    <script src="/public/scripts/oauth.js"></script>
+    <script src="/js/oauth.js"></script>
 </body>
 </html>

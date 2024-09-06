@@ -18,7 +18,6 @@ exports.handler = async (event) => {
         };
     }
 
-    // Trocar o código de autorização por um token
     const tokenResponse = await fetch('https://discord.com/api/v10/oauth2/token', {
         method: 'POST',
         headers: {
@@ -44,7 +43,6 @@ exports.handler = async (event) => {
     const tokenData = await tokenResponse.json();
     const { access_token } = tokenData;
 
-    // Obter informações do usuário
     const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
         headers: {
             Authorization: `Bearer ${access_token}`,
@@ -60,7 +58,6 @@ exports.handler = async (event) => {
 
     const userData = await userResponse.json();
 
-    // Redirecionar para o formulário com o token de usuário
     return {
         statusCode: 302,
         headers: {
