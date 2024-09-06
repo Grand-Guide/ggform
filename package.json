@@ -7,6 +7,10 @@
     "start": "node server.js",
     "build": "echo 'No build step needed' "
   },
+  "dependencies": {
+    "node-fetch": "^3.3.1" 
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC"
