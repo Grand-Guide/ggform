@@ -1,0 +1,13 @@
+{
+    "name": "ggform",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.html",
+    "scripts": {
+      "start": "serve",
+      "build": "cp -r * dist"
+    },
+    "dependencies": {
+      "serve": "^14.2.0" 
+    }
+  }

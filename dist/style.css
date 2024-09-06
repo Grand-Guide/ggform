@@ -1,0 +1,40 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Fonte moderna e legível */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0; /* Cor de fundo suave */
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #5865F2; /* Cor característica do Discord */
+    margin-bottom: 20px;
+}
+
+.discord-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #5865F2;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s; /* Animação suave na cor de fundo */
+}
+
+.discord-button:hover {
+    background-color: #4752C4; /* Cor mais escura ao passar o mouse */
+}
+
+.discord-button i {
+    margin-right: 10px;
+}
