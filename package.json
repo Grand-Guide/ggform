@@ -1,0 +1,12 @@
+{
+  "name": "ggform",
+  "version": "1.0.0",
+  "description": "Aplicação OAuth2 GGForm",
+  "scripts": {
+    "start": "npm run build", 
+    "build": "echo 'Undefined'"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
