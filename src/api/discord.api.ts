@@ -5,7 +5,7 @@ const router = Router();
 
 const CLIENT_ID = process.env.CLIENT_ID as string;
 const CLIENT_SECRET = process.env.CLIENT_SECRET as string;
-const REDIRECT_URI = 'http://localhost:3000/api/discord/auth-callback';
+const REDIRECT_URI = 'https://ggform.netlify.app/callback';
 
 router.get('/auth', (req: Request, res: Response) => {
     const authorizationUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
