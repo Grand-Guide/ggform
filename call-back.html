@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Callback</title>
+    <script>
+        // Função para validar o código OAuth2 com o backend
+        window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+
+            if (code) {
+                try {
+                    // Faz a solicitação para a função serverless de validação
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+                    const data = await response.json();
+
+                    if (response.ok && data.access_token) {
+                        // Se a validação for bem-sucedida, armazena o token no sessionStorage
+                        sessionStorage.setItem('authToken', data.access_token);
+
+                        // Redireciona para a página protegida
+                        window.location.href = '/protect.html';
+                    } else {
+                        // Se o código não for válido, redireciona para a página inicial
+                        alert('Código inválido. Redirecionando...');
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    // Em caso de erro no backend, redireciona para a página inicial
+                    alert('Erro na validação. Redirecionando...');
+                    window.location.href = '/';
+                }
+            } else {
+                // Redireciona para a página inicial se não houver código
+                window.location.href = '/';
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Autenticando...</h1>
+    <p>Aguarde enquanto validamos suas credenciais...</p>
+</body>
+</html>
