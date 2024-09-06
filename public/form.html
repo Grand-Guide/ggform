@@ -1,38 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Itens</title>
-    <link rel="stylesheet" href="public/assets/css/style.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="/public/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <header>
-        <div class="user-info">
-            <img src="public/assets/img/avatar.png" alt="User Avatar" class="user-avatar">
-            <button id="logoutBtn" class="logout-btn">Logout</button>
+    <div class="container">
+        <div class="form-box">
+            <h1>Adicionar Item</h1>
+            <form id="itemForm" action="/netlify/functions/send-to-discord" method="POST">
+                <div class="form-group">
+                    <label for="id">ID do Item:</label>
+                    <input type="text" id="id" name="id" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Nome do Item:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cover">Imagem de Capa:</label>
+                    <input type="text" id="cover" name="cover" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrição:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Preço:</label>
+                    <input type="text" id="price" name="price" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="update">Data de Atualização:</label>
+                    <input type="text" id="update" name="update" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <input type="text" id="status" name="status" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="quality">Qualidade:</label>
+                    <input type="text" id="quality" name="quality" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="shop">Loja:</label>
+                    <input type="text" id="shop" name="shop">
+                </div>
+
+                <div class="form-group">
+                    <label for="hunting">Caça:</label>
+                    <input type="text" id="hunting" name="hunting">
+                </div>
+
+                <div class="form-group">
+                    <label for="recipe">Receita:</label>
+                    <input type="text" id="recipe" name="recipe">
+                </div>
+
+                <div class="form-group">
+                    <label for="videos">Vídeos:</label>
+                    <input type="text" id="videos" name="videos">
+                </div>
+
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+
+            <!-- Botão de logout e ícone do usuário -->
+            <div class="user-info">
+                <a id="logoutBtn" class="btn logout-btn">Logout</a>
+                <img id="userIcon" class="user-icon" src="" alt="User Icon">
+            </div>
         </div>
-    </header>
-
-    <div class="form-container">
-        <h1>Formulário de Itens</h1>
-        <form id="itemForm">
-            <label for="name">Nome do Item:</label>
-            <input type="text" id="name" name="name" required>
-            
-            <label for="cover">URL da Imagem:</label>
-            <input type="url" id="cover" name="cover" required>
-
-            <label for="description">Descrição:</label>
-            <textarea id="description" name="description" required></textarea>
-
-            <label for="price">Preço:</label>
-            <input type="text" id="price" name="price" required>
-
-            <button type="submit" class="btn submit-btn">Enviar</button>
-        </form>
     </div>
-
-    <script src="public/scripts/oauth.js"></script>
+    <script src="/public/js/oauth.js"></script>
 </body>
 </html>

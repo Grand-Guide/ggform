@@ -1,7 +1,13 @@
 [build]
-  base = "/"
   publish = "public"
-  command = "npm run build"
+  functions = "netlify/functions"
 
-[functions]
-  directory = "netlify/functions"
+[[redirects]]
+  from = "/form"
+  to = "/form.html"
+  status = 200
+
+[[redirects]]
+  from = "/logout"
+  to = "/logout"
+  status = 302

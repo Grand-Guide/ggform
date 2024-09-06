@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord OAuth2 Authentication</title>
-    <link rel="stylesheet" href="public/assets/css/style.css">
+    <title>Autenticação via Discord</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="/public/assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="container">
         <div class="auth-box">
             <h1>Bem-vindo!</h1>
             <p>Autentique-se via Discord para acessar o formulário.</p>
-            <a href="/auth/discord" class="btn discord-btn">Autenticar com Discord</a>
+            <a href="https://discord.com/api/oauth2/authorize?client_id=1281408368078229616&redirect_uri=https%3A%2F%2Fggform.netlify.app%2Fform&response_type=code&scope=identify%20guilds.join" class="btn discord-btn">Autenticar com Discord</a>
         </div>
     </div>
 </body>

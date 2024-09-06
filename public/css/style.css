@@ -1,79 +1,160 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background: #f5f5f5;
+/* Estilos Globais */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #7289da; /* Cor de fundo do Discord */
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
+/* Container principal */
 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Caixa de autenticação */
+.auth-box {
+    background-color: #202225;
+    padding: 40px;
+    border-radius: 10px;
     text-align: center;
-    padding: 50px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+}
+
+.auth-box:hover {
+    transform: translateY(-5px);
 }
 
 .auth-box h1 {
-    font-size: 24px;
+    font-size: 2rem;
     margin-bottom: 20px;
 }
 
+.auth-box p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+/* Botão de autenticação */
 .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #5865f2; /* Cor padrão do Discord */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #4752c4;
+}
+
+/* Estilos do botão Discord */
+.discord-btn {
+    background-color: #7289da;
+}
+
+.discord-btn:hover {
+    background-color: #5b6eae;
+}
+
+/* Para telas menores */
+@media (max-width: 768px) {
+    .auth-box {
+        padding: 30px;
+    }
+
+    .auth-box h1 {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.auth-box, .form-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+.btn {
+    display: inline-block;
     padding: 10px 20px;
+    color: #fff;
+    background-color: #5865F2;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
 }
 
 .discord-btn {
     background-color: #7289da;
-    color: white;
-    font-size: 18px;
 }
 
-.form-container {
-    max-width: 600px;
-    margin: 50px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+.btn:hover {
+    opacity: 0.9;
 }
 
-.logout-btn {
-    background-color: #ff5f57;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+.header {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .user-avatar {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+.logout-btn {
+    background-color: #f04747;
+    color: white;
+    padding: 10px 15px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    text-decoration: none;
 }
 
-.submit-btn {
-    background-color: #4caf50;
-    color: white;
-    font-size: 18px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.logout-btn:hover {
+    background-color: #c13535;
 }
