@@ -10,7 +10,7 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
 const router = (0, _express.Router)();
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = 'http://localhost:3000/api/discord/auth-callback';
+const REDIRECT_URI = 'https://ggform.netlify.app/api/discord/auth-callback';
 router.get('/auth', (req, res) => {
   const authorizationUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
   res.redirect(authorizationUrl);
