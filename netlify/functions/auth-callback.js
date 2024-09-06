@@ -1,63 +1,71 @@
 const fetch = require('node-fetch');
-const cookie = require('cookie');
+const querystring = require('querystring');
 
 exports.handler = async (event) => {
-    const code = event.queryStringParameters.code;
-    const clientId = process.env.DISCORD_CLIENT_ID;
-    const clientSecret = process.env.DISCORD_CLIENT_SECRET;
-    const redirectUri = process.env.DISCORD_REDIRECT_URI;
-
-    try {
-        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                client_id: clientId,
-                client_secret: clientSecret,
-                grant_type: 'authorization_code',
-                code: code,
-                redirect_uri: redirectUri,
-                scope: 'identify'
-            })
-        });
-
-        if (!tokenResponse.ok) {
-            throw new Error('Failed to fetch token');
-        }
-
-        const { access_token } = await tokenResponse.json();
-        const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
-            headers: {
-                'Authorization': `Bearer ${access_token}`
-            }
-        });
-
-        if (!userResponse.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-
-        const userData = await userResponse.json();
-
-        // Configure o cookie com o token do usuário
-        const cookieHeader = cookie.serialize('userToken', access_token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 3600 // 1 hora
-        });
-
+    if (event.httpMethod !== 'GET') {
         return {
-            statusCode: 200,
-            headers: {
-                'Set-Cookie': cookieHeader
-            },
-            body: JSON.stringify(userData)
-        };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message })
+            statusCode: 405,
+            body: 'Method Not Allowed',
         };
     }
+
+    const { code } = event.queryStringParameters;
+    
+    if (!code) {
+        return {
+            statusCode: 400,
+            body: 'Missing authorization code',
+        };
+    }
+
+    // Trocar o código de autorização por um token
+    const tokenResponse = await fetch('https://discord.com/api/v10/oauth2/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: querystring.stringify({
+            client_id: process.env.DISCORD_CLIENT_ID,
+            client_secret: process.env.DISCORD_CLIENT_SECRET,
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: 'https://ggform.netlify.app/auth-callback',
+            scope: 'identify',
+        }),
+    });
+
+    if (!tokenResponse.ok) {
+        return {
+            statusCode: 400,
+            body: 'Failed to exchange code for token',
+        };
+    }
+
+    const tokenData = await tokenResponse.json();
+    const { access_token } = tokenData;
+
+    // Obter informações do usuário
+    const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+    });
+
+    if (!userResponse.ok) {
+        return {
+            statusCode: 400,
+            body: 'Failed to fetch user info',
+        };
+    }
+
+    const userData = await userResponse.json();
+
+    // Redirecionar para o formulário com o token de usuário
+    return {
+        statusCode: 302,
+        headers: {
+            Location: `/form?code=${code}&avatar=${userData.avatar}&username=${userData.username}`,
+        },
+        body: '',
+    };
 };
