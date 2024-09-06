@@ -3,43 +3,61 @@ const cookie = require('cookie');
 
 exports.handler = async (event) => {
     const code = event.queryStringParameters.code;
+    const clientId = process.env.DISCORD_CLIENT_ID;
+    const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+    const redirectUri = process.env.DISCORD_REDIRECT_URI;
 
-    const data = {
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: 'https://ggform.netlify.app/form',
-        scope: 'identify guilds.join'
-    };
+    try {
+        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                client_id: clientId,
+                client_secret: clientSecret,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: redirectUri,
+                scope: 'identify'
+            })
+        });
 
-    const response = await fetch('https://discord.com/api/oauth2/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-    });
-
-    const tokenInfo = await response.json();
-
-    const userInfo = await fetch('https://discord.com/api/users/@me', {
-        headers: {
-            authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`
+        if (!tokenResponse.ok) {
+            throw new Error('Failed to fetch token');
         }
-    });
 
-    const user = await userInfo.json();
+        const { access_token } = await tokenResponse.json();
+        const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        });
 
-    const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 1000
-    };
-
-    return {
-        statusCode: 302,
-        headers: {
-            'Set-Cookie': cookie.serialize('userSession', JSON.stringify(user), cookieOptions),
-            Location: '/form'
+        if (!userResponse.ok) {
+            throw new Error('Failed to fetch user data');
         }
-    };
+
+        const userData = await userResponse.json();
+
+        // Configure o cookie com o token do usuário
+        const cookieHeader = cookie.serialize('userToken', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 3600 // 1 hora
+        });
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Set-Cookie': cookieHeader
+            },
+            body: JSON.stringify(userData)
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message })
+        };
+    }
 };
