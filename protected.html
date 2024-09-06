@@ -5,68 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Guide - WikiForm</title>
     <link rel="stylesheet" href="protect.css">
+
 </head>
 <body>
     <div class="container">
         <h1>Item Management</h1>
-        <button id="addItemButton" class="button">Adicionar Item</button>
-        <button id="editItemButton" class="button">Editar Item</button>
+        <button id="addItemButton" class="button">Add Item</button>
+        <button id="editItemButton" class="button">Edit Item</button>
 
+        <!-- Add Item Form -->
         <div id="addItemForm" class="hidden">
             <h2>Add New Item</h2>
             <form id="itemForm">
-                <div class="form-group">
-                    <label for="id">ID:</label>
-                    <input type="text" id="id" name="id" required>
-                </div>
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="cover">Cover URL:</label>
-                    <input type="text" id="cover" name="cover" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="price">Price:</label>
-                    <input type="number" id="price" name="price" required>
-                </div>
-                <div class="form-group">
-                    <label for="update">Update Date:</label>
-                    <input type="date" id="update" name="update" required>
-                </div>
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select id="status" name="status" required>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Aprovado">Aprovado</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="quality">Quality:</label>
-                    <input type="text" id="quality" name="quality" required>
-                </div>
-                <div class="form-group">
-                    <label for="shop">Shop:</label>
-                    <input type="text" id="shop" name="shop">
-                </div>
-                <div class="form-group">
-                    <label for="hunting">Hunting:</label>
-                    <input type="text" id="hunting" name="hunting">
-                </div>
-                <div class="form-group">
-                    <label for="recipe">Recipe:</label>
-                    <input type="text" id="recipe" name="recipe">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="id">ID:</label>
+                        <input type="text" id="id" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cover">Cover URL:</label>
+                        <input type="text" id="cover" name="cover" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="update">Update Date:</label>
+                        <input type="date" id="update" name="update" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Aprovado">Aprovado</option>
+                            <option value="Rejeitado">Rejeitado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quality">Quality:</label>
+                        <input type="text" id="quality" name="quality" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shop">Shop:</label>
+                        <input type="text" id="shop" name="shop">
+                    </div>
+                    <div class="form-group">
+                        <label for="hunting">Hunting:</label>
+                        <input type="text" id="hunting" name="hunting">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe">Recipe:</label>
+                        <input type="text" id="recipe" name="recipe">
+                    </div>
                 </div>
                 <button type="submit" class="button">Submit</button>
             </form>
             <div id="message" class="message"></div>
         </div>
 
+        <!-- Edit Item Form -->
         <div id="searchContainer" class="hidden">
             <h2>Edit Existing Item</h2>
             <input type="text" id="searchBox" placeholder="Search items...">
@@ -138,52 +144,55 @@
                 editForm.innerHTML = `
                     <h2>Edit Item</h2>
                     <form id="editForm">
-                        <div class="form-group">
-                            <label for="editId">ID:</label>
-                            <input type="text" id="editId" name="id" value="${item.id}" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="editName">Name:</label>
-                            <input type="text" id="editName" name="name" value="${item.name}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editCover">Cover URL:</label>
-                            <input type="text" id="editCover" name="cover" value="${item.cover}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editDescription">Description:</label>
-                            <textarea id="editDescription" name="description" rows="4" required>${item.description}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editPrice">Price:</label>
-                            <input type="number" id="editPrice" name="price" value="${item.price}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editUpdate">Update Date:</label>
-                            <input type="date" id="editUpdate" name="update" value="${item.update}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editStatus">Status:</label>
-                            <select id="editStatus" name="status" required>
-                                <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                                <option value="Aprovado" ${item.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editQuality">Quality:</label>
-                            <input type="text" id="editQuality" name="quality" value="${item.quality}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editShop">Shop:</label>
-                            <input type="text" id="editShop" name="shop" value="${item.shop}">
-                        </div>
-                        <div class="form-group">
-                            <label for="editHunting">Hunting:</label>
-                            <input type="text" id="editHunting" name="hunting" value="${item.hunting}">
-                        </div>
-                        <div class="form-group">
-                            <label for="editRecipe">Recipe:</label>
-                            <input type="text" id="editRecipe" name="recipe" value="${item.recipe}">
+                        <div class="form-container">
+                            <div class="form-group">
+                                <label for="editId">ID:</label>
+                                <input type="text" id="editId" name="id" value="${item.id}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="editName">Name:</label>
+                                <input type="text" id="editName" name="name" value="${item.name}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCover">Cover URL:</label>
+                                <input type="text" id="editCover" name="cover" value="${item.cover}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editDescription">Description:</label>
+                                <textarea id="editDescription" name="description" rows="4" required>${item.description}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPrice">Price:</label>
+                                <input type="number" id="editPrice" name="price" value="${item.price}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editUpdate">Update Date:</label>
+                                <input type="date" id="editUpdate" name="update" value="${item.update}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editStatus">Status:</label>
+                                <select id="editStatus" name="status" required>
+                                    <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                    <option value="Aprovado" ${item.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
+                                    <option value="Rejeitado" ${item.status === 'Rejeitado' ? 'selected' : ''}>Rejeitado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editQuality">Quality:</label>
+                                <input type="text" id="editQuality" name="quality" value="${item.quality}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editShop">Shop:</label>
+                                <input type="text" id="editShop" name="shop" value="${item.shop}">
+                            </div>
+                            <div class="form-group">
+                                <label for="editHunting">Hunting:</label>
+                                <input type="text" id="editHunting" name="hunting" value="${item.hunting}">
+                            </div>
+                            <div class="form-group">
+                                <label for="editRecipe">Recipe:</label>
+                                <input type="text" id="editRecipe" name="recipe" value="${item.recipe}">
+                            </div>
                         </div>
                         <button type="submit" class="button">Update</button>
                     </form>
