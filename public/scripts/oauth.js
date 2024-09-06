@@ -34,12 +34,12 @@ document.getElementById("itemForm").addEventListener("submit", function (e) {
 
 // Botão de logout
 document.getElementById("logoutBtn").addEventListener("click", function () {
-    window.location.href = 'netlify/functions/logout.js';
+    window.location.href = '/netlify/functions/logout';
 });
 
 // Configurar ícone do usuário
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('netlify/functions/user-info', {
+    fetch('/netlify/functions/user-info', {
         headers: {
             'Authorization': `Bearer ${sessionStorage.getItem('userToken')}`
         }
