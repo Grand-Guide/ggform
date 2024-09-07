@@ -1,4 +1,5 @@
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
 exports.handler = async function(event, context) {
     const code = event.queryStringParameters.code;
