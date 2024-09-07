@@ -1,21 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600&display=swap');
-
 body {
     font-family: 'Chakra Petch', sans-serif;
-    background: linear-gradient(to bottom, #292C34, #050505);
+    background: linear-gradient(to bottom, #292C34 0%, #050505 100%);
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    color: #E5E5E5;
 }
 
 .container {
-    background-color: #1B1C1F;
+    background: #E5E5E5;
     border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 40px;
     text-align: center;
     max-width: 600px;
@@ -23,8 +20,9 @@ body {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 1.8em;
     margin-bottom: 20px;
+    color: #080809;
 }
 
 .button-container {
@@ -40,12 +38,12 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     font-size: 1em;
-    text-decoration: none; /* Remove o sublinhado */
+    text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
 .button:hover {
-    background-color: #44474D;
+    background-color: #1a1a1a;
 }
 
 .form-container, .search-container {
@@ -54,38 +52,41 @@ h1 {
 
 .input-group {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 15px;
+    align-items: flex-start;
 }
 
-input[type="text"], #searchBar {
+label {
+    margin-bottom: 5px;
+    color: #080809;
+}
+
+input[type="text"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 10px;
-    background-color: #292C34;
-    color: #E5E5E5;
 }
 
 #searchResults {
     list-style-type: none;
     padding: 0;
     text-align: left;
-    max-height: 200px; /* Limita a altura para evitar que a estrutura se mova */
-    overflow-y: auto;
 }
 
 #searchResults li {
-    background-color: #1B1C1F;
+    background-color: #E5E5E5;
     margin-bottom: 5px;
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
+    color: #080809;
 }
 
 #searchResults li:hover {
-    background-color: #44474D;
+    background-color: #dcdcdc;
 }
 
 /* Responsividade */
@@ -93,22 +94,9 @@ input[type="text"], #searchBar {
     .container {
         padding: 20px;
     }
-
+    
     .input-group {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .input-group label {
-        margin-bottom: 5px;
-    }
-
-    .button-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .button {
-        margin: 10px 0;
     }
 }

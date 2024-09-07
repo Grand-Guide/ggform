@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchBar = document.getElementById('searchBar');
     const searchResults = document.getElementById('searchResults');
     const formContainer = document.getElementById('formContainer');
-    const itemForm = document.getElementById('itemForm');
     let items = [];
 
     // Função para carregar os itens do JSON
@@ -39,8 +38,18 @@ document.addEventListener("DOMContentLoaded", function() {
         formContainer.style.display = 'block';
         searchResults.innerHTML = ''; // Limpa a lista de resultados de pesquisa
         searchBar.value = ''; // Limpa o campo de pesquisa
-        document.getElementById('id').value = item.id; // Preenche o campo ID com o valor do item selecionado
-        document.getElementById('name').value = item.name; // Preenche o campo Nome com o valor do item selecionado
+        document.getElementById('id').value = item.id;
+        document.getElementById('name').value = item.name;
+        document.getElementById('cover').value = item.cover || '';
+        document.getElementById('description').value = item.description || '';
+        document.getElementById('price').value = item.price || '';
+        document.getElementById('update').value = item.update || '';
+        document.getElementById('status').value = item.status || '';
+        document.getElementById('quality').value = item.quality || '';
+        document.getElementById('shop').value = item.shop || '';
+        document.getElementById('hunting').value = item.hunting || '';
+        document.getElementById('recipe').value = item.recipe || '';
+        document.getElementById('videos').value = item.videos || '';
     }
 
     // Inicializar carregamento dos itens

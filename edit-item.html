@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Guide - Wikiform</title>
+    <title>Grand Guide - Editar Item</title>
     <link rel="stylesheet" href="/public/css/protect.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -25,12 +24,51 @@
                     <label for="name">Nome do Item:</label>
                     <input type="text" id="name" name="name" required>
                 </div>
+                <div class="input-group">
+                    <label for="cover">Imagem do Item (URL):</label>
+                    <input type="text" id="cover" name="cover">
+                </div>
+                <div class="input-group">
+                    <label for="description">Descrição:</label>
+                    <input type="text" id="description" name="description">
+                </div>
+                <div class="input-group">
+                    <label for="price">Preço:</label>
+                    <input type="text" id="price" name="price">
+                </div>
+                <div class="input-group">
+                    <label for="update">Data de Atualização:</label>
+                    <input type="text" id="update" name="update">
+                </div>
+                <div class="input-group">
+                    <label for="status">Status:</label>
+                    <input type="text" id="status" name="status">
+                </div>
+                <div class="input-group">
+                    <label for="quality">Qualidade:</label>
+                    <input type="text" id="quality" name="quality">
+                </div>
+                <div class="input-group">
+                    <label for="shop">Loja:</label>
+                    <input type="text" id="shop" name="shop">
+                </div>
+                <div class="input-group">
+                    <label for="hunting">Caça:</label>
+                    <input type="text" id="hunting" name="hunting">
+                </div>
+                <div class="input-group">
+                    <label for="recipe">Receita:</label>
+                    <input type="text" id="recipe" name="recipe">
+                </div>
+                <div class="input-group">
+                    <label for="videos">Vídeos:</label>
+                    <input type="text" id="videos" name="videos">
+                </div>
                 <button type="submit" class="button">Salvar</button>
+                <a href="/protected.html" class="button">Voltar</a>
             </form>
-            <a href="/protected.html" class="button">Voltar</a>
         </div>
     </div>
-    <script src="/public/js/auth-check.js"></script>
     <script src="/public/js/edit-item.js"></script>
 </body>
 </html>
