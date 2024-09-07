@@ -16,5 +16,27 @@
             <a href="edit-item.html" class="button">Editar Item Existente</a>
         </div>
     </div>
+
+    <script>
+        const user = {
+            id: 'USER_ID',
+            username: 'USERNAME',
+            avatar: 'AVATAR_URL'
+        };
+    
+        fetch('/.netlify/functions/notify-on-auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Notificação enviada:', result);
+        })
+        .catch(error => {
+            console.error('Erro ao enviar notificação:', error);
+        });
+    </script>    
+
 </body>
 </html>

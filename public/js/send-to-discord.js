@@ -9,10 +9,14 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Impede o envio padrão do formulário
 
+        // Função para obter o valor de um elemento
         const getValue = (id) => {
             const element = document.getElementById(id);
             return element ? element.value : '';
         };
+
+        // Recupera os dados do usuário do localStorage
+        const user = JSON.parse(localStorage.getItem('user')) || {};
 
         const formType = getValue('formType');
         const data = {
@@ -29,9 +33,9 @@ document.addEventListener("DOMContentLoaded", function() {
             recipe: getValue('recipe'),
             videos: getValue('videos'),
             formType: formType,
-            userId: getValue('userId'), // Adicione o ID do usuário
-            username: getValue('username'), // Adicione o nome do usuário
-            avatar: getValue('avatar') // Adicione o URL do avatar do usuário
+            userId: user.id || '', // Adicione o ID do usuário
+            username: user.username || '', // Adicione o nome do usuário
+            avatar: user.avatar || '' // Adicione o URL do avatar do usuário
         };
 
         fetch('/.netlify/functions/send-to-discord', {
