@@ -9,118 +9,126 @@
 </head>
 <body>
     <div class="container">
-        <h1>Item Management</h1>
-        <button id="addItemButton" class="button">Add Item</button>
-        <button id="editItemButton" class="button">Edit Item</button>
+        <h1>Formulário de Itens</h1>
 
-        <!-- Add Item Form -->
-        <div id="addItemForm" class="hidden">
-            <h2>Add New Item</h2>
-            <form id="itemForm">
-                <div class="form-container">
-                    <!-- Add item inputs (ID, Name, etc.) -->
-                    <div class="form-group">
-                        <label for="id">ID:</label>
-                        <input type="text" id="id" name="id" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cover">Cover URL:</label>
-                        <input type="text" id="cover" name="cover" required>
-                    </div>
-                    <!-- Add other fields similarly -->
-                </div>
-                <button type="submit" class="button">Submit</button>
-            </form>
+        <!-- Botões para escolher entre adicionar ou editar item -->
+        <div class="button-group">
+            <button class="button" id="addItemBtn">Adicionar Item</button>
+            <button class="button" id="editItemBtn">Editar Item</button>
         </div>
 
-        <!-- Edit Item Form -->
-        <div id="searchContainer" class="hidden">
-            <h2>Edit Existing Item</h2>
-            <input type="text" id="searchBox" placeholder="Search items...">
-            <div id="itemList"></div>
-            <div id="editItemForm" class="hidden"></div>
+        <!-- Formulário de adição e edição de itens -->
+        <div class="form-section" id="itemForm">
+            <h2 id="formTitle">Adicionar Item</h2>
+
+            <div class="form-group">
+                <label for="itemId">ID:</label>
+                <input type="text" id="itemId">
+            </div>
+
+            <div class="form-group">
+                <label for="itemName">Nome:</label>
+                <input type="text" id="itemName">
+            </div>
+
+            <div class="form-group">
+                <label for="itemDescription">Descrição:</label>
+                <input type="text" id="itemDescription">
+            </div>
+
+            <div class="form-group">
+                <label for="itemPrice">Preço:</label>
+                <input type="text" id="itemPrice">
+            </div>
+
+            <div class="form-group">
+                <label for="itemStatus">Status:</label>
+                <input type="text" id="itemStatus">
+            </div>
+
+            <!-- Outros campos... -->
+
+            <div class="button-group">
+                <button class="button" id="saveBtn">Salvar</button>
+            </div>
+        </div>
+
+        <!-- Barra de pesquisa para selecionar itens ao editar -->
+        <div class="search-bar form-section" id="searchBar">
+            <h2>Pesquisar Item para Editar</h2>
+            <input type="text" id="searchInput" placeholder="Digite o nome ou ID do item">
         </div>
     </div>
 
     <script>
         window.onload = function() {
+            // Verifica se o authToken está presente no sessionStorage
             const authToken = sessionStorage.getItem('authToken');
+
             if (authToken) {
                 document.querySelector('.container').style.display = 'block';
             } else {
                 window.location.href = '/';
             }
+
+            const addItemBtn = document.getElementById('addItemBtn');
+            const editItemBtn = document.getElementById('editItemBtn');
+            const itemForm = document.getElementById('itemForm');
+            const searchBar = document.getElementById('searchBar');
+            const formTitle = document.getElementById('formTitle');
+
+            // Evento para o botão "Adicionar Item"
+            addItemBtn.addEventListener('click', () => {
+                formTitle.textContent = 'Adicionar Item';
+                itemForm.style.display = 'block';
+                searchBar.style.display = 'none';
+                clearForm();
+            });
+
+            // Evento para o botão "Editar Item"
+            editItemBtn.addEventListener('click', () => {
+                formTitle.textContent = 'Editar Item';
+                itemForm.style.display = 'block';
+                searchBar.style.display = 'block';
+                loadItems();
+            });
+
+            // Função para limpar o formulário
+            function clearForm() {
+                document.getElementById('itemId').value = '';
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemDescription').value = '';
+                document.getElementById('itemPrice').value = '';
+                document.getElementById('itemStatus').value = '';
+                // Limpar outros campos...
+            }
+
+            // Função para carregar itens na barra de pesquisa
+            function loadItems() {
+                fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const searchInput = document.getElementById('searchInput');
+                        searchInput.addEventListener('input', function() {
+                            const searchTerm = searchInput.value.toLowerCase();
+                            const matchedItem = data.find(item => item.name.toLowerCase().includes(searchTerm) || item.id.toString() === searchTerm);
+                            if (matchedItem) {
+                                fillForm(matchedItem);
+                            }
+                        });
+                    });
+            }
+
+            // Função para preencher o formulário com os dados do item
+            function fillForm(item) {
+                document.getElementById('itemId').value = item.id;
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemDescription').value = item.description;
+                document.getElementById('itemPrice').value = item.price;
+                document.getElementById('itemStatus').value = item.status;
+                // Preencher outros campos...
+            }
         };
-
-        document.getElementById('addItemButton').addEventListener('click', function() {
-            document.getElementById('addItemForm').classList.remove('hidden');
-            document.getElementById('searchContainer').classList.add('hidden');
-        });
-
-        document.getElementById('editItemButton').addEventListener('click', async function() {
-            document.getElementById('addItemForm').classList.add('hidden');
-            document.getElementById('searchContainer').classList.remove('hidden');
-            const response = await fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json');
-            const items = await response.json();
-            const itemList = document.getElementById('itemList');
-            itemList.innerHTML = '';
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.textContent = item.name;
-                div.dataset.id = item.id;
-                itemList.appendChild(div);
-            });
-
-            // Evento ao clicar no item da lista
-            itemList.addEventListener('click', function(event) {
-                if (event.target.dataset.id) {
-                    const selectedItemId = event.target.dataset.id;
-                    loadEditForm(selectedItemId, items);
-                }
-            });
-        });
-
-        function loadEditForm(itemId, items) {
-            const item = items.find(item => item.id === itemId);
-            const editFormContainer = document.getElementById('editItemForm');
-            editFormContainer.innerHTML = `
-                <h2>Edit Item: ${item.name}</h2>
-                <form id="editForm">
-                    <div class="form-container">
-                        <div class="form-group">
-                            <label for="editId">ID:</label>
-                            <input type="text" id="editId" name="id" value="${item.id}" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="editName">Name:</label>
-                            <input type="text" id="editName" name="name" value="${item.name}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editCover">Cover URL:</label>
-                            <input type="text" id="editCover" name="cover" value="${item.cover}" required>
-                        </div>
-                        <!-- Add other fields similarly -->
-                    </div>
-                    <button type="submit" class="button">Update</button>
-                </form>
-            `;
-            editFormContainer.classList.remove('hidden');
-
-            document.getElementById('editForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                const updatedItemData = {};
-                formData.forEach((value, key) => {
-                    updatedItemData[key] = value;
-                });
-                console.log('Updated item data:', updatedItemData);
-                document.getElementById('editItemForm').innerHTML += '<p>Item atualizado com sucesso!</p>';
-            });
-        }
     </script>
 </body>
 </html>
