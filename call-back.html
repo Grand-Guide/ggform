@@ -61,8 +61,11 @@
                     const data = await response.json();
 
                     if (response.ok && data.access_token) {
-                        // Se a validação for bem-sucedida, armazena o token no sessionStorage
+                        // Se a validação for bem-sucedida, armazena o token e informações do usuário no sessionStorage
                         sessionStorage.setItem('authToken', data.access_token);
+                        sessionStorage.setItem('userId', data.userId);
+                        sessionStorage.setItem('username', data.username);
+                        sessionStorage.setItem('avatar', data.avatar);
 
                         // Redireciona para a página protegida
                         window.location.href = '/protected.html';

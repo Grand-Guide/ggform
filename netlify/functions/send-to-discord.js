@@ -3,10 +3,15 @@ const fetch = require('node-fetch');
 exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
         try {
-            const { id, name, cover, description, price, update, status, quality, shop, hunting, recipe, videos, formType, userId, username, avatar } = JSON.parse(event.body);
+            const { id, name, cover, description, price, update, status, quality, shop, hunting, recipe, videos, formType } = JSON.parse(event.body);
 
             // URL do webhook definida como variável de ambiente
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+            // Recupera as informações do usuário do sessionStorage
+            const userId = process.env.USER_ID; // Utilize a variável de ambiente se necessário
+            const username = process.env.USERNAME; // Utilize a variável de ambiente se necessário
+            const avatar = process.env.AVATAR; // Utilize a variável de ambiente se necessário
 
             // Novo código embed gerado pelo embed generator, atualizado com informações do usuário
             const embed = {
