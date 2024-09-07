@@ -7,8 +7,6 @@ exports.handler = async (event) => {
             const data = JSON.parse(event.body);
             const { id, username, avatar } = data;
 
-            console.log('Received data:', data); // Adicione um log para depuração
-
             // Webhook URL for the specific channel
             const webhookUrl = process.env.DISCORD_AUTH_URL;
 
@@ -25,15 +23,13 @@ exports.handler = async (event) => {
                     fields: [
                         { name: 'ID do Usuário', value: id || 'Não fornecido', inline: true },
                         { name: 'Nome de Usuário', value: username || 'Não fornecido', inline: true },
-                        { name: 'Avatar', value: `[Link do Avatar](${avatar})`, inline: false }
+                        { name: 'Avatar', value: avatar ? `[Link do Avatar](${avatar})` : 'Não fornecido', inline: false }
                     ],
                     thumbnail: {
                         url: avatar || 'https://example.com/default-avatar.png' // Use uma imagem padrão se o avatar não estiver disponível
                     }
                 }]
             };
-
-            console.log('Sending embed:', embed); // Adicione um log para depuração
 
             // Send the embed to the Discord webhook
             const response = await fetch(webhookUrl, {
@@ -42,9 +38,10 @@ exports.handler = async (event) => {
                 body: JSON.stringify(embed)
             });
 
+            const responseBody = await response.text(); // Read response body for more information
+
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Network response was not ok: ${errorText}`);
+                throw new Error(`Network response was not ok: ${responseBody}`);
             }
 
             return {
@@ -52,7 +49,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ message: 'Notificação enviada com sucesso!' })
             };
         } catch (error) {
-            console.error('Error:', error); // Log the error
+            console.error('Error:', error);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ error: error.message })
