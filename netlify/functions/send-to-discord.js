@@ -1,3 +1,4 @@
+// Endpoint/Codigo do serveless
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
