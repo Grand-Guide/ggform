@@ -8,10 +8,15 @@ exports.handler = async (event) => {
             // URL do webhook definida como variável de ambiente
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-            // Recupera as informações do usuário do sessionStorage
-            const userId = process.env.USER_ID; // Utilize a variável de ambiente se necessário
-            const username = process.env.USERNAME; // Utilize a variável de ambiente se necessário
-            const avatar = process.env.AVATAR; // Utilize a variável de ambiente se necessário
+            // Recupera as informações do usuário dos parâmetros da query string
+            const userId = event.queryStringParameters.userId || 'Não fornecido';
+            const username = event.queryStringParameters.username || 'Não fornecido';
+            let avatar = event.queryStringParameters.avatar || ''; 
+
+            // If avatar is null or empty, replace it with the default URL
+            if (!avatar) {
+                avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            }
 
             // Novo código embed gerado pelo embed generator, atualizado com informações do usuário
             const embed = {
@@ -55,12 +60,12 @@ exports.handler = async (event) => {
                         id: 386768945,
                         description: "",
                         fields: [
-                            { name: "User ID", value: userId || 'Não fornecido', inline: true },
-                            { name: "Nickname", value: username || 'Não fornecido', inline: true }
+                            { name: "User ID", value: userId, inline: true },
+                            { name: "Nickname", value: username, inline: true }
                         ],
-                        title: "Sobre o remetente",
+                        title: "UserInfo",
                         thumbnail: {
-                            url: avatar || 'https://cdn.discordapp.com/embed/avatars/0.png' // URL padrão se avatar não fornecido
+                            url: avatar 
                         }
                     }
                 ],

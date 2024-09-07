@@ -56,21 +56,19 @@
     
             if (code) {
                 try {
-                    // Faz a solicitação para a função serverless de validação
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
     
-                    // Exibe o retorno completo da API no console
                     console.log('Dados recebidos da validação:', data);
     
                     if (response.ok && data.access_token) {
-                        // Armazena o token de autenticação
+                        // Armazena o token de autenticação e as informações do usuário
                         sessionStorage.setItem('authToken', data.access_token);
+                        sessionStorage.setItem('user', JSON.stringify(data.user)); 
     
                         // Redireciona para a página protegida
                         window.location.href = '/protected.html';
                     } else {
-                        // Redireciona para a página inicial se o código for inválido
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
                     }
@@ -80,10 +78,10 @@
                     window.location.href = '/';
                 }
             } else {
-                // Redireciona para a página inicial se não houver código
                 window.location.href = '/';
             }
         };
-    </script>    
+    </script>
+    
 </body>
 </html>

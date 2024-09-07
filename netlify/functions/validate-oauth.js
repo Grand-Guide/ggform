@@ -11,7 +11,6 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        // Faz a solicitação ao Discord para trocar o código por um token
         const response = await axios.post(
             'https://discord.com/api/oauth2/token',
             new URLSearchParams({
@@ -19,15 +18,13 @@ exports.handler = async function(event, context) {
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'https://ggform.netlify.app/call-back' // Certifique-se que este URL corresponde ao configurado no Discord Developer Portal
+                redirect_uri: 'https://ggform.netlify.app/call-back' 
             }),
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
-        // Se o código for válido, retornamos os dados do token
         const tokenData = response.data;
 
-        // Enviar uma notificação para o canal do Discord com webhook
         const userInfoResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
                 Authorization: `Bearer ${tokenData.access_token}`
@@ -36,11 +33,11 @@ exports.handler = async function(event, context) {
 
         const userInfo = userInfoResponse.data;
 
-        // Defina o payload do embed da notificação
+        // Enviar uma notificação para o canal do Discord com webhook (opcional)
         const embed = {
             embeds: [{
                 title: "Novo Usuário Autorizado",
-                color: 0x00FF00, // Cor verde
+                color: 0x00FF00, 
                 fields: [
                     { name: "ID do Usuário", value: userInfo.id, inline: true },
                     { name: "Nome de Usuário", value: userInfo.username, inline: true },
@@ -51,18 +48,24 @@ exports.handler = async function(event, context) {
             }]
         };
 
-        // Enviar o embed usando o webhook
         await axios.post(process.env.DISCORD_AUTH_URL, embed, {
             headers: { 'Content-Type': 'application/json' }
         });
 
+        // Retorna as informações do usuário junto com o access_token
         return {
             statusCode: 200,
-            body: JSON.stringify(tokenData)
+            body: JSON.stringify({
+                access_token: tokenData.access_token,
+                user: {
+                    id: userInfo.id,
+                    username: userInfo.username,
+                    avatar: userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : null 
+                }
+            })
         };
 
     } catch (error) {
-        // Captura detalhes do erro
         return {
             statusCode: 500,
             body: JSON.stringify({ 
