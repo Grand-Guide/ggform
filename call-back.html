@@ -1,49 +1,89 @@
-<script>
-    window.onload = async function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Guide - WikiForm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-        if (code) {
-            try {
-                // Faz a solicitação para a função serverless de validação
-                const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
-                const data = await response.json();
+        .container {
+            text-align: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+        }
 
-                if (response.ok && data.access_token) {
-                    // Se a validação for bem-sucedida, armazena o token no sessionStorage
-                    sessionStorage.setItem('authToken', data.access_token);
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
 
-                    // Solicita as informações do usuário
-                    const userInfoResponse = await fetch('/.netlify/functions/user-info', {
-                        headers: { 'Authorization': `Bearer ${data.access_token}` }
-                    });
-                    const userInfo = await userInfoResponse.json();
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
 
-                    // Armazena informações do usuário
-                    sessionStorage.setItem('userId', userInfo.id);
-                    sessionStorage.setItem('username', userInfo.username);
-                    sessionStorage.setItem('avatar', userInfo.avatar);
+        .loading {
+            font-size: 1em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Authenticating...</h1>
+        <p class="loading">Please wait while we validate your credentials.</p>
+    </div>
 
-                    // Log para verificar as informações armazenadas
-                    console.log('User ID:', sessionStorage.getItem('userId'));
-                    console.log('Username:', sessionStorage.getItem('username'));
-                    console.log('Avatar:', sessionStorage.getItem('avatar'));
-
-                    // Redireciona para a página protegida
-                    window.location.href = '/protected.html';
-                } else {
-                    // Se o código não for válido, redireciona para a página inicial
-                    alert('Código inválido. Redirecionando...');
+    <script>
+        window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+    
+            if (code) {
+                try {
+                    // Faz a solicitação para a função serverless de validação
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+                    const data = await response.json();
+    
+                    // Exibe o retorno completo da API no console
+                    console.log('Dados recebidos da validação:', data);
+    
+                    if (response.ok && data.access_token) {
+                        // Armazena o token de autenticação
+                        sessionStorage.setItem('authToken', data.access_token);
+    
+                        // Redireciona para a página protegida
+                        window.location.href = '/protected.html';
+                    } else {
+                        // Redireciona para a página inicial se o código for inválido
+                        alert('Código inválido. Redirecionando...');
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Erro na solicitação:', error);
+                    alert('Erro na validação. Redirecionando...');
                     window.location.href = '/';
                 }
-            } catch (error) {
-                // Em caso de erro no backend, redireciona para a página inicial
-                alert('Erro na validação. Redirecionando...');
+            } else {
+                // Redireciona para a página inicial se não houver código
                 window.location.href = '/';
             }
-        } else {
-            // Redireciona para a página inicial se não houver código
-            window.location.href = '/';
-        }
-    };
-</script>
+        };
+    </script>    
+</body>
+</html>
