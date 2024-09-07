@@ -17,13 +17,11 @@ exports.handler = async (event) => {
                     title: 'Novo Usuário Autorizado',
                     color: 0x00FF00, // Verde
                     fields: [
-                        { name: 'ID do Usuário', value: id || 'Não fornecido', inline: true },
-                        { name: 'Nome de Usuário', value: username || 'Não fornecido', inline: true },
-                        { name: 'Avatar', value: avatar ? `[Link do Avatar](${avatar})` : 'Não fornecido', inline: false }
+                        { name: 'ID do Usuário', value: id || 'Não disponível', inline: true },
+                        { name: 'Nome de Usuário', value: username || 'Não disponível', inline: true },
+                        { name: 'Avatar', value: avatar ? `[Link do Avatar](${avatar})` : 'Não disponível', inline: false }
                     ],
-                    thumbnail: {
-                        url: avatar || 'https://example.com/default-avatar.png' // URL padrão se o avatar não estiver presente
-                    }
+                    thumbnail: avatar ? { url: avatar } : undefined
                 }]
             };
 
@@ -35,7 +33,7 @@ exports.handler = async (event) => {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok: ' + await response.text());
+                throw new Error('Network response was not ok');
             }
 
             return {

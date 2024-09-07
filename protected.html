@@ -18,25 +18,33 @@
     </div>
 
     <script>
-        const user = {
-            id: 'USER_ID',
-            username: 'USERNAME',
-            avatar: 'AVATAR_URL'
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recupera as informações do usuário do sessionStorage
+            const user = {
+                id: sessionStorage.getItem('userId'),
+                username: sessionStorage.getItem('username'),
+                avatar: sessionStorage.getItem('avatar')
+            };
     
-        fetch('/.netlify/functions/notify-on-auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user)
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log('Notificação enviada:', result);
-        })
-        .catch(error => {
-            console.error('Erro ao enviar notificação:', error);
+            // Verifica se as informações do usuário estão disponíveis
+            if (user.id && user.username && user.avatar) {
+                fetch('/.netlify/functions/notify-on-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Notificação enviada:', result);
+                })
+                .catch(error => {
+                    console.error('Erro ao enviar notificação:', error);
+                });
+            } else {
+                console.error('Informações do usuário não disponíveis.');
+            }
         });
-    </script>         
+    </script>              
 
 </body>
 </html>
