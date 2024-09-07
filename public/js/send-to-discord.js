@@ -1,26 +1,37 @@
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('itemForm');
+
+    if (!form) {
+        console.error('Formulário não encontrado');
+        return;
+    }
+
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Impede o envio padrão do formulário
 
-        const formType = document.getElementById('formType').value;
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
+        const formType = getValue('formType');
         const data = {
-            id: document.getElementById('id').value,
-            name: document.getElementById('name').value,
-            cover: document.getElementById('cover').value,
-            description: document.getElementById('description').value,
-            price: document.getElementById('price').value,
-            update: document.getElementById('update').value,
-            status: document.getElementById('status').value,
-            quality: document.getElementById('quality').value,
-            shop: document.getElementById('shop').value,
-            hunting: document.getElementById('hunting').value,
-            recipe: document.getElementById('recipe').value,
-            videos: document.getElementById('videos').value,
+            id: getValue('id'),
+            name: getValue('name'),
+            cover: getValue('cover'),
+            description: getValue('description'),
+            price: getValue('price'),
+            update: getValue('update'),
+            status: getValue('status'),
+            quality: getValue('quality'),
+            shop: getValue('shop'),
+            hunting: getValue('hunting'),
+            recipe: getValue('recipe'),
+            videos: getValue('videos'),
             formType: formType,
-            userId: document.getElementById('userId').value, // Adicione o ID do usuário
-            username: document.getElementById('username').value, // Adicione o nome do usuário
-            avatar: document.getElementById('avatar').value // Adicione o URL do avatar do usuário
+            userId: getValue('userId'), // Adicione o ID do usuário
+            username: getValue('username'), // Adicione o nome do usuário
+            avatar: getValue('avatar') // Adicione o URL do avatar do usuário
         };
 
         fetch('/.netlify/functions/send-to-discord', {
