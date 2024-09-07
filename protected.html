@@ -3,37 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protected Page</title>
-    <link rel="stylesheet" href="protect.css">
+    <title>Grand Guide - WikiForm</title>
+    <link rel="stylesheet" href="/public/css/protect.css">
 </head>
 <body>
     <div class="container">
         <h1>O que você deseja fazer?</h1>
-        <button id="addItemBtn" class="button">Adicionar Novo Item</button>
-        <button id="editItemBtn" class="button">Editar Item Existente</button>
+        <div class="button-container">
+            <button id="addItemBtn" class="button">Adicionar Novo Item</button>
+            <button id="editItemBtn" class="button">Editar Item Existente</button>
+        </div>
 
-        <!-- Formulário para adicionar/editar item -->
-        <div id="formContainer">
-            <form id="itemForm">
-                <div class="form-group">
-                    <label for="id">ID:</label>
-                    <input type="text" id="id" required>
+        <div id="formContainer" class="form-container">
+            <form id="itemForm" style="display:none;">
+                <div class="input-group">
+                    <label for="id">ID do Item:</label>
+                    <input type="text" id="id" name="id" required>
                 </div>
-                <div class="form-group">
-                    <label for="name">Nome:</label>
-                    <input type="text" id="name" required>
+                <div class="input-group">
+                    <label for="name">Nome do Item:</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <button type="submit" class="button">Salvar</button>
             </form>
         </div>
 
         <!-- Barra de pesquisa para editar item -->
-        <div id="searchContainer">
-            <input type="text" id="searchBar" placeholder="Pesquise por nome ou ID...">
+        <div id="searchContainer" class="search-container" style="display:none;">
+            <input type="text" id="searchBar" placeholder="Pesquise um item..." />
             <ul id="searchResults"></ul>
         </div>
     </div>
 
-    <script src="protect.js"></script>
+    <script src="/public/js/protect.js"></script>
 </body>
 </html>
