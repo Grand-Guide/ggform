@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const formContainer = document.getElementById('formContainer');
     let items = [];
 
+    // Função para carregar os itens do JSON
     function loadItems() {
         fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
             .then(response => response.json())
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
+    // Filtrar e exibir os resultados de pesquisa dinamicamente conforme o usuário digita
     searchBar.addEventListener('input', function() {
         const query = searchBar.value.toLowerCase();
         searchResults.innerHTML = ''; // Limpa os resultados anteriores
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    // Função para carregar o item no formulário de edição
     function loadItemForEdit(item) {
         formContainer.style.display = 'block';
         searchResults.innerHTML = ''; // Limpa a lista de resultados de pesquisa
@@ -49,5 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('videos').value = item.videos || '';
     }
 
+    // Inicializar carregamento dos itens
     loadItems();
 });

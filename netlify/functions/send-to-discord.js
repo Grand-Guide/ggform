@@ -5,8 +5,10 @@ exports.handler = async (event) => {
         try {
             const { id, name, cover, description, price, update, status, quality, shop, hunting, recipe, videos, formType, userId, username, avatar } = JSON.parse(event.body);
 
+            // URL do webhook definida como variável de ambiente
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
+            // Novo código embed gerado pelo embed generator, atualizado com informações do usuário
             const embed = {
                 content: "",
                 tts: false,
@@ -15,7 +17,7 @@ exports.handler = async (event) => {
                         id: 652627557,
                         title: `Item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
                         description: "O formulário será revisado pela equipe responsável.",
-                        color: formType === 'add' ? 0x00FF00 : 0xFF0000,
+                        color: formType === 'add' ? 0x00FF00 : 0xFF0000, // Verde para adição, vermelho para atualização
                         fields: [
                             { name: "ID", value: id, inline: true },
                             { name: "Nome", value: name, inline: true },
@@ -53,7 +55,7 @@ exports.handler = async (event) => {
                         ],
                         title: "Sobre o remetente",
                         thumbnail: {
-                            url: avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'
+                            url: avatar || 'https://cdn.discordapp.com/embed/avatars/0.png' // URL padrão se avatar não fornecido
                         }
                     }
                 ],
@@ -61,6 +63,7 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
+            // Envio da solicitação para o webhook do Discord
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
