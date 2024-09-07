@@ -12,6 +12,7 @@
         <h1>Adicionar Novo Item</h1>
         <div id="formContainer">
             <form id="itemForm" class="grid-form">
+                <input type="hidden" id="formType" value="add">
                 <div class="input-group">
                     <label for="id">ID do Item:</label>
                     <input type="text" id="id" name="id" required>
@@ -60,11 +61,12 @@
                     <label for="videos">Vídeos:</label>
                     <input type="text" id="videos" name="videos">
                 </div>
-                <button type="submit" class="button">Salvar</button>
+                <button type="submit" class="button">Enviar</button>
                 <a href="/protected.html" class="button">Voltar</a>
             </form>
         </div>
     </div>
-    <script src="/public/js/add-item.js"></script>
+    <script src="/public/js/auth-check.js"></script>
+    <script src="/public/js/send-to-discord.js"></script>
 </body>
 </html>

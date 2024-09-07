@@ -16,6 +16,7 @@
         </div>
         <div id="formContainer" style="display:none;">
             <form id="itemForm" class="grid-form">
+                <input type="hidden" id="formType" value="edit">
                 <div class="input-group">
                     <label for="id">ID do Item:</label>
                     <input type="text" id="id" name="id" required>
@@ -64,11 +65,13 @@
                     <label for="videos">Vídeos:</label>
                     <input type="text" id="videos" name="videos">
                 </div>
-                <button type="submit" class="button">Salvar</button>
+                <button type="submit" class="button">Enviar</button>
                 <a href="/protected.html" class="button">Voltar</a>
             </form>
         </div>
     </div>
+    <script src="/public/js/auth-check.js"></script>
     <script src="/public/js/edit-item.js"></script>
+    <script src="/public/js/send-to-discord.js"></script>
 </body>
 </html>
