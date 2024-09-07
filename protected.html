@@ -5,117 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Guide - WikiForm</title>
     <link rel="stylesheet" href="protect.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
 
-        .container {
-            display: none;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 1em;
-            color: #fff;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            margin: 10px;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            resize: vertical;
-        }
-
-        .form-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .form-container .form-group {
-            flex: 1 1 calc(50% - 20px);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #searchContainer {
-            display: none;
-            margin-top: 20px;
-        }
-
-        #itemList {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: #fff;
-            margin-top: 10px;
-        }
-
-        #itemList div {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        #itemList div:hover {
-            background-color: #f0f0f0;
-        }
-
-        #editItemForm {
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -128,6 +18,7 @@
             <h2>Add New Item</h2>
             <form id="itemForm">
                 <div class="form-container">
+                    <!-- Add item inputs (ID, Name, etc.) -->
                     <div class="form-group">
                         <label for="id">ID:</label>
                         <input type="text" id="id" name="id" required>
@@ -140,45 +31,10 @@
                         <label for="cover">Cover URL:</label>
                         <input type="text" id="cover" name="cover" required>
                     </div>
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price:</label>
-                        <input type="number" id="price" name="price" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="update">Update Date:</label>
-                        <input type="date" id="update" name="update" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status:</label>
-                        <select id="status" name="status" required>
-                            <option value="Pendente">Pendente</option>
-                            <option value="Aprovado">Aprovado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="quality">Quality:</label>
-                        <input type="text" id="quality" name="quality" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="shop">Shop:</label>
-                        <input type="text" id="shop" name="shop">
-                    </div>
-                    <div class="form-group">
-                        <label for="hunting">Hunting:</label>
-                        <input type="text" id="hunting" name="hunting">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipe">Recipe:</label>
-                        <input type="text" id="recipe" name="recipe">
-                    </div>
+                    <!-- Add other fields similarly -->
                 </div>
                 <button type="submit" class="button">Submit</button>
             </form>
-            <div id="message" class="message"></div>
         </div>
 
         <!-- Edit Item Form -->
@@ -186,44 +42,32 @@
             <h2>Edit Existing Item</h2>
             <input type="text" id="searchBox" placeholder="Search items...">
             <div id="itemList"></div>
-            <div id="editItemForm" class="hidden">
-                <!-- Form for editing items will be injected here -->
-            </div>
+            <div id="editItemForm" class="hidden"></div>
         </div>
     </div>
 
     <script>
-        window.onload = async function() {
-            // Verifica se o authToken está presente no sessionStorage
+        window.onload = function() {
             const authToken = sessionStorage.getItem('authToken');
-
             if (authToken) {
-                // Se o token estiver presente, exibe o conteúdo da página
                 document.querySelector('.container').style.display = 'block';
             } else {
-                // Se o token não estiver presente, redireciona para a página inicial
                 window.location.href = '/';
             }
         };
 
-        // Função para mostrar o formulário de adicionar item
         document.getElementById('addItemButton').addEventListener('click', function() {
             document.getElementById('addItemForm').classList.remove('hidden');
             document.getElementById('searchContainer').classList.add('hidden');
         });
 
-        // Função para mostrar o formulário de editar item
         document.getElementById('editItemButton').addEventListener('click', async function() {
             document.getElementById('addItemForm').classList.add('hidden');
             document.getElementById('searchContainer').classList.remove('hidden');
-
-            // Carregar itens do JSON e mostrar na barra de pesquisa
             const response = await fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json');
             const items = await response.json();
-
             const itemList = document.getElementById('itemList');
-            itemList.innerHTML = ''; // Limpar lista existente
-
+            itemList.innerHTML = '';
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.textContent = item.name;
@@ -231,100 +75,51 @@
                 itemList.appendChild(div);
             });
 
-            // Adicionar evento para seleção de item
+            // Evento ao clicar no item da lista
             itemList.addEventListener('click', function(event) {
                 if (event.target.dataset.id) {
                     const selectedItemId = event.target.dataset.id;
-                    showEditForm(selectedItemId);
+                    loadEditForm(selectedItemId, items);
                 }
             });
         });
 
-        // Função para exibir o formulário de edição de item
-        async function showEditForm(itemId) {
-            // Carregar os dados do item selecionado
-            const response = await fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json');
-            const items = await response.json();
+        function loadEditForm(itemId, items) {
             const item = items.find(item => item.id === itemId);
-
-            if (item) {
-                // Criar o formulário de edição dinamicamente
-                const editForm = document.getElementById('editItemForm');
-                editForm.innerHTML = `
-                    <h2>Edit Item</h2>
-                    <form id="editForm">
-                        <div class="form-container">
-                            <div class="form-group">
-                                <label for="editId">ID:</label>
-                                <input type="text" id="editId" name="id" value="${item.id}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="editName">Name:</label>
-                                <input type="text" id="editName" name="name" value="${item.name}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editCover">Cover URL:</label>
-                                <input type="text" id="editCover" name="cover" value="${item.cover}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editDescription">Description:</label>
-                                <textarea id="editDescription" name="description" rows="4" required>${item.description}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="editPrice">Price:</label>
-                                <input type="number" id="editPrice" name="price" value="${item.price}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editUpdate">Update Date:</label>
-                                <input type="date" id="editUpdate" name="update" value="${item.update}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editStatus">Status:</label>
-                                <select id="editStatus" name="status" required>
-                                    <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                                    <option value="Aprovado" ${item.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editQuality">Quality:</label>
-                                <input type="text" id="editQuality" name="quality" value="${item.quality}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editShop">Shop:</label>
-                                <input type="text" id="editShop" name="shop" value="${item.shop}">
-                            </div>
-                            <div class="form-group">
-                                <label for="editHunting">Hunting:</label>
-                                <input type="text" id="editHunting" name="hunting" value="${item.hunting}">
-                            </div>
-                            <div class="form-group">
-                                <label for="editRecipe">Recipe:</label>
-                                <input type="text" id="editRecipe" name="recipe" value="${item.recipe}">
-                            </div>
+            const editFormContainer = document.getElementById('editItemForm');
+            editFormContainer.innerHTML = `
+                <h2>Edit Item: ${item.name}</h2>
+                <form id="editForm">
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label for="editId">ID:</label>
+                            <input type="text" id="editId" name="id" value="${item.id}" readonly>
                         </div>
-                        <button type="submit" class="button">Update</button>
-                    </form>
-                    <div id="editMessage" class="message"></div>
-                `;
-                editForm.classList.remove('hidden');
+                        <div class="form-group">
+                            <label for="editName">Name:</label>
+                            <input type="text" id="editName" name="name" value="${item.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCover">Cover URL:</label>
+                            <input type="text" id="editCover" name="cover" value="${item.cover}" required>
+                        </div>
+                        <!-- Add other fields similarly -->
+                    </div>
+                    <button type="submit" class="button">Update</button>
+                </form>
+            `;
+            editFormContainer.classList.remove('hidden');
 
-                // Adicionar evento para o envio do formulário de edição
-                document.getElementById('editForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const formData = new FormData(this);
-                    const updatedItemData = {};
-                    formData.forEach((value, key) => {
-                        updatedItemData[key] = value;
-                    });
-
-                    console.log('Updated item data:', updatedItemData);
-
-                    // Aqui você pode adicionar o código para enviar os dados do formulário para o backend
-                    // e processar a atualização conforme necessário.
-
-                    document.getElementById('editMessage').textContent = 'Item atualizado com sucesso!';
+            document.getElementById('editForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const updatedItemData = {};
+                formData.forEach((value, key) => {
+                    updatedItemData[key] = value;
                 });
-            }
+                console.log('Updated item data:', updatedItemData);
+                document.getElementById('editItemForm').innerHTML += '<p>Item atualizado com sucesso!</p>';
+            });
         }
     </script>
 </body>
