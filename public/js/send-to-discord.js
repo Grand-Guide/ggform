@@ -1,8 +1,7 @@
-// public/js/send-to-discord.js
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('itemForm');
     form.addEventListener('submit', function(event) {
-        event.preventDefault();
+        event.preventDefault(); // Impede o envio padrão do formulário
 
         const formType = document.getElementById('formType').value;
         const data = {
@@ -17,35 +16,14 @@ document.addEventListener("DOMContentLoaded", function() {
             shop: document.getElementById('shop').value,
             hunting: document.getElementById('hunting').value,
             recipe: document.getElementById('recipe').value,
-            videos: document.getElementById('videos').value
+            videos: document.getElementById('videos').value,
+            formType: formType
         };
 
-        const embed = {
-            content: `Novo item ${formType === 'add' ? 'adicionado' : 'atualizado'}`,
-            embeds: [{
-                title: `Item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
-                color: formType === 'add' ? 0x00FF00 : 0xFF0000, // Verde para adição, vermelho para atualização
-                fields: [
-                    { name: 'ID', value: data.id, inline: true },
-                    { name: 'Nome', value: data.name, inline: true },
-                    { name: 'Descrição', value: data.description || 'Não fornecido', inline: false },
-                    { name: 'Preço', value: data.price || 'Não fornecido', inline: true },
-                    { name: 'Data de Atualização', value: data.update || 'Não fornecido', inline: true },
-                    { name: 'Status', value: data.status || 'Não fornecido', inline: true },
-                    { name: 'Qualidade', value: data.quality || 'Não fornecido', inline: true },
-                    { name: 'Loja', value: data.shop || 'Não fornecido', inline: true },
-                    { name: 'Caça', value: data.hunting || 'Não fornecido', inline: true },
-                    { name: 'Receita', value: data.recipe || 'Não fornecido', inline: true },
-                    { name: 'Vídeos', value: data.videos || 'Não fornecido', inline: true },
-                    { name: 'Imagem', value: data.cover ? `[Link da Imagem](${data.cover})` : 'Não fornecido', inline: false }
-                ]
-            }]
-        };
-
-        fetch(process.env.DISCORD_WEBHOOK_URL, {
+        fetch('/.netlify/functions/send-to-discord', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(embed)
+            body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(result => {
