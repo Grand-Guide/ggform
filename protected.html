@@ -3,38 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Guide - WikiForm</title>
+    <title>Grand Guide - Selecione uma Ação</title>
     <link rel="stylesheet" href="/public/css/protect.css">
 </head>
 <body>
     <div class="container">
         <h1>O que você deseja fazer?</h1>
         <div class="button-container">
-            <button id="addItemBtn" class="button">Adicionar Novo Item</button>
-            <button id="editItemBtn" class="button">Editar Item Existente</button>
-        </div>
-
-        <div id="formContainer" class="form-container">
-            <form id="itemForm" style="display:none;">
-                <div class="input-group">
-                    <label for="id">ID do Item:</label>
-                    <input type="text" id="id" name="id" required>
-                </div>
-                <div class="input-group">
-                    <label for="name">Nome do Item:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <button type="submit" class="button">Salvar</button>
-            </form>
-        </div>
-
-        <!-- Barra de pesquisa para editar item -->
-        <div id="searchContainer" class="search-container" style="display:none;">
-            <input type="text" id="searchBar" placeholder="Pesquise um item..." />
-            <ul id="searchResults"></ul>
+            <a href="add-item.html" class="button">Adicionar Novo Item</a>
+            <a href="edit-item.html" class="button">Editar Item Existente</a>
         </div>
     </div>
-
-    <script src="/public/js/protect.js"></script>
 </body>
 </html>

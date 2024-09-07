@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Item Existente</title>
+    <link rel="stylesheet" href="/public/css/protect.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Item Existente</h1>
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Pesquise um item..." />
+            <ul id="searchResults"></ul>
+        </div>
+        <div id="formContainer" class="form-container" style="display:none;">
+            <form id="editItemForm">
+                <div class="input-group">
+                    <label for="editId">ID do Item:</label>
+                    <input type="text" id="editId" name="id" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="editName">Nome do Item:</label>
+                    <input type="text" id="editName" name="name" required>
+                </div>
+                <button type="submit" class="button">Salvar</button>
+            </form>
+        </div>
+        <a href="protected.html" class="button">Voltar</a>
+    </div>
+    <script src="/public/js/edit-item.js"></script>
+</body>
+</html>
