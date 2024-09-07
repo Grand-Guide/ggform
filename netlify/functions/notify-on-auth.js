@@ -8,7 +8,7 @@ exports.handler = async (event) => {
             const { id, username, avatar } = JSON.parse(event.body);
 
             // Webhook URL for the specific channel
-            const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+            const webhookUrl = process.env.DISCORD_AUTH_URL;
 
             // Create the embed
             const embed = {
