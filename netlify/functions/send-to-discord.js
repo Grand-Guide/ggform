@@ -24,8 +24,8 @@ exports.handler = async (event) => {
                 embeds: [
                     {
                         id: 652627557,
-                        title: `Item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
-                        description: "O formulário será revisado pela equipe responsável.",
+                        title: `Sugestão de item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
+                        description: "O pedido será revisado pela equipe responsável, Aguarde.",
                         color: formType === 'add' ? 0x00FF00 : 0xFF0000, // Verde para adição, vermelho para atualização
                         fields: [
                             { name: "ID", value: id, inline: true },
@@ -59,8 +59,8 @@ exports.handler = async (event) => {
                         id: 386768945,
                         description: "",
                         fields: [
-                            { name: "User ID", value: userIdToUse, inline: true },
-                            { name: "Nickname", value: usernameToUse, inline: true }
+                            { name: "ID", value: userIdToUse, inline: true },
+                            { name: "Nome", value: usernameToUse, inline: true }
                         ],
                         title: "UserInfo",
                         thumbnail: {
