@@ -3,22 +3,21 @@ const fetch = require('node-fetch');
 exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
         try {
-            const { id, name, cover, description, price, update, status, quality, shop, hunting, recipe, videos, formType } = JSON.parse(event.body);
+            const { 
+                id, name, cover, description, price, update, status, quality, shop, 
+                hunting, recipe, videos, formType, userId, username, avatar 
+            } = JSON.parse(event.body);
 
-            // URL do webhook definida como variável de ambiente
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-            // Recupera as informações do usuário dos parâmetros da query string
-            const userId = event.queryStringParameters.userId || 'Não fornecido';
-            const username = event.queryStringParameters.username || 'Não fornecido';
-            let avatar = event.queryStringParameters.avatar || ''; 
+            const userIdToUse = userId || event.queryStringParameters.userId || 'Não fornecido';
+            const usernameToUse = username || event.queryStringParameters.username || 'Não fornecido';
+            let avatarToUse = avatar || event.queryStringParameters.avatar || '';
 
-            // If avatar is null or empty, replace it with the default URL
-            if (!avatar) {
-                avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            if (!avatarToUse) {
+                avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
 
-            // Novo código embed gerado pelo embed generator, atualizado com informações do usuário
             const embed = {
                 content: "",
                 tts: false,
@@ -60,12 +59,12 @@ exports.handler = async (event) => {
                         id: 386768945,
                         description: "",
                         fields: [
-                            { name: "User ID", value: userId, inline: true },
-                            { name: "Nickname", value: username, inline: true }
+                            { name: "User ID", value: userIdToUse, inline: true },
+                            { name: "Nickname", value: usernameToUse, inline: true }
                         ],
                         title: "UserInfo",
                         thumbnail: {
-                            url: avatar 
+                            url: avatarToUse
                         }
                     }
                 ],
