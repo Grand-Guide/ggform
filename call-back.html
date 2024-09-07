@@ -16,7 +16,6 @@
             align-items: center;
             height: 100vh;
         }
-
         .container {
             text-align: center;
             background: #fff;
@@ -26,17 +25,14 @@
             width: 90%;
             max-width: 500px;
         }
-
         h1 {
             color: #4CAF50;
             margin-bottom: 20px;
         }
-
         p {
             font-size: 1.2em;
             margin: 10px 0;
         }
-
         .loading {
             font-size: 1em;
             color: #666;
@@ -63,9 +59,15 @@
                     if (response.ok && data.access_token) {
                         // Se a validação for bem-sucedida, armazena o token e informações do usuário no sessionStorage
                         sessionStorage.setItem('authToken', data.access_token);
-                        sessionStorage.setItem('userId', data.userId);
-                        sessionStorage.setItem('username', data.username);
-                        sessionStorage.setItem('avatar', data.avatar);
+                        sessionStorage.setItem('userId', data.userInfo.id || 'Não fornecido');
+                        sessionStorage.setItem('username', data.userInfo.username || 'Não fornecido');
+                        sessionStorage.setItem('avatar', data.userInfo.avatar ? `https://cdn.discordapp.com/avatars/${data.userInfo.id}/${data.userInfo.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png');
+
+                        // Log para verificar se os dados estão armazenados corretamente
+                        console.log('Auth Token:', sessionStorage.getItem('authToken'));
+                        console.log('User ID:', sessionStorage.getItem('userId'));
+                        console.log('Username:', sessionStorage.getItem('username'));
+                        console.log('Avatar:', sessionStorage.getItem('avatar'));
 
                         // Redireciona para a página protegida
                         window.location.href = '/protected.html';
