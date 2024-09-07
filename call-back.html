@@ -64,11 +64,6 @@
                         // Se a validação for bem-sucedida, armazena o token no sessionStorage
                         sessionStorage.setItem('authToken', data.access_token);
 
-                        // Armazene também o ID, nome e avatar do usuário no sessionStorage
-                        sessionStorage.setItem('userId', data.user.id);
-                        sessionStorage.setItem('username', data.user.username);
-                        sessionStorage.setItem('avatar', data.user.avatar);
-
                         // Redireciona para a página protegida
                         window.location.href = '/protected.html';
                     } else {
