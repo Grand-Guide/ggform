@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const itemForm = document.getElementById('itemForm');
     const searchBar = document.getElementById('searchBar');
     const searchResults = document.getElementById('searchResults');
+    
+    let items = [];
 
     // Função para mostrar o formulário de adicionar item
     addItemBtn.addEventListener('click', function() {
@@ -20,23 +22,34 @@ document.addEventListener("DOMContentLoaded", function() {
         formContainer.style.display = 'none';
         searchContainer.style.display = 'block';
         itemForm.style.display = 'none';
-        loadItems();
+        searchResults.innerHTML = ''; // Limpa resultados anteriores
     });
 
-    // Carregar os itens do JSON e exibir na pesquisa
+    // Carregar os itens do JSON
     function loadItems() {
         fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
             .then(response => response.json())
-            .then(items => {
-                searchResults.innerHTML = ''; // Limpa resultados anteriores
-                items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = `${item.id} - ${item.name}`;
-                    li.addEventListener('click', () => loadItemForEdit(item));
-                    searchResults.appendChild(li);
-                });
+            .then(data => {
+                items = data; // Armazena os itens para uso posterior na pesquisa
             });
     }
+
+    // Filtra e exibe os resultados de pesquisa dinamicamente conforme o usuário digita
+    searchBar.addEventListener('input', function() {
+        const query = searchBar.value.toLowerCase();
+        searchResults.innerHTML = ''; // Limpa os resultados anteriores
+
+        if (query) {
+            const filteredItems = items.filter(item => item.name.toLowerCase().includes(query) || item.id.toString().includes(query));
+
+            filteredItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.id} - ${item.name}`;
+                li.addEventListener('click', () => loadItemForEdit(item));
+                searchResults.appendChild(li);
+            });
+        }
+    });
 
     // Função para carregar o item no formulário de edição
     function loadItemForEdit(item) {
@@ -46,4 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('id').value = item.id;
         document.getElementById('name').value = item.name;
     }
+
+    // Carregar os itens ao inicializar
+    loadItems();
 });
