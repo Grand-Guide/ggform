@@ -1,54 +1,59 @@
+/* Estilo global */
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #f5f5f5 25%, #4CAF50 100%);
+    font-family: 'Orbitron', sans-serif; /* Fonte estilo cyberpunk */
+    background: linear-gradient(135deg, #080809 30%, #E5E5E5 100%);
+    color: #E5E5E5;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 
+/* Container central */
 .container {
-    background: white;
+    background: rgba(12, 13, 15, 0.95); /* Fundo transparente para criar efeito de sobreposição */
     border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     padding: 40px;
-    text-align: center;
     max-width: 600px;
-    width: 100%;
+    width: 90%;
+    text-align: center;
+    color: #E5E5E5;
 }
 
+/* Títulos */
 h1 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.button-container {
+    font-size: 2em;
+    color: #FFFFFF;
     margin-bottom: 20px;
 }
 
+/* Botões */
 .button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #1F1F1F;
+    color: #E5E5E5;
     border: none;
-    padding: 12px 24px;
+    padding: 15px 30px;
     margin: 10px;
-    border-radius: 8px;
+    border-radius: 50px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-    display: inline-block;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .button:hover {
-    background-color: #45a049;
+    background-color: #FF4500;
+    transform: scale(1.05); /* Efeito de hover */
 }
 
+/* Estilo do formulário */
 .form-container, .search-container {
     margin-top: 20px;
+    animation: fadeIn 0.5s ease;
 }
 
 .input-group {
@@ -59,51 +64,60 @@ h1 {
 
 input[type="text"], #searchBar {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    margin-bottom: 15px;
+    background-color: #202020;
+    color: #E5E5E5;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 10px #FF4500;
 }
 
 #searchResults {
     list-style-type: none;
     padding: 0;
     text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 #searchResults li {
-    background-color: #f5f5f5;
+    background-color: #1E1E1E;
     margin-bottom: 5px;
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
+    transition: background-color 0.2s;
 }
 
 #searchResults li:hover {
-    background-color: #ddd;
+    background-color: #FF4500;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Responsividade */
 @media (max-width: 600px) {
-    .container {
-        padding: 20px;
-    }
-
     .input-group {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .input-group label {
-        margin-bottom: 5px;
-    }
-
     .button-container {
         display: flex;
         flex-direction: column;
-    }
-
-    .button {
-        margin: 10px 0;
     }
 }
