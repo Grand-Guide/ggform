@@ -7,21 +7,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchBar = document.getElementById('searchBar');
     const searchResults = document.getElementById('searchResults');
 
-    // Mostra o formulário de adicionar item
+    // Função para mostrar o formulário de adicionar item
     addItemBtn.addEventListener('click', function() {
         formContainer.style.display = 'block';
         searchContainer.style.display = 'none';
+        itemForm.style.display = 'block';
         itemForm.reset();
     });
 
-    // Mostra a barra de pesquisa e carrega os itens para edição
+    // Função para mostrar a barra de pesquisa e carregar itens para edição
     editItemBtn.addEventListener('click', function() {
         formContainer.style.display = 'none';
         searchContainer.style.display = 'block';
+        itemForm.style.display = 'none';
         loadItems();
     });
 
-    // Função para carregar os itens do JSON
+    // Carregar os itens do JSON e exibir na pesquisa
     function loadItems() {
         fetch('https://raw.githubusercontent.com/Grand-Guide/Grand-Guide.github.io/main/public/pages/items/items.json')
             .then(response => response.json())
@@ -36,10 +38,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
-    // Função para carregar item no formulário de edição
+    // Função para carregar o item no formulário de edição
     function loadItemForEdit(item) {
         formContainer.style.display = 'block';
         searchContainer.style.display = 'none';
+        itemForm.style.display = 'block';
         document.getElementById('id').value = item.id;
         document.getElementById('name').value = item.name;
     }
