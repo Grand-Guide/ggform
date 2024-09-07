@@ -17,7 +17,10 @@ document.addEventListener("DOMContentLoaded", function() {
             hunting: document.getElementById('hunting').value,
             recipe: document.getElementById('recipe').value,
             videos: document.getElementById('videos').value,
-            formType: formType
+            formType: formType,
+            userId: document.getElementById('userId').value, // Adicione o ID do usuário
+            username: document.getElementById('username').value, // Adicione o nome do usuário
+            avatar: document.getElementById('avatar').value // Adicione o URL do avatar do usuário
         };
 
         fetch('/.netlify/functions/send-to-discord', {
