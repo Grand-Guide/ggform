@@ -1,18 +1,14 @@
+// netlify/functions/notify-on-auth.js
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
         try {
             // Parse the incoming JSON data
-            const data = JSON.parse(event.body);
-            const { id, username, avatar } = data;
+            const { id, username, avatar } = JSON.parse(event.body);
 
             // Webhook URL for the specific channel
             const webhookUrl = process.env.DISCORD_AUTH_URL;
-
-            if (!webhookUrl) {
-                throw new Error('Webhook URL not defined');
-            }
 
             // Create the embed
             const embed = {
@@ -26,7 +22,7 @@ exports.handler = async (event) => {
                         { name: 'Avatar', value: avatar ? `[Link do Avatar](${avatar})` : 'Não fornecido', inline: false }
                     ],
                     thumbnail: {
-                        url: avatar || 'https://example.com/default-avatar.png' // Use uma imagem padrão se o avatar não estiver disponível
+                        url: avatar || 'https://example.com/default-avatar.png' // URL padrão se o avatar não estiver presente
                     }
                 }]
             };
@@ -38,10 +34,8 @@ exports.handler = async (event) => {
                 body: JSON.stringify(embed)
             });
 
-            const responseBody = await response.text(); // Read response body for more information
-
             if (!response.ok) {
-                throw new Error(`Network response was not ok: ${responseBody}`);
+                throw new Error('Network response was not ok: ' + await response.text());
             }
 
             return {
@@ -49,7 +43,6 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ message: 'Notificação enviada com sucesso!' })
             };
         } catch (error) {
-            console.error('Error:', error);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ error: error.message })
