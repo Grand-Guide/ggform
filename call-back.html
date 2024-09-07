@@ -64,7 +64,7 @@
                     if (response.ok && data.access_token) {
                         // Armazena o token de autenticação e as informações do usuário
                         sessionStorage.setItem('authToken', data.access_token);
-                        sessionStorage.setItem('user', JSON.stringify(data.user)); 
+                        localStorage.setItem('user', JSON.stringify(data.user)); 
     
                         // Redireciona para a página protegida
                         window.location.href = '/protected.html';
