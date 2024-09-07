@@ -52,7 +52,7 @@ exports.handler = async function(event, context) {
         };
 
         // Enviar o embed usando o webhook
-        await axios.post(process.env.DISCORD_WEBHOOK_URL, embed, {
+        await axios.post(process.env.DISCORD_AUTH_URL, embed, {
             headers: { 'Content-Type': 'application/json' }
         });
 
