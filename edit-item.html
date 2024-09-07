@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Item Existente</title>
+    <title>Editar Item</title>
     <link rel="stylesheet" href="/public/css/protect.css">
 </head>
 <body>
     <div class="container">
         <h1>Editar Item Existente</h1>
-        <div class="search-container">
+        <div id="searchContainer">
             <input type="text" id="searchBar" placeholder="Pesquise um item..." />
             <ul id="searchResults"></ul>
         </div>
-        <div id="formContainer" class="form-container" style="display:none;">
-            <form id="editItemForm">
+        <div id="formContainer" style="display:none;">
+            <form id="itemForm">
                 <div class="input-group">
-                    <label for="editId">ID do Item:</label>
-                    <input type="text" id="editId" name="id" readonly>
+                    <label for="id">ID do Item:</label>
+                    <input type="text" id="id" name="id" required>
                 </div>
                 <div class="input-group">
-                    <label for="editName">Nome do Item:</label>
-                    <input type="text" id="editName" name="name" required>
+                    <label for="name">Nome do Item:</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <button type="submit" class="button">Salvar</button>
             </form>
+            <a href="/protected.html" class="button">Voltar</a>
         </div>
-        <a href="protected.html" class="button">Voltar</a>
     </div>
-    <script src="/public/js/edit-item.js"></script>
     <script src="/public/js/auth-check.js"></script>
+    <script src="/public/js/edit-item.js"></script>
 </body>
 </html>

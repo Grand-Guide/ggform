@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adicionar Novo Item</title>
+    <title>Adicionar Item</title>
     <link rel="stylesheet" href="/public/css/protect.css">
 </head>
 <body>
     <div class="container">
         <h1>Adicionar Novo Item</h1>
-        <form id="addItemForm">
+        <form id="itemForm">
             <div class="input-group">
                 <label for="id">ID do Item:</label>
                 <input type="text" id="id" name="id" required>
@@ -20,8 +20,9 @@
             </div>
             <button type="submit" class="button">Salvar</button>
         </form>
-        <a href="protected.html" class="button">Voltar</a>
+        <a href="/protected.html" class="button">Voltar</a>
     </div>
     <script src="/public/js/auth-check.js"></script>
+    <script src="/public/js/add-item.js"></script> <!-- Adicione o script específico para adicionar item -->
 </body>
 </html>
