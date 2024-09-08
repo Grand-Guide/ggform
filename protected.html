@@ -5,58 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Guide - WikiForm</title>
     <link rel="stylesheet" href="/public/css/protect.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="logo">
-                <h2>Site Logo</h2>
-            </div>
-            <ul>
-                <li class="nav-item">
-                    <a href="/add-item.html">
-                        <i class="icon">&#x2795;</i>
-                        <span class="nav-text">Adicionar Item</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/edit-item.html">
-                        <i class="icon">&#x270E;</i>
-                        <span class="nav-text">Editar Item</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#profile">
-                        <i class="icon">&#x1F464;</i>
-                        <span class="nav-text">Perfil</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#status">
-                        <i class="icon">&#x1F4C8;</i>
-                        <span class="nav-text">Status</span>
-                    </a>
-                </li>
-            </ul>
-            <div class="logout">
-                <a href="/logout">
-                    <i class="icon">&#x274C;</i>
-                    <span class="nav-text">Logout</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <section id="intro">
-                <h1>Bem-vindo(a)!</h1>
-                <p>Selecione uma das opções no menu à esquerda para começar.</p>
-            </section>
+        <h1>O que você deseja fazer?</h1>
+        <div class="button-container">
+            <a href="add-item.html" class="button">Adicionar Novo Item</a>
+            <a href="edit-item.html" class="button">Editar Item Existente</a>
         </div>
     </div>
 
-    <script src="/public/js/protected.js"></script>
+    <script>
+        const user = {
+            id: 'USER_ID',
+            username: 'USERNAME',
+            avatar: 'AVATAR_URL'
+        };
+    
+        fetch('/.netlify/functions/notify-on-auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Notificação enviada:', result);
+        })
+        .catch(error => {
+            console.error('Erro ao enviar notificação:', error);
+        });
+    </script>         
+
 </body>
 </html>
