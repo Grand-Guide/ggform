@@ -3,49 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Guide - WikiForm</title>
-    <link rel="stylesheet" href="/public/css/protect.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand GUide - WikiForm</title>
-    <link rel="stylesheet" href="/public/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Protected Page</title>
+    <link rel="stylesheet" href="/public/css/protected.css">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-top">
-            <a href="#" class="home-icon">
-                <i class="fas fa-home"></i>
-            </a>
-        </div>
-        <div class="sidebar-menu">
-            <a href="/add-item.html" class="sidebar-item">
-                <i class="fas fa-plus"></i>
-                <span class="sidebar-text">Adicionar Item</span>
-            </a>
-            <a href="/edit-item.html" class="sidebar-item">
-                <i class="fas fa-edit"></i>
-                <span class="sidebar-text">Editar Item</span>
-            </a>
-            <a href="/profile.html" class="sidebar-item">
-                <i class="fas fa-user"></i>
-                <span class="sidebar-text">Perfil</span>
-            </a>
-            <a href="/status.html" class="sidebar-item">
-                <i class="fas fa-chart-line"></i>
-                <span class="sidebar-text">Status</span>
-            </a>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Site Logo</h2>
+            </div>
+            <ul>
+                <li class="nav-item">
+                    <a href="#add-item">
+                        <i class="icon">&#x2795;</i>
+                        <span class="nav-text">Adicionar Item</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#edit-item">
+                        <i class="icon">&#x270E;</i>
+                        <span class="nav-text">Editar Item</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#profile">
+                        <i class="icon">&#x1F464;</i>
+                        <span class="nav-text">Perfil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#status">
+                        <i class="icon">&#x1F4C8;</i>
+                        <span class="nav-text">Status</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="logout">
+                <a href="/logout">
+                    <i class="icon">&#x274C;</i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section id="intro">
+                <h1>Bem-vindo(a)!</h1>
+                <p>Selecione uma das opções no menu à esquerda para começar.</p>
+            </section>
+
+            <!-- Section templates -->
+            <section id="add-item" class="section hidden">
+                <h2>Adicionar Item</h2>
+                <p>Formulário para adicionar item.</p>
+            </section>
+            <section id="edit-item" class="section hidden">
+                <h2>Editar Item</h2>
+                <p>Formulário para editar item.</p>
+            </section>
+            <section id="profile" class="section hidden">
+                <h2>Perfil do Usuário</h2>
+                <p>Informações sobre o usuário.</p>
+            </section>
+            <section id="status" class="section hidden">
+                <h2>Status do Sistema</h2>
+                <p>Status e estatísticas do site.</p>
+            </section>
         </div>
     </div>
 
-    <div class="main-content">
-        <h1>Bem-vindo à página protegida</h1>
-        <p>Aqui você pode adicionar, editar itens ou verificar seu perfil e status do website.</p>
-    </div>
+    <script src="/public/js/protected.js"></script>
 </body>
 </html>

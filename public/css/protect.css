@@ -1,88 +1,108 @@
-/* Global Styles */
-body {
-    font-family: 'Chakra Petch', sans-serif;
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    background-color: #292C34;
-    color: #fff;
+    box-sizing: border-box;
 }
 
-/* Sidebar Styles */
+body {
+    font-family: 'Chakra Petch', sans-serif;
+    background-color: #292C34;
+    color: #E0E0E0;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
 .sidebar {
-    width: 80px;
+    width: 250px;
     background-color: #050505;
-    height: 100vh;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-top: 20px;
-    position: fixed;
-    transition: width 0.3s ease;
+    justify-content: space-between;
 }
 
-.sidebar:hover {
-    width: 200px;
-}
-
-.sidebar-top {
+.logo h2 {
+    color: #E0E0E0;
+    font-weight: 600;
     margin-bottom: 40px;
+    text-align: center;
 }
 
-.home-icon {
-    color: #fff;
-    font-size: 30px;
+.nav-item {
+    list-style: none;
+    margin-bottom: 20px;
 }
 
-.sidebar-menu {
-    width: 100%;
-}
-
-.sidebar-item {
-    width: 100%;
+.nav-item a {
     display: flex;
     align-items: center;
-    padding: 10px;
-    color: #fff;
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    color: #E0E0E0;
+    padding: 10px 0;
+    transition: background 0.3s ease;
 }
 
-.sidebar-item:hover {
+.nav-item a:hover {
     background-color: #292C34;
+    border-radius: 5px;
 }
 
-.sidebar-item i {
-    font-size: 24px;
+.icon {
+    font-size: 1.5rem;
     margin-right: 10px;
 }
 
-.sidebar-text {
+.nav-text {
+    font-size: 1.1rem;
+}
+
+.logout a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #ff5f5f;
+    padding: 10px 0;
+    font-weight: bold;
+}
+
+.logout a:hover {
+    background-color: #292C34;
+    border-radius: 5px;
+}
+
+/* Main Content Styling */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #20232A;
+}
+
+.main-content h1, .main-content h2 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.main-content p {
+    font-size: 1.2rem;
+}
+
+.section.hidden {
     display: none;
 }
 
-.sidebar:hover .sidebar-text {
-    display: inline;
-    font-size: 16px;
-}
-
-.sidebar:hover .sidebar-item i {
-    margin-right: 20px;
-}
-
-/* Main Content Styles */
-.main-content {
-    margin-left: 80px;
-    padding: 20px;
-    width: calc(100% - 80px);
-    transition: margin-left 0.3s ease;
-}
-
-.sidebar:hover ~ .main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
-}
-
-h1, p {
-    margin: 0;
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+    .nav-text {
+        display: none;
+    }
+    .logout span {
+        display: none;
+    }
 }
