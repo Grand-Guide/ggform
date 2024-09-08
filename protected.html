@@ -9,14 +9,66 @@
 
 </head>
 <body>
-    <div class="container">
-        <h1>O que você deseja fazer?</h1>
-        <div class="button-container">
-            <a href="add-item.html" class="button">Adicionar Novo Item</a>
-            <a href="edit-item.html" class="button">Editar Item Existente</a>
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+        <div class="logo" onclick="goHome()"> <!-- Ícone no topo -->
+            <img src="logo.png" alt="Logo">
         </div>
-    </div>
-          
+        <nav>
+            <ul>
+                <li>
+                    <a href="#dashboard">
+                        <i class="fas fa-home"></i>
+                        <span class="nav-text">Início</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#add-edit-items">
+                        <i class="fas fa-edit"></i>
+                        <span class="nav-text">Adicionar/Editar Itens</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#guide">
+                        <i class="fas fa-book"></i>
+                        <span class="nav-text">Guia</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#profile">
+                        <i class="fas fa-user"></i>
+                        <span class="nav-text">Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#status">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="nav-text">Status</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <section id="dashboard">
+            <h1>Bem-vindo ao Painel de Controle</h1>
+        </section>
+        <section id="add-edit-items">
+            <h2>Adicionar/Editar Itens</h2>
+        </section>
+        <section id="guide">
+            <h2>Guia de Utilização</h2>
+        </section>
+        <section id="profile">
+            <h2>Perfil do Usuário</h2>
+        </section>
+        <section id="status">
+            <h2>Status do Website</h2>
+        </section>
+    </main>
+
+    <script src="/public/js/protected.js"></script>
 </body>
 </html>
