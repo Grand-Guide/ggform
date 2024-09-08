@@ -17,7 +17,7 @@ body {
 
 /* Sidebar Styling */
 .sidebar {
-    width: 250px;
+    width: 230px;
     background-color: #050505;
     padding: 20px;
     display: flex;
@@ -28,13 +28,13 @@ body {
 .logo h2 {
     color: #E0E0E0;
     font-weight: 600;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
 .nav-item {
     list-style: none;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .nav-item a {
