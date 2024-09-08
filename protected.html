@@ -7,52 +7,45 @@
     <link rel="stylesheet" href="/public/css/protect.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand GUide - WikiForm</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
 <body>
     <div class="sidebar">
-        <span class="icon" onclick="toggleSidebar()">☰</span>
-        <div class="menu-item">
-            <span class="icon">🏠</span>
-            <span class="text">Início</span>
+        <div class="sidebar-top">
+            <a href="#" class="home-icon">
+                <i class="fas fa-home"></i>
+            </a>
         </div>
-        <div class="menu-item">
-            <span class="icon">➕</span>
-            <span class="text">Adicionar Item</span>
-        </div>
-        <div class="menu-item">
-            <span class="icon">✏️</span>
-            <span class="text">Editar Item</span>
-        </div>
-        <div class="menu-item">
-            <span class="icon">📝</span>
-            <span class="text">Guia de Atualização</span>
-        </div>
-        <div class="menu-item">
-            <span class="icon">👤</span>
-            <span class="text">Perfil</span>
-        </div>
-        <div class="menu-item">
-            <span class="icon">📊</span>
-            <span class="text">Status</span>
+        <div class="sidebar-menu">
+            <a href="/add-item.html" class="sidebar-item">
+                <i class="fas fa-plus"></i>
+                <span class="sidebar-text">Adicionar Item</span>
+            </a>
+            <a href="/edit-item.html" class="sidebar-item">
+                <i class="fas fa-edit"></i>
+                <span class="sidebar-text">Editar Item</span>
+            </a>
+            <a href="/profile.html" class="sidebar-item">
+                <i class="fas fa-user"></i>
+                <span class="sidebar-text">Perfil</span>
+            </a>
+            <a href="/status.html" class="sidebar-item">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-text">Status</span>
+            </a>
         </div>
     </div>
 
     <div class="main-content">
-        <div class="container">
-            <h1>O que você deseja fazer?</h1>
-            <div class="button-container">
-                <a href="add-item.html" class="button">Adicionar Novo Item</a>
-                <a href="edit-item.html" class="button">Editar Item Existente</a>
-            </div>
-        </div>
+        <h1>Bem-vindo à página protegida</h1>
+        <p>Aqui você pode adicionar, editar itens ou verificar seu perfil e status do website.</p>
     </div>
-
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            sidebar.classList.toggle('expanded');
-            mainContent.classList.toggle('expanded');
-        }
-    </script>
 </body>
 </html>
