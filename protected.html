@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Guide - WikiForm</title>
+    <title>Painel de Controle - WikiForm</title>
     <link rel="stylesheet" href="/public/css/protect.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Barra lateral -->
     <aside class="sidebar">
         <div class="logo" onclick="goHome()"> <!-- Ícone no topo -->
-            <img src="logo.png" alt="Logo">
+            <img src="/public/images/logo.png" alt="Logo">
         </div>
         <nav>
             <ul>
@@ -23,9 +23,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#add-edit-items">
+                    <a href="add-item.html">
+                        <i class="fas fa-plus-circle"></i>
+                        <span class="nav-text">Adicionar Item</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="edit-item.html">
                         <i class="fas fa-edit"></i>
-                        <span class="nav-text">Adicionar/Editar Itens</span>
+                        <span class="nav-text">Editar Item</span>
                     </a>
                 </li>
                 <li>
@@ -43,7 +49,7 @@
                 <li>
                     <a href="#status">
                         <i class="fas fa-info-circle"></i>
-                        <span class="nav-text">Status</span>
+                        <span class="nav-text">Status do Website</span>
                     </a>
                 </li>
             </ul>
@@ -54,21 +60,26 @@
     <main class="main-content">
         <section id="dashboard">
             <h1>Bem-vindo ao Painel de Controle</h1>
-        </section>
-        <section id="add-edit-items">
-            <h2>Adicionar/Editar Itens</h2>
+            <div class="button-container">
+                <a href="add-item.html" class="button">Adicionar Novo Item</a>
+                <a href="edit-item.html" class="button">Editar Item Existente</a>
+            </div>
         </section>
         <section id="guide">
             <h2>Guia de Utilização</h2>
+            <p>Aqui você encontrará orientações sobre como adicionar e editar itens corretamente.</p>
         </section>
         <section id="profile">
             <h2>Perfil do Usuário</h2>
+            <p>Informações sobre o seu perfil, como contribuições e status de usuário.</p>
         </section>
         <section id="status">
             <h2>Status do Website</h2>
+            <p>Status atual do site, desempenho e informações importantes.</p>
         </section>
     </main>
 
-    <script src="/public/js/protected.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- Ícones FontAwesome -->
+    <script src="script.js"></script>
 </body>
 </html>
