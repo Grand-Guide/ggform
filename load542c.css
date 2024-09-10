@@ -1,0 +1,167 @@
+.skin-citizen blockquote {
+    margin: 0.8rem 20px;
+    padding: 0;
+}
+
+:root {
+    --color-primary__h: 205;
+}
+
+:root.skin-citizen-dark {
+    --color-primary__l: 56%;
+}
+
+.mw-logo-icon {
+    opacity: var(--opacity-icon-base);
+    filter: var(--filter-invert);
+}
+
+.citizen-drawer__menu {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.mw-portlet-External {
+    position: sticky;
+    bottom: 0;
+    margin-top: var(--space-md);
+    padding: var(--space-xs) 0;
+    border-top: 1px solid var(--border-color-base);
+    background: var(--color-surface-1);
+    font-size: var(--font-size-x-small);
+    grid-column: 1 / -1;
+    white-space: nowrap;
+}
+
+.mw-portlet-External .citizen-menu__heading {
+    display: none;
+}
+
+.mw-portlet-External ul {
+    display: flex;
+    overflow: auto;
+}
+
+.mw-portlet-External .mw-list-item a {
+    gap: 0;
+}
+
+.citizen-drawer__menu [id^="n-sidebar-label-"] a {
+    pointer-events: none;
+    margin-left: var(--space-xs);
+    padding-left: var(--space-md);
+    padding-right: var(--space-xs);
+    border-left: 1px solid var(--border-color-base);
+    border-radius: 0;
+    letter-spacing: 0.05em;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-base--subtle) !important;
+}
+
+.citizen-drawer__menu [id^="n-sidebar-icon-"] a {
+    font-size: 0;
+}
+
+.citizen-drawer__menu [id^="n-sidebar-icon-"] a:before {
+    display: block;
+    content: "";
+    width: var(--size-icon);
+    height: var(--size-icon);
+    background: transparent center/contain no-repeat;
+    opacity: var(--opacity-icon-base);
+    filter: var(--filter-invert);
+}
+
+#footer-icons a {
+    opacity: var(--opacity-icon-base);
+    transition: opacity 250ms ease;
+}
+
+#footer-icons a:hover {
+    opacity: var(--opacity-icon-base--hover);
+}
+
+#footer-icons a:active {
+    opacity: var(--opacity-icon-base--active);
+}
+
+#footer-icons ul, #footer-icons li {
+    gap: var(--space-md);
+}
+
+#footer-icons img {
+    width: auto;
+    height: 32px;
+}
+
+#footer-places {
+    column-count: 2;
+}
+
+#footer-places ul {
+    display: initial;
+}
+
+.skin-citizen-light #footer-icons a {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+.page-GG_Form_Wiki .citizen-body-container {
+    grid-template-areas: 'content' 'header' 'afterHeader' 'footer';
+}
+
+.mw-logo-wordmark {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.mw-logo-wordmark:after {
+    content: "";
+    width: 1em;
+    height: 1em;
+    display: block;
+    background-image: url(https://svgur.com/i/1ABo.svg);
+}
+
+.mw-cookiewarning-container {
+    max-width: 480px;
+}
+
+.mw-cookiewarning-text {
+    gap: var(--space-xs);
+}
+
+.mw-cookiewarning-text::before {
+    content: '🍪';
+    font-size: 2rem;
+}
+
+.client-js .mw-cookiewarning-container {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 250ms ease, visibility 250ms ease;
+}
+
+.client-js.citizen-animations-ready .mw-cookiewarning-container {
+    opacity: 1;
+    visibility: visible;
+}
+
+#scw-birthday {
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-surface-2);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
+}
+
+#scw-birthday-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.page-List_of_pledge_vehicles {
+    --width-layout: 100vw;
+}

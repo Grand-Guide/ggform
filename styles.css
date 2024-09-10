@@ -1,9 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
 /* General Reset */
-* {
-    margin: 0;
-    padding: 0;
+*,
+*::before,
+*::after {
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+}
+
+/* Aplicando fonte padrão */
+body {
+    background-color: #101114;
+    color: #ffffff;
+    margin: 0;
+    display: block;
+    margin: 0;
+    border-width: 0;
+    opacity: 1;
+    margin-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+/* Estilos Gerais */
+h1, h2, h3, h4, h5, h6, p {
+    margin-bottom: 1px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: bold;
 }
 
 /* Container for page content */
@@ -12,7 +35,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(180deg, #2A2D35, #101114);
 }
 
 .content {
@@ -35,11 +58,14 @@ p {
 button {
     padding: 15px 30px;
     font-size: 1.2rem;
-    background-color: #7289da;
+    background-color: #2A2D35;
     border: none;
     border-radius: 50px;
-    color: white;
+    color: #fff;
     cursor: pointer;
+    margin-bottom: 2px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: bold;
     transition: transform 0.3s ease;
 }
 
@@ -47,7 +73,23 @@ button:hover {
     transform: scale(1.1);
 }
 
-/* Animations */
+/* Estilo para barra de pesquisa */
+.searchInput {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ffd700;
+    background-color: #1E252E;
+    color: #ffffff;
+    font-family: 'Chakra Petche', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.searchInput::placeholder {
+    color: #ffffff;
+}
+
+/* Estilos para animação */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -57,4 +99,17 @@ button:hover {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Footer */
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #030303;
+    color: #ffffff;
+    text-align: left;
+    padding: 5px;
+    font-size: 0.7em;
 }
