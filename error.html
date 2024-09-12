@@ -3,113 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Denied</title>
+    <title>Access Denied - Grand Guide WikiForm</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: 'Chakra Petch', sans-serif;
-            background-color: #1a1a1a;
-            color: #fff;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            text-align: center;
+            margin: 0;
         }
 
         .error-container {
-            max-width: 600px;
-            background: #292C34;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: fadeIn 1s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
         }
 
         h1 {
-            font-size: 3rem;
+            color: #e74c3c;
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            color: #FF5555;
         }
 
         p {
             font-size: 1.2rem;
+            color: #333;
             margin-bottom: 30px;
-            color: #ddd;
         }
 
-        .error-code {
-            font-size: 5rem;
-            color: #FF5555;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .buttons {
+            display: flex;
+            justify-content: space-around;
         }
 
-        .btn-home {
-            display: inline-block;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            background-color: #FF5555;
-            color: #fff;
-            text-decoration: none;
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
             border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            text-decoration: none;
             transition: background-color 0.3s ease;
+            cursor: pointer;
         }
 
-        .btn-home:hover {
-            background-color: #FF3333;
+        .btn:hover {
+            background-color: #2980b9;
         }
 
-        .btn-home:active {
-            background-color: #CC0000;
+        .btn-secondary {
+            background-color: #2ecc71;
         }
 
-        .server-img {
-            width: 150px;
-            margin-top: 20px;
-            opacity: 0.6;
+        .btn-secondary:hover {
+            background-color: #27ae60;
         }
 
-        .server-img:hover {
-            opacity: 1;
+        .discord-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://www.svgrepo.com/show/353655/discord-icon.svg');
+            background-size: cover;
+            vertical-align: middle;
         }
-
-        footer {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #888;
-        }
-
     </style>
 </head>
 <body>
 
     <div class="error-container">
-        <div class="error-code">403</div>
-        <h1>Access Denied</h1>
-        <p>Sorry, you need to be a member of our Discord server to access this page.</p>
-        <a class="btn-home" href="/">Go Back Home</a>
-        <footer>
-            <p>If you believe this is an error, please contact our support team.</p>
-            <img class="server-img" src="https://img.icons8.com/cotton/64/000000/server.png" alt="Server Icon">
-        </footer>
+        <h1>Acesso Negado</h1>
+        <p>Você precisa ser membro do servidor Discord para acessar esta página.</p>
+        
+        <div class="buttons">
+            <a href="/" class="btn">Voltar</a>
+            <a href="hhttps://discord.gg/GQx5MpX7cA" target="_blank" class="btn btn-secondary">
+                <span class="discord-icon"></span> Entrar no Servidor
+            </a>
+        </div>
     </div>
 
 </body>

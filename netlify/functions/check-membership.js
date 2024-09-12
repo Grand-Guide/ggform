@@ -1,42 +1,37 @@
-const fetch = require('node-fetch');
+async function verifyMembership() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const authToken = sessionStorage.getItem('authToken');
 
-exports.handler = async (event, context) => {
-    const { user_id, access_token } = JSON.parse(event.body);
-    const serverId = process.env.DISCORD_SERVER_ID; // Variável armazenada no Netlify
+    if (!user || !authToken) {
+        // Se o usuário não está logado, redireciona para a página inicial
+        window.location.href = '/';
+        return;
+    }
 
     try {
-        const response = await fetch(`https://discord.com/api/v10/users/@me/guilds`, {
-            headers: {
-                Authorization: `Bearer ${access_token}`
-            }
+        const response = await fetch('/.netlify/functions/check-membership', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: user.id,
+                access_token: authToken
+            }),
         });
 
-        if (!response.ok) {
-            return {
-                statusCode: 403,
-                body: JSON.stringify({ message: 'Erro na verificação de guildas' }),
-            };
+        const data = await response.json();
+
+        if (response.ok && data.message === 'Usuário está no servidor') {
+            console.log('Usuário confirmado no servidor:', data.message);
+            // Usuário está no servidor, pode acessar a página
+        } else {
+            console.log('Acesso negado:', data.message);
+            window.location.href = '/error.html';  // Redireciona para a página de erro
         }
-
-        const guilds = await response.json();
-        const isMember = guilds.some(guild => guild.id === serverId);
-
-        if (!isMember) {
-            return {
-                statusCode: 403,
-                body: JSON.stringify({ message: 'Usuário não está no servidor' }),
-            };
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Usuário verificado com sucesso' }),
-        };
-
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Erro no servidor' }),
-        };
+        console.error('Erro ao verificar associação ao servidor:', error);
+        window.location.href = '/error.html';  // Redireciona em caso de erro
     }
-};
+}
+
+// Executa a verificação de associação ao carregar a página
+window.onload = verifyMembership;
