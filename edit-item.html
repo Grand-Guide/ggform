@@ -15,7 +15,7 @@
             <ul id="searchResults"></ul>
         </div>
         <div id="formContainer" style="display:none;">
-            <form id="itemForm" class="grid-form">
+            <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
                 <input type="hidden" id="formType" value="edit">
                 <div class="input-group">
                     <label for="id">ID do Item:</label>
@@ -70,6 +70,89 @@
             </form>
         </div>
     </div>
+
+    <script>
+        async function verifyMembershipOnPageLoad() {
+            // Pegue o token de autenticação e o user_id armazenados
+            const authToken = sessionStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
+    
+            if (authToken && user && user.id) {
+                // Chama a função de verificação
+                try {
+                    const response = await fetch('/.netlify/functions/check-membership', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                    });
+    
+                    const data = await response.json();
+    
+                    if (response.status === 200) {
+                        console.log('Usuário está no servidor:', data.message);
+                        // Usuário continua no servidor, pode acessar a página
+                    } else {
+                        console.log('Erro:', data.message);
+                        alert('Você foi removido do servidor do Discord. Acesso negado.');
+                        window.location.href = '/error.html'; // Redireciona para a página de erro
+                    }
+                } catch (error) {
+                    console.error('Erro na verificação da membresia:', error);
+                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
+                    window.location.href = '/error.html'; // Redireciona para a página de erro
+                }
+            } else {
+                // Caso não exista um token ou user_id, redireciona para a página de login
+                alert('Autenticação necessária. Redirecionando para login.');
+                window.location.href = '/';
+            }
+        }
+
+        async function verifyBeforeSubmit() {
+            // Pegue o token de autenticação e o user_id armazenados
+            const authToken = sessionStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (authToken && user && user.id) {
+                // Chama a função de verificação
+                try {
+                    const response = await fetch('/.netlify/functions/check-membership', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.status === 200) {
+                        console.log('Usuário está no servidor:', data.message);
+                        return true; // Permite o envio do formulário
+                    } else {
+                        console.log('Erro:', data.message);
+                        alert('Você foi removido do servidor do Discord. Acesso negado.');
+                        window.location.href = '/error.html'; // Redireciona para a página de erro
+                        return false; // Bloqueia o envio do formulário
+                    }
+                } catch (error) {
+                    console.error('Erro na verificação da membresia:', error);
+                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
+                    return false; // Bloqueia o envio do formulário
+                }
+            } else {
+                alert('Autenticação necessária.');
+                window.location.href = '/';
+                return false; // Bloqueia o envio do formulário
+            }
+        }
+
+        // Chama a verificação assim que a página carregar
+        window.onload = verifyMembershipOnPageLoad;
+    </script>
+    
     <script src="/public/js/auth-check.js"></script>
     <script src="/public/js/edit-item.js"></script>
     <script src="/public/js/send-to-discord.js"></script>
