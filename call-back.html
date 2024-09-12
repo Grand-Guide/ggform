@@ -56,6 +56,7 @@
     
             if (code) {
                 try {
+                    // Realiza a validação do código OAuth2 e obtém o access_token
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
     
@@ -65,9 +66,10 @@
                         // Armazena o token de autenticação e as informações do usuário
                         sessionStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(data.user));
-    
-                        // Redireciona para a página protegida
-                        window.location.href = '/protected.html';
+
+                        // Verifica se o usuário está no servidor do Discord
+                        await verifyMembership(data.user.id, data.access_token);
+
                     } else {
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
@@ -81,7 +83,36 @@
                 window.location.href = '/';
             }
         };
+
+        // Função para verificar a associação ao servidor Discord
+        async function verifyMembership(userId, accessToken) {
+            try {
+                const response = await fetch('/.netlify/functions/check-membership', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_id: userId, access_token: accessToken }),
+                });
+
+                const data = await response.json();
+
+                if (response.status === 200) {
+                    console.log('Usuário está no servidor:', data.message);
+                    // Redireciona para a página protegida
+                    window.location.href = '/protected.html';
+                } else {
+                    console.log('Erro:', data.message);
+                    alert('Você não está no servidor do Discord. Acesso negado.');
+                    // Redireciona para uma página de erro ou bloqueia o acesso
+                    window.location.href = '/error.html';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar associação ao servidor:', error);
+                alert('Erro ao verificar associação. Redirecionando...');
+                window.location.href = '/';
+            }
+        }
     </script>
-    
 </body>
 </html>
