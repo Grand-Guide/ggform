@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil do Usuário</title>
+    <link rel="stylesheet" href="/public/css/profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row py-5 px-4">
+            <div class="col-md-5 mx-auto">
+                <!-- Widget do Perfil -->
+                <div class="bg-dark shadow rounded overflow-hidden">
+                    <div class="px-4 pt-0 pb-4 cover">
+                        <div class="media align-items-end profile-head">
+                            <div class="profile mr-3">
+                                <img src="https://via.placeholder.com/130" alt="Avatar do usuário" width="130" class="rounded mb-2 img-thumbnail">
+                                <a href="#" class="btn btn-outline-light btn-sm btn-block">Editar Perfil</a>
+                            </div>
+                            <div class="media-body mb-5 text-white">
+                                <h4 class="mt-0 mb-0" id="userName">Nome do Usuário</h4>
+                                <p class="small mb-4">
+                                    <i class="fas fa-id-badge mr-2"></i>ID: <span id="userId">#123456789</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-light p-4 d-flex justify-content-end text-center">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item">
+                                <h5 class="font-weight-bold mb-0 d-block" id="totalContributions">0</h5>
+                                <small class="text-muted">Contribuições Enviadas</small>
+                            </li>
+                            <li class="list-inline-item">
+                                <h5 class="font-weight-bold mb-0 d-block" id="totalAccepted">0</h5>
+                                <small class="text-muted">Contribuições Aceitas</small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="px-4 py-3">
+                        <h5 class="mb-0">Sobre</h5>
+                        <div class="p-4 rounded shadow-sm bg-light">
+                            <p class="font-italic mb-0" id="userRole">Cargo no Servidor</p>
+                            <p class="font-italic mb-0">Contribuidor ativo</p>
+                        </div>
+                    </div>
+                    <div class="py-4 px-4">
+                        <!-- Seção futura para mais informações -->
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="mb-0">Outras Informações</h5>
+                        </div>
+                        <div class="p-4 rounded shadow-sm bg-light">
+                            <p class="font-italic mb-0">Mais detalhes sobre o usuário...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar os dados do usuário
+        document.addEventListener('DOMContentLoaded', function () {
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (user) {
+                document.getElementById('userName').textContent = user.username;
+                document.getElementById('userId').textContent = `#${user.id}`;
+                document.getElementById('totalContributions').textContent = user.totalContributions || 0;
+                document.getElementById('totalAccepted').textContent = user.totalAccepted || 0;
+
+                const avatarImg = document.querySelector('.profile img');
+                avatarImg.src = user.avatarUrl || 'https://via.placeholder.com/130';
+            }
+        });
+    </script>
+</body>
+</html>
