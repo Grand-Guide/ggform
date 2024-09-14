@@ -170,25 +170,29 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Supondo que essas informações venham do servidor ou da API OAuth
-        const userData = {
-            username: "Mark Williams",
-            discordId: "987654321",
-            avatarUrl: "https://path-to-avatar-image.png", // Colocar a URL do avatar do Discord
-            totalContributions: 215,
-            acceptedContributions: 150,
-        };
+        // Recuperar dados do usuário armazenados no localStorage
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedUser) {
+            // Parse os dados do usuário
+            const userData = JSON.parse(storedUser);
 
-        // Preenchendo os dados no DOM
-        document.getElementById("username").textContent = userData.username;
-        document.getElementById("discord-id").textContent = userData.discordId;
-        document.getElementById("avatar").src = userData.avatarUrl;
-        document.getElementById("total-contributions").textContent = userData.totalContributions;
-        document.getElementById("accepted-contributions").textContent = userData.acceptedContributions;
-
-        // Inicializar contadores de contribuições enviadas e aceitas (colocar lógica real aqui depois)
-        document.getElementById("total-enviadas").textContent = userData.totalContributions; // Exemplo placeholder
-        document.getElementById("total-aceitas").textContent = userData.acceptedContributions; // Exemplo placeholder
+            // Preencher os campos da página com os dados do usuário
+            document.getElementById("username").textContent = userData.username;
+            document.getElementById("discord-id").textContent = userData.id;
+            document.getElementById("avatar").src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+            
+            // Exemplo: Preenchendo contribuições com valores placeholder, 
+            // já que você mencionou implementar a contagem mais tarde
+            document.getElementById("total-contributions").textContent = userData.totalContributions || 0;
+            document.getElementById("accepted-contributions").textContent = userData.acceptedContributions || 0;
+            document.getElementById("total-enviadas").textContent = userData.totalContributions || 0;
+            document.getElementById("total-aceitas").textContent = userData.acceptedContributions || 0;
+        } else {
+            // Se não houver dados, redirecionar ou mostrar mensagem de erro
+            alert('Usuário não autenticado. Redirecionando para a página de login.');
+            window.location.href = '/';
+        }
     });
 </script>
 
