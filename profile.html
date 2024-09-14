@@ -8,65 +8,45 @@
     <style>
         body {
             font-family: 'Chakra Petch', sans-serif;
-            background-color: #292C34;
+            background: #292C34;
             color: #fff;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
 
         .profile-container {
-            width: 90%;
-            max-width: 1000px;
-            background-color: #050505;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            margin: auto;
             padding: 20px;
+            background: #050505;
+            border-radius: 8px;
         }
 
         .profile-header {
             display: flex;
             align-items: center;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
             margin-bottom: 20px;
         }
 
         .profile-avatar {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            overflow: hidden;
             margin-right: 20px;
         }
 
         .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-info {
-            flex-grow: 1;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
         }
 
         .profile-info h1 {
             margin: 0;
-            font-size: 2.2em;
-        }
-
-        .profile-info p {
-            margin: 5px 0;
-            color: #c4c4c4;
         }
 
         .profile-stats {
             display: flex;
-            justify-content: space-around;
-            background-color: #1c1c1c;
-            padding: 15px;
-            border-radius: 8px;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
 
@@ -75,120 +55,68 @@
         }
 
         .stat h3 {
-            font-size: 1.8em;
             margin: 0;
-        }
-
-        .stat p {
-            color: #c4c4c4;
-        }
-
-        .contribution-section {
-            background-color: #1c1c1c;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .contribution-section h2 {
-            margin-bottom: 15px;
-        }
-
-        .contribution-stats {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .contribution-stat {
-            text-align: center;
-        }
-
-        .contribution-stat h3 {
-            font-size: 2em;
-            margin: 0;
-        }
-
-        .contribution-stat p {
-            color: #c4c4c4;
         }
 
         .button-back {
             display: inline-block;
-            margin-top: 20px;
-            background-color: #292C34;
-            color: white;
             padding: 10px 20px;
+            color: #fff;
+            background-color: #4CAF50;
             border-radius: 5px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .button-back:hover {
-            background-color: #505050;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <img id="avatar" src="" alt="Avatar do usuário">
-            </div>
-            <div class="profile-info">
-                <h1 id="username">Nome do Usuário</h1>
-                <p>ID do Discord: <span id="discord-id">123456789</span></p>
-                <p>Status no Servidor: <span id="server-status">Desconhecido</span></p>
-            </div>
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <img id="avatar" src="" alt="Avatar do usuário">
         </div>
-    
-        <div class="profile-stats">
-            <div class="stat">
-                <h3 id="total-contributions">0</h3>
-                <p>Total de Contribuições</p>
-            </div>
-            <div class="stat">
-                <h3 id="accepted-contributions">0</h3>
-                <p>Contribuições Aceitas</p>
-            </div>
+        <div class="profile-info">
+            <h1 id="username">Nome do Usuário</h1>
+            <p>ID do Discord: <span id="discord-id">123456789</span></p>
+            <p>Status no Servidor: <span id="server-status">Desconhecido</span></p>
         </div>
-    
-        <div class="contribution-section">
-            <h2>Seções de Contribuições</h2>
-            <div class="contribution-stats">
-                <div class="contribution-stat">
-                    <h3 id="total-enviadas">0</h3>
-                    <p>Contribuições Enviadas</p>
-                </div>
-                <div class="contribution-stat">
-                    <h3 id="total-aceitas">0</h3>
-                    <p>Contribuições Aceitas</p>
-                </div>
-            </div>
-        </div>
-    
-        <a href="/protected.html" class="button-back">Voltar à Página Inicial</a>
     </div>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const user = JSON.parse(localStorage.getItem('user'));
-    
-            if (user) {
-                document.getElementById("username").textContent = user.username;
-                document.getElementById("discord-id").textContent = user.id;
-    
-                // Corrigir a URL do avatar
-                const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}${user.avatar_extension}`;
-                document.getElementById("avatar").src = avatarUrl;
-    
-                document.getElementById("server-status").textContent = user.serverStatus;
-                // Atualize os dados de contribuições conforme necessário
-            } else {
-                alert('Dados do perfil não encontrados. Redirecionando...');
-                window.location.href = '/';
-            }
-        });
-    </script>
-    
-    </body>
-    </html>
+
+    <div class="profile-stats">
+        <div class="stat">
+            <h3 id="total-contributions">0</h3>
+            <p>Total de Contribuições</p>
+        </div>
+        <div class="stat">
+            <h3 id="accepted-contributions">0</h3>
+            <p>Contribuições Aceitas</p>
+        </div>
+    </div>
+
+    <a href="/protected.html" class="button-back">Voltar à Página Inicial</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (user) {
+            document.getElementById("username").textContent = user.username;
+            document.getElementById("discord-id").textContent = user.id;
+
+            // Corrigir a URL do avatar
+            const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}${user.avatar_extension}`;
+            document.getElementById("avatar").src = avatarUrl;
+
+            document.getElementById("server-status").textContent = user.serverStatus;
+            // Atualize os dados de contribuições conforme necessário
+        } else {
+            alert('Dados do perfil não encontrados. Redirecionando...');
+            window.location.href = '/';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -68,10 +68,9 @@
                             id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
-                            avatar_extension: data.user.avatar_extension, // Certifique-se de adicionar isso
-                            serverStatus: 'Membro' // Ajuste isso conforme necessário
+                            avatar_extension: data.user.avatar_extension || '.png', // Supondo que a extensão padrão seja .png
+                            serverStatus: data.user.serverStatus // Se você estiver armazenando o status do servidor
                         };
-
                         sessionStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(user));
 
