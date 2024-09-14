@@ -1,7 +1,6 @@
 // profile.js
 exports.handler = async function(event, context) {
     try {
-        // Dados simulados para exemplo. Substitua com dados reais conforme necessário.
         const userData = {
             username: 'Nome do Usuário',
             id: '123456789',
@@ -22,6 +21,7 @@ exports.handler = async function(event, context) {
             body: JSON.stringify(userData)
         };
     } catch (error) {
+        console.error('Erro ao recuperar dados do perfil:', error); // Adicione logs
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Erro ao recuperar dados do perfil' })
