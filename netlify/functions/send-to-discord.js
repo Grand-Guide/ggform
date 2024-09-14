@@ -5,7 +5,7 @@ exports.handler = async (event) => {
         try {
             const { 
                 id, name, cover, description, price, update, status, quality, shop, 
-                hunting, recipe, videos, formType, userId, username, avatar 
+                hunting, recipe, videos, formType, userId, username, avatar, userImageLink
             } = JSON.parse(event.body);
 
             const webhookUrls = [
@@ -15,10 +15,22 @@ exports.handler = async (event) => {
 
             const userIdToUse = userId || event.queryStringParameters.userId || 'Não fornecido';
             const usernameToUse = username || event.queryStringParameters.username || 'Não fornecido';
-            let avatarToUse = avatar || event.queryStringParameters.avatar || '';
+            let avatarToUse = avatar || event.queryStringParameters.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+            
+            // Lógica para definir a thumbnail
+            const defaultThumbnailUrl = "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"; // Imagem substituta
+            let thumbnailUrl = defaultThumbnailUrl;
 
-            if (!avatarToUse) {
-                avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            if (userImageLink) {
+                try {
+                    // Verifica se a imagem fornecida é acessível
+                    const imageResponse = await fetch(userImageLink, { method: 'HEAD' });
+                    if (imageResponse.ok) {
+                        thumbnailUrl = userImageLink;
+                    }
+                } catch (error) {
+                    // Se não for possível acessar o link, use a imagem substituta
+                }
             }
 
             const embed1 = {
@@ -50,7 +62,7 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"
+                            url: thumbnailUrl
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
@@ -84,7 +96,7 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
-            // Envio da solicitação para o primeiro webhook
+            // Envio da solicitação para os webhooks do Discord
             const response1 = await fetch(webhookUrls[0], {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -95,7 +107,6 @@ exports.handler = async (event) => {
                 throw new Error('Network response was not ok for webhook 1');
             }
 
-            // Envio da solicitação para o segundo webhook
             const response2 = await fetch(webhookUrls[1], {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
