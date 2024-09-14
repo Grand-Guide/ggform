@@ -183,7 +183,10 @@
             // Preencher os campos da página com os dados do usuário
             document.getElementById("username").textContent = userData.username;
             document.getElementById("discord-id").textContent = userData.id;
-            document.getElementById("avatar").src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+            // Corrigir a URL do avatar
+            const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.${userData.avatar.startsWith('a_') ? 'gif' : 'png'}`;
+            document.getElementById("avatar").src = avatarUrl;
 
             // Verificar se o usuário está em um servidor específico
             const serverId = "819380036351688716";
