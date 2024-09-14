@@ -21,7 +21,7 @@ exports.handler = async (event) => {
                 avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
 
-            const embed = {
+            const embed1 = {
                 content: "",
                 tts: false,
                 embeds: [
@@ -57,7 +57,16 @@ exports.handler = async (event) => {
                             text: "WebForm enviado hoje às"
                         },
                         timestamp: new Date().toISOString()
-                    },
+                    }
+                ],
+                components: [],
+                actions: {}
+            };
+
+            const embed2 = {
+                content: "",
+                tts: false,
+                embeds: [
                     {
                         id: 386768945,
                         description: "",
@@ -75,28 +84,31 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
-            // Envio da solicitação para ambos os webhooks do Discord
-            const promises = webhookUrls.map(webhookUrl =>
-                fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(embed)
-                })
-            );
+            // Envio da solicitação para o primeiro webhook
+            const response1 = await fetch(webhookUrls[0], {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(embed1)
+            });
 
-            // Aguarde todas as promessas serem resolvidas
-            const responses = await Promise.all(promises);
+            if (!response1.ok) {
+                throw new Error('Network response was not ok for webhook 1');
+            }
 
-            // Verifique se todos os responses foram bem-sucedidos
-            for (const response of responses) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+            // Envio da solicitação para o segundo webhook
+            const response2 = await fetch(webhookUrls[1], {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(embed2)
+            });
+
+            if (!response2.ok) {
+                throw new Error('Network response was not ok for webhook 2');
             }
 
             return {
                 statusCode: 200,
-                body: JSON.stringify({ message: 'Mensagem enviada com sucesso!' })
+                body: JSON.stringify({ message: 'Mensagens enviadas com sucesso!' })
             };
         } catch (error) {
             return {
