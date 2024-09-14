@@ -190,12 +190,10 @@
             document.getElementById("avatar").src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
 
             // Verificar se o usuário está em um servidor específico
-            const serverId = "SEU_SERVIDOR_ID"; // Substitua pelo ID do seu servidor
+            const serverId = "819380036351688716";
             const isInServer = guildsData.some(guild => guild.id === serverId);
             document.getElementById("server-status").textContent = isInServer ? 'No Servidor' : 'Fora do Servidor';
 
-            // Exemplo: Preenchendo contribuições com valores placeholder, 
-            // já que você mencionou implementar a contagem mais tarde
             document.getElementById("total-contributions").textContent = userData.totalContributions || 0;
             document.getElementById("accepted-contributions").textContent = userData.acceptedContributions || 0;
             document.getElementById("total-enviadas").textContent = userData.totalContributions || 0;
