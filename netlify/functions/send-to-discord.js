@@ -5,42 +5,20 @@ exports.handler = async (event) => {
         try {
             const { 
                 id, name, cover, description, price, update, status, quality, shop, 
-                hunting, recipe, videos, formType, userId, username, avatar, userImageLink
+                hunting, recipe, videos, formType, userId, username, avatar 
             } = JSON.parse(event.body);
 
-            const webhookUrls = [
-                process.env.DISCORD_WEBHOOK_URL_1,
-                process.env.DISCORD_WEBHOOK_URL_2
-            ];
+            const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
             const userIdToUse = userId || event.queryStringParameters.userId || 'Não fornecido';
             const usernameToUse = username || event.queryStringParameters.username || 'Não fornecido';
-            let avatarToUse = avatar || event.queryStringParameters.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-            
-            // Lógica para definir a thumbnail
-            const defaultThumbnailUrl = "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"; // Imagem substituta
-            let thumbnailUrl = defaultThumbnailUrl;
+            let avatarToUse = avatar || event.queryStringParameters.avatar || '';
 
-            if (userImageLink) {
-                try {
-                    // Verifica a extensão da imagem fornecida
-                    const validExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
-                    const imageUrl = new URL(userImageLink);
-                    const imageExtension = imageUrl.pathname.split('.').pop().toLowerCase();
-
-                    if (validExtensions.includes(`.${imageExtension}`)) {
-                        // Verifica se a imagem fornecida é acessível
-                        const imageResponse = await fetch(userImageLink, { method: 'HEAD' });
-                        if (imageResponse.ok) {
-                            thumbnailUrl = userImageLink;
-                        }
-                    }
-                } catch (error) {
-                    // Se não for possível acessar o link ou extensão inválida, use a imagem substituta
-                }
+            if (!avatarToUse) {
+                avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
 
-            const embed1 = {
+            const embed = {
                 content: "",
                 tts: false,
                 embeds: [
@@ -69,23 +47,14 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: thumbnailUrl
+                            url: "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
                             text: "WebForm enviado hoje às"
                         },
                         timestamp: new Date().toISOString()
-                    }
-                ],
-                components: [],
-                actions: {}
-            };
-
-            const embed2 = {
-                content: "",
-                tts: false,
-                embeds: [
+                    },
                     {
                         id: 386768945,
                         description: "",
@@ -103,30 +72,20 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
-            // Envio da solicitação para os webhooks do Discord
-            const response1 = await fetch(webhookUrls[0], {
+            // Envio da solicitação para o webhook do Discord
+            const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...embed1, embeds: [ ...embed1.embeds, ...embed2.embeds ] })
+                body: JSON.stringify(embed)
             });
 
-            if (!response1.ok) {
-                throw new Error('Network response was not ok for webhook 1');
-            }
-
-            const response2 = await fetch(webhookUrls[1], {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...embed1, embeds: [ ...embed1.embeds, ...embed2.embeds ] })
-            });
-
-            if (!response2.ok) {
-                throw new Error('Network response was not ok for webhook 2');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
 
             return {
                 statusCode: 200,
-                body: JSON.stringify({ message: 'Mensagens enviadas com sucesso!' })
+                body: JSON.stringify({ message: 'Mensagem enviada com sucesso!' })
             };
         } catch (error) {
             return {
