@@ -64,8 +64,16 @@
     
                     if (response.ok && data.access_token) {
                         // Armazena o token de autenticação e as informações do usuário
+                        const user = {
+                            id: data.user.id,
+                            username: data.user.username,
+                            avatar: data.user.avatar,
+                            avatar_extension: data.user.avatar_extension, // Certifique-se de adicionar isso
+                            serverStatus: 'Membro' // Ajuste isso conforme necessário
+                        };
+
                         sessionStorage.setItem('authToken', data.access_token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('user', JSON.stringify(user));
 
                         // Verifica se o usuário está no servidor do Discord
                         await verifyMembership(data.user.id, data.access_token);
@@ -86,33 +94,33 @@
 
         // Função para verificar a associação ao servidor Discord
         async function verifyMembership(userId, accessToken) {
-    try {
-        const response = await fetch('/.netlify/functions/check-membership', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_id: userId, access_token: accessToken }),
-        });
+            try {
+                const response = await fetch('/.netlify/functions/check-membership', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_id: userId, access_token: accessToken }),
+                });
 
-        const data = await response.json();
+                const data = await response.json();
 
-        console.log('Resposta da verificação de associação:', data); // Adicione esta linha para depuração
+                console.log('Resposta da verificação de associação:', data);
 
-        if (response.status === 200 && data.message.includes('está no servidor')) {
-            console.log('Usuário está no servidor:', data.message);
-            window.location.href = '/protected.html';
-        } else {
-            console.log('Erro:', data.message);
-            alert('Você não está no servidor do Discord. Acesso negado.');
-            window.location.href = '/error.html';
+                if (response.status === 200 && data.message.includes('está no servidor')) {
+                    console.log('Usuário está no servidor:', data.message);
+                    window.location.href = '/protected.html';
+                } else {
+                    console.log('Erro:', data.message);
+                    alert('Você não está no servidor do Discord. Acesso negado.');
+                    window.location.href = '/error.html';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar associação ao servidor:', error);
+                alert('Erro ao verificar associação. Redirecionando...');
+                window.location.href = '/';
+            }
         }
-    } catch (error) {
-        console.error('Erro ao verificar associação ao servidor:', error);
-        alert('Erro ao verificar associação. Redirecionando...');
-        window.location.href = '/';
-    }
-}
     </script>
 </body>
 </html>
