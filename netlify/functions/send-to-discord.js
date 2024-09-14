@@ -5,8 +5,7 @@ exports.handler = async (event) => {
         try {
             const { 
                 id, name, cover, description, price, update, status, quality, shop, 
-                hunting, recipe, videos, formType, userId, username, avatar,
-                Imagen 
+                hunting, recipe, videos, formType, userId, username, avatar 
             } = JSON.parse(event.body);
 
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
@@ -18,9 +17,6 @@ exports.handler = async (event) => {
             if (!avatarToUse) {
                 avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
-
-            // Use 'Imagen' se disponível, caso contrário, use 'cover' ou a imagem padrão
-            const thumbnailUrl = Imagen || cover || "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"; 
 
             const embed = {
                 content: "",
@@ -51,7 +47,7 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: thumbnailUrl 
+                            url: "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
