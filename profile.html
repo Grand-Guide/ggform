@@ -137,8 +137,6 @@
         <div class="profile-info">
             <h1 id="username">Nome do Usuário</h1>
             <p>ID do Discord: <span id="discord-id">123456789</span></p>
-            <p>Discriminador: <span id="discriminator">#0000</span></p>
-            <p>É bot?: <span id="is-bot">Não</span></p>
             <p>Status no Servidor: <span id="server-status">Desconhecido</span></p>
         </div>
     </div>
@@ -185,14 +183,12 @@
             // Preencher os campos da página com os dados do usuário
             document.getElementById("username").textContent = userData.username;
             document.getElementById("discord-id").textContent = userData.id;
-            document.getElementById("discriminator").textContent = `#${userData.discriminator}`;
-            document.getElementById("is-bot").textContent = userData.bot ? 'Sim' : 'Não';
             document.getElementById("avatar").src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
 
             // Verificar se o usuário está em um servidor específico
             const serverId = "819380036351688716";
             const isInServer = guildsData.some(guild => guild.id === serverId);
-            document.getElementById("server-status").textContent = isInServer ? 'No Servidor' : 'Fora do Servidor';
+            document.getElementById("server-status").textContent = isInServer ? 'Membro' : 'Não Está Presente';
 
             document.getElementById("total-contributions").textContent = userData.totalContributions || 0;
             document.getElementById("accepted-contributions").textContent = userData.acceptedContributions || 0;
