@@ -8,7 +8,10 @@ exports.handler = async (event) => {
                 hunting, recipe, videos, formType, userId, username, avatar 
             } = JSON.parse(event.body);
 
-            const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+            const webhookUrls = [
+                process.env.DISCORD_WEBHOOK_URL_1,
+                process.env.DISCORD_WEBHOOK_URL_2
+            ];
 
             const userIdToUse = userId || event.queryStringParameters.userId || 'Não fornecido';
             const usernameToUse = username || event.queryStringParameters.username || 'Não fornecido';
@@ -72,15 +75,23 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
-            // Envio da solicitação para o webhook do Discord
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(embed)
-            });
+            // Envio da solicitação para ambos os webhooks do Discord
+            const promises = webhookUrls.map(webhookUrl =>
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embed)
+                })
+            );
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            // Aguarde todas as promessas serem resolvidas
+            const responses = await Promise.all(promises);
+
+            // Verifique se todos os responses foram bem-sucedidos
+            for (const response of responses) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
             }
 
             return {
