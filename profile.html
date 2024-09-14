@@ -171,37 +171,27 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Recuperar dados do usuário armazenados no localStorage
-        const storedUser = localStorage.getItem('user');
-        const storedGuilds = localStorage.getItem('guilds'); // Lista de servidores
+        fetch('/api/profile') // Endpoint da Função do Netlify
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("username").textContent = data.username;
+                document.getElementById("discord-id").textContent = data.id;
 
-        if (storedUser) {
-            // Parse os dados do usuário
-            const userData = JSON.parse(storedUser);
-            const guildsData = storedGuilds ? JSON.parse(storedGuilds) : [];
+                // Corrigir a URL do avatar
+                const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}${data.avatar_extension}`;
+                document.getElementById("avatar").src = avatarUrl;
 
-            // Preencher os campos da página com os dados do usuário
-            document.getElementById("username").textContent = userData.username;
-            document.getElementById("discord-id").textContent = userData.id;
-
-            // Corrigir a URL do avatar
-            const avatarUrl = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.${userData.avatar.startsWith('a_') ? 'gif' : 'png'}`;
-            document.getElementById("avatar").src = avatarUrl;
-
-            // Verificar se o usuário está em um servidor específico
-            const serverId = "819380036351688716";
-            const isInServer = guildsData.some(guild => guild.id === serverId);
-            document.getElementById("server-status").textContent = isInServer ? 'Membro' : 'Não Está Presente';
-
-            document.getElementById("total-contributions").textContent = userData.totalContributions || 0;
-            document.getElementById("accepted-contributions").textContent = userData.acceptedContributions || 0;
-            document.getElementById("total-enviadas").textContent = userData.totalContributions || 0;
-            document.getElementById("total-aceitas").textContent = userData.acceptedContributions || 0;
-        } else {
-            // Se não houver dados, redirecionar ou mostrar mensagem de erro
-            alert('Usuário não autenticado. Redirecionando para a página de login.');
-            window.location.href = '/';
-        }
+                document.getElementById("server-status").textContent = data.serverStatus;
+                document.getElementById("total-contributions").textContent = data.totalContributions || 0;
+                document.getElementById("accepted-contributions").textContent = data.acceptedContributions || 0;
+                document.getElementById("total-enviadas").textContent = data.totalSubmitted || 0;
+                document.getElementById("total-aceitas").textContent = data.totalAccepted || 0;
+            })
+            .catch(error => {
+                console.error('Erro ao carregar os dados do perfil:', error);
+                alert('Não foi possível carregar os dados do perfil.');
+                window.location.href = '/'; // Redirecionar se houver erro
+            });
     });
 </script>
 
