@@ -23,13 +23,20 @@ exports.handler = async (event) => {
 
             if (userImageLink) {
                 try {
-                    // Verifica se a imagem fornecida é acessível
-                    const imageResponse = await fetch(userImageLink, { method: 'HEAD' });
-                    if (imageResponse.ok) {
-                        thumbnailUrl = userImageLink;
+                    // Verifica a extensão da imagem fornecida
+                    const validExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+                    const imageUrl = new URL(userImageLink);
+                    const imageExtension = imageUrl.pathname.split('.').pop().toLowerCase();
+
+                    if (validExtensions.includes(`.${imageExtension}`)) {
+                        // Verifica se a imagem fornecida é acessível
+                        const imageResponse = await fetch(userImageLink, { method: 'HEAD' });
+                        if (imageResponse.ok) {
+                            thumbnailUrl = userImageLink;
+                        }
                     }
                 } catch (error) {
-                    // Se não for possível acessar o link, use a imagem substituta
+                    // Se não for possível acessar o link ou extensão inválida, use a imagem substituta
                 }
             }
 
@@ -100,7 +107,7 @@ exports.handler = async (event) => {
             const response1 = await fetch(webhookUrls[0], {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(embed1)
+                body: JSON.stringify({ ...embed1, embeds: [ ...embed1.embeds, ...embed2.embeds ] })
             });
 
             if (!response1.ok) {
@@ -110,7 +117,7 @@ exports.handler = async (event) => {
             const response2 = await fetch(webhookUrls[1], {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(embed2)
+                body: JSON.stringify({ ...embed1, embeds: [ ...embed1.embeds, ...embed2.embeds ] })
             });
 
             if (!response2.ok) {
