@@ -18,6 +18,9 @@ exports.handler = async (event) => {
                 avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
 
+            // Define a URL da thumbnail com a imagem enviada ou uma padrão
+            const thumbnailUrl = cover || "https://cdn-icons-png.flaticon.com/512/17568/17568020.png";
+
             const embed = {
                 content: "",
                 tts: false,
@@ -47,7 +50,7 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"
+                            url: thumbnailUrl
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
