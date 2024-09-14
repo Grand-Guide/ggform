@@ -176,13 +176,15 @@
             if (user) {
                 document.getElementById("username").textContent = user.username;
                 document.getElementById("discord-id").textContent = user.id;
-
-                // Corrigir a URL do avatar
-                const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : `https://cdn.discordapp.com/avatars/${user.id}/default.png`;
+    
+                const avatarUrl = user.avatar ? user.avatar : `https://cdn.discordapp.com/avatars/${user.id}/default.png`;
                 document.getElementById("avatar").src = avatarUrl;
     
-                document.getElementById("server-status").textContent = user.serverStatus;
-                // Atualize os dados de contribuições conforme necessário
+                document.getElementById("server-status").textContent = data.serverStatus;
+                document.getElementById("total-contributions").textContent = data.totalContributions || 0;
+                document.getElementById("accepted-contributions").textContent = data.acceptedContributions || 0;
+                document.getElementById("total-enviadas").textContent = data.totalSubmitted || 0;
+                document.getElementById("total-aceitas").textContent = data.totalAccepted || 0;
             } else {
                 alert('Dados do perfil não encontrados. Redirecionando...');
                 window.location.href = '/';
@@ -190,5 +192,5 @@
         });
     </script>
     
-</body>
-</html>
+    </body>
+    </html
