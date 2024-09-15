@@ -88,8 +88,6 @@
             margin-top: 20px;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/discord-embed-previewer@latest/dist/embed-preview.min.js"></script> 
-</head>
 </head>
 <body>
     <div class="container">
@@ -191,22 +189,6 @@
         </div>
     </div>
 
-    <div class="container"></div>
-        <h1>Adicionar Novo Item</h1>
-        <div id="formContainer">
-            <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
-                <input type="hidden" id="formType" value="add">
-                
-                </form>
-        </div>
-
-        <div id="embedPreview" class="container" style="margin-top: 20px;"> 
-            <h2>Preview do Embed</h2>
-            <discord-embed id="myEmbed"> </discord-embed> 
-        </div>
-
-    </div>
-
     <script>
         async function verifyMembershipOnPageLoad() {
             const authToken = sessionStorage.getItem('authToken');
@@ -275,61 +257,6 @@
         }
 
         window.onload = verifyMembershipOnPageLoad;
-
-        // Função para atualizar o preview do embed
-        function updateEmbedPreview() {
-            const form = document.getElementById('itemForm');
-            const myEmbed = document.getElementById('myEmbed');
-
-            // Obter os valores dos campos do formulário
-            const formType = form.elements['formType'].value;
-            const id = form.elements['id'].value;
-            const name = form.elements['name'].value;
-            const cover = form.elements['cover'].value;
-            const description = form.elements['description'].value || 'Não fornecido';
-            const price = form.elements['price'].value || 'Não fornecido';
-            const update = form.elements['update'].value || 'Não fornecido';
-            const status = form.elements['status'].value || 'Não fornecido';
-            const quality = form.elements['quality'].value || 'Não fornecido';
-            const shop = form.elements['shop'].value || 'Não fornecido';
-            const hunting = form.elements['hunting'].value || 'Não fornecido';
-            const recipe = form.elements['recipe'].value || 'Não fornecido';
-            const videos = form.elements['videos'].value || 'Não fornecido';
-
-            // Configurar o embed usando a API do Discord Embed Previewer
-            myEmbed.title = `Sugestão de item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`;
-            myEmbed.description = "O pedido será revisado pela equipe responsável, Aguarde.";
-            myEmbed.color = formType === 'add' ? '#00FF00' : '#FF0000'; 
-            myEmbed.thumbnail = cover; // Definir a imagem da thumbnail
-
-            // Adicionar os campos ao embed
-            myEmbed.fields = [
-                { name: 'ID', value: id, inline: true },
-                { name: 'Nome', value: name, inline: true },
-                { name: 'Descrição', value: description, inline: false },
-                { name: 'Preço', value: price, inline: true },
-                { name: 'Data de Atualização', value: update, inline: true },
-                { name: 'Status', value: status, inline: true },
-                { name: 'Qualidade', value: quality, inline: true },
-                { name: 'Loja', value: shop, inline: true },
-                { name: 'Caça', value: hunting, inline: true },
-                { name: 'Receita', value: recipe, inline: true },
-                { name: 'Vídeos', value: videos, inline: true },
-                { name: 'Imagem', value: cover ? `[Link da Imagem](${cover})` : 'Não fornecido', inline: false }
-            ];
-
-            // O componente `discord-embed` cuida da atualização do preview automaticamente
-        }
-
-        // Adicionar eventos para atualizar o preview quando os campos mudarem
-        const formElements = document.querySelectorAll('#itemForm input, #itemForm select');
-        formElements.forEach(element => {
-            element.addEventListener('input', updateEmbedPreview);
-        });
-
-        // Chamar a função inicialmente para mostrar o preview com os valores padrão
-        updateEmbedPreview();
-
     </script>
     
     <script src="/public/js/auth-check.js"></script>
