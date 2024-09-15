@@ -23,6 +23,8 @@ exports.handler = async (event) => {
                 ? cover 
                 : 'https://cdn-icons-png.flaticon.com/512/17568/17568020.png'; // URL padrão se não for fornecida
 
+            console.log("Thumbnail URL:", coverToUse); // Log da URL para verificar se está correta
+
             const embed = {
                 content: "",
                 tts: false,
@@ -52,7 +54,7 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: coverToUse
+                            url: coverToUse // Força a exibição da imagem fornecida
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
