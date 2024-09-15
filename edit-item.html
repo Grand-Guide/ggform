@@ -4,7 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Guide - Editar Item</title>
-    <link rel="stylesheet" href="/public/css/edit.css">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #292C34;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #050505;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+        }
+
+        #searchContainer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #searchBar {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+
+        #formContainer {
+            display: none;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #292C34;
+            color: #FFFFFF;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #3F51B5;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            grid-column: span 2;
+        }
+
+        a.button {
+            text-decoration: none;
+            text-align: center;
+        }
+
+        #searchResults {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        #searchResults li {
+            background-color: #292C34;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #searchResults li:hover {
+            background-color: #3F51B5;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,7 +127,7 @@
             <input type="text" id="searchBar" placeholder="Pesquise um item..." />
             <ul id="searchResults"></ul>
         </div>
-        <div id="formContainer" style="display:none;">
+        <div id="formContainer">
             <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
                 <input type="hidden" id="formType" value="edit">
                 <div class="input-group">
@@ -27,7 +140,7 @@
                 </div>
                 <div class="input-group">
                     <label for="cover">Imagem do Item (URL):</label>
-                    <input type="text" id="cover" name="cover">
+                    <input type="text" id="cover" name="cover" required placeholder="https:// (apenas .png)">
                 </div>
                 <div class="input-group">
                     <label for="description">Classe:</label>
@@ -65,20 +178,20 @@
                     <label for="videos">Vídeos:</label>
                     <input type="text" id="videos" name="videos">
                 </div>
-                <button type="submit" class="button">Enviar</button>
-                <a href="/protected.html" class="button">Voltar</a>
+                <div class="button-container">
+                    <button type="submit" class="button">Salvar Alterações</button>
+                    <a href="/protected.html" class="button">Voltar</a>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
         async function verifyMembershipOnPageLoad() {
-            // Pegue o token de autenticação e o user_id armazenados
             const authToken = sessionStorage.getItem('authToken');
             const user = JSON.parse(localStorage.getItem('user'));
     
             if (authToken && user && user.id) {
-                // Chama a função de verificação
                 try {
                     const response = await fetch('/.netlify/functions/check-membership', {
                         method: 'POST',
@@ -92,70 +205,24 @@
     
                     if (response.status === 200) {
                         console.log('Usuário está no servidor:', data.message);
-                        // Usuário continua no servidor, pode acessar a página
                     } else {
                         console.log('Erro:', data.message);
                         alert('Você foi removido do servidor do Discord. Acesso negado.');
-                        window.location.href = '/error.html'; // Redireciona para a página de erro
+                        window.location.href = '/error.html';
                     }
                 } catch (error) {
                     console.error('Erro na verificação da membresia:', error);
                     alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                    window.location.href = '/error.html'; // Redireciona para a página de erro
+                    window.location.href = '/error.html';
                 }
             } else {
-                // Caso não exista um token ou user_id, redireciona para a página de login
                 alert('Autenticação necessária. Redirecionando para login.');
                 window.location.href = '/';
             }
         }
 
-        async function verifyBeforeSubmit() {
-            // Pegue o token de autenticação e o user_id armazenados
-            const authToken = sessionStorage.getItem('authToken');
-            const user = JSON.parse(localStorage.getItem('user'));
-
-            if (authToken && user && user.id) {
-                // Chama a função de verificação
-                try {
-                    const response = await fetch('/.netlify/functions/check-membership', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
-                    });
-
-                    const data = await response.json();
-
-                    if (response.status === 200) {
-                        console.log('Usuário está no servidor:', data.message);
-                        return true; // Permite o envio do formulário
-                    } else {
-                        console.log('Erro:', data.message);
-                        alert('Você foi removido do servidor do Discord. Acesso negado.');
-                        window.location.href = '/error.html'; // Redireciona para a página de erro
-                        return false; // Bloqueia o envio do formulário
-                    }
-                } catch (error) {
-                    console.error('Erro na verificação da membresia:', error);
-                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                    return false; // Bloqueia o envio do formulário
-                }
-            } else {
-                alert('Autenticação necessária.');
-                window.location.href = '/';
-                return false; // Bloqueia o envio do formulário
-            }
-        }
-
-        // Chama a verificação assim que a página carregar
         window.onload = verifyMembershipOnPageLoad;
     </script>
-    
-    <script src="/public/js/auth-check.js"></script>
     <script src="/public/js/edit-item.js"></script>
-    <script src="/public/js/send-to-discord.js"></script>
-    <script src="/public/js/check-membership.js"></script>
 </body>
 </html>

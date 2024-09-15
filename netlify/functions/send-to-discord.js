@@ -46,8 +46,9 @@ exports.handler = async (event) => {
                             icon_url: "https://cdn.discordapp.com/avatars/821793454577156127/40e1fcf3cb492d0924395d6388f73a02.webp?size=1024&format=webp&width=0&height=256"
                         },
                         url: "https://google.com",
+                        // Atualização do thumbnail condicionalmente
                         thumbnail: {
-                            url: "https://cdn-icons-png.flaticon.com/512/17568/17568020.png"
+                            url: cover ? cover : "https://cdn-icons-png.flaticon.com/512/17568/17568020.png" 
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
