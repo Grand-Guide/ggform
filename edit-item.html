@@ -91,7 +91,119 @@
             justify-content: space-between;
             margin-top: 20px;
         }
-        
+
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #292C34;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #050505;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+        }
+
+        #searchContainer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #searchBar {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+
+        #formContainer {
+            display: none;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #292C34;
+            color: #FFFFFF;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #3F51B5;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            grid-column: span 2;
+        }
+
+        a.button {
+            text-decoration: none;
+            text-align: center;
+        }
+
+        #searchResults {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        #searchResults li {
+            background-color: #292C34;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #searchResults li:hover {
+            background-color: #3F51B5;
+        }
 </style>
 <body>
     <div class="container">
