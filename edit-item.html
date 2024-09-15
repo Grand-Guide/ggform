@@ -130,54 +130,91 @@
         <div id="formContainer">
             <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
                 <input type="hidden" id="formType" value="edit">
+
+                <!-- ID do Item -->
                 <div class="input-group">
                     <label for="id">ID do Item:</label>
                     <input type="text" id="id" name="id" required>
                 </div>
+                
+                <!-- Nome do Item -->
                 <div class="input-group">
                     <label for="name">Nome do Item:</label>
                     <input type="text" id="name" name="name" required>
                 </div>
-                <div class="input-group">
-                    <label for="cover">Imagem do Item (URL):</label>
-                    <input type="text" id="cover" name="cover" required placeholder="https:// (apenas .png)">
+
+                <!-- Imagem do Item (URL) (apenas .png) -->
+                <div class="input-group full-width">
+                <label for="cover">Imagem (URL):</label>
+                <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
                 </div>
+
+
+                <!-- Classe -->
                 <div class="input-group">
                     <label for="description">Descrição / Classe:</label>
                     <input type="text" id="description" name="description">
                 </div>
+
+                <!-- Preço -->
                 <div class="input-group">
                     <label for="price">Preço:</label>
                     <input type="text" id="price" name="price">
                 </div>
+
+                <!-- Data da Adição (com calendário) -->
                 <div class="input-group">
-                    <label for="update">Data da Atualização:</label>
-                    <input type="text" id="update" name="update">
+                    <label for="update">Data da Adição:</label>
+                    <input type="date" id="update" name="update" required>
                 </div>
+
+                <!-- Status (Verificado ou Pendente) -->
                 <div class="input-group">
                     <label for="status">Status:</label>
-                    <input type="text" id="status" name="status">
+                    <select id="status" name="status" required>
+                        <option value="Verificado">Verificado</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
                 </div>
+
+                <!-- Qualidade (várias opções) -->
                 <div class="input-group">
                     <label for="quality">Qualidade:</label>
-                    <input type="text" id="quality" name="quality">
+                    <select id="quality" name="quality" required>
+                        <option value="Comum">Comum</option>
+                        <option value="Incomum">Incomum</option>
+                        <option value="Raro">Raro</option>
+                        <option value="Exótico">Exótico</option>
+                        <option value="Épico">Épico</option>
+                        <option value="Lendário">Lendário</option>
+                        <option value="Sagrado">Sagrado</option>
+                    </select>
                 </div>
+
+                <!-- Loja -->
                 <div class="input-group">
                     <label for="shop">Loja:</label>
                     <input type="text" id="shop" name="shop">
                 </div>
+
+                <!-- Caça -->
                 <div class="input-group">
                     <label for="hunting">Caça:</label>
                     <input type="text" id="hunting" name="hunting">
                 </div>
+
+                <!-- Receita -->
                 <div class="input-group">
                     <label for="recipe">Receita:</label>
                     <input type="text" id="recipe" name="recipe">
                 </div>
-                <div class="input-group">
+
+                <!-- Vídeos -->
+                <div class="input-group full-width">
                     <label for="videos">Vídeos:</label>
                     <input type="text" id="videos" name="videos">
                 </div>
+
                 <div class="button-container">
                     <button type="submit" class="button">Salvar Alterações</button>
                     <a href="/protected.html" class="button">Voltar</a>
