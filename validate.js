@@ -1,5 +1,8 @@
 // validate.js
 
+// Importa o Firebase
+import { db } from './firebase.js'; // Ajuste o caminho conforme necessário
+
 // Função que redireciona para a página inicial em caso de erro
 function redirectToLogin() {
     window.location.href = 'index.html';
@@ -28,6 +31,16 @@ async function isValidCode(code) {
     }
 }
 
+// Função para armazenar o código no Firestore
+async function storeCodeInFirestore(code) {
+    try {
+        const userId = 'uniqueUserId'; // Substitua pelo ID do usuário
+        await db.collection('authTokens').doc(userId).set({ token: code });
+    } catch (error) {
+        console.error('Erro ao armazenar no Firestore:', error);
+    }
+}
+
 // Obtém o código da URL
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get('code');
@@ -36,8 +49,8 @@ const code = urlParams.get('code');
 if (code) {
     isValidCode(code).then(valid => {
         if (valid) {
-            // Armazena o código temporariamente (localStorage ou sessionStorage)
-            sessionStorage.setItem('authToken', code);
+            // Armazena o código no Firestore
+            storeCodeInFirestore(code);
 
             // Exibe o conteúdo da página protegida
             document.querySelector('.container').style.display = 'block';
