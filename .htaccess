@@ -1,0 +1,7 @@
+<Files .env>
+Order Allow,Deny
+Deny from all
+</Files>
+
+RewriteCond %{QUERY_STRING} (\<|\>|\%3C|\%3E)
+RewriteRule ^ - [F]
