@@ -1,7 +1,31 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const authToken = sessionStorage.getItem('authToken');
+document.addEventListener("DOMContentLoaded", checkAuth);
 
-    if (!authToken) {
-        window.location.href = '/'; // Redireciona para a página de login
+async function checkAuth() {
+    const user = firebase.auth().currentUser;
+
+    if (!user) {
+        alert('Você precisa estar autenticado para acessar esta página.');
+        window.location.href = '/';
+    } else {
+        await validateToken(user);
     }
-});
+}
+
+async function validateToken(user) {
+    try {
+        const response = await fetch('/.netlify/functions/validate-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${await user.getIdToken()}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Token inválido');
+        }
+    } catch (error) {
+        alert('Sessão expirada. Redirecionando para login.');
+        window.location.href = '/';
+    }
+}

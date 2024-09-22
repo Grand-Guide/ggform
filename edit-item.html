@@ -6,11 +6,8 @@
     <title>Grand Guide - Editar Item</title>
     <link rel="stylesheet" href="/public/css/edit.css">
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
-</head>
-
-<style>
-
-* {
+    <style>
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -23,7 +20,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
         .container {
             background-color: rgba(0, 0, 0, 0.8);
@@ -37,94 +33,12 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 24px;
-        }
-        .grid-form {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .input-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .input-group input,
-        .input-group select {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #333;
-            color: #fff;
-            font-size: 14px;
-        }
-        input[type="date"] {
-            cursor: pointer;
-        }
-        .full-width {
-            grid-column: 1 / span 2;
-        }
-        .button {
-            padding: 10px 20px;
-            background-color: #292C34;
-            border: 2px solid #fff;
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-align: center;
-            text-decoration: none;
-        }
-        .button:hover {
-            background-color: #050505;
-            transform: scale(1.05);
-        }
-        .button:active {
-            transform: scale(1);
-        }
-        .buttons-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        body {
-            font-family: 'Chakra Petch', sans-serif;
-            background-color: #292C34;
-            color: #FFFFFF;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background-color: #050505;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
             color: #FFFFFF;
         }
-
         #searchContainer {
             text-align: center;
             margin-bottom: 20px;
         }
-
         #searchBar {
             width: 80%;
             padding: 10px;
@@ -132,34 +46,30 @@
             border: none;
             font-size: 16px;
         }
-
         #formContainer {
             display: none;
         }
-
         .grid-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-
         .input-group {
             display: flex;
             flex-direction: column;
         }
-
         label {
             margin-bottom: 5px;
             font-size: 14px;
         }
-
-        input {
+        input, select {
             padding: 10px;
             border-radius: 5px;
             border: none;
             font-size: 16px;
+            background-color: #333;
+            color: #fff;
         }
-
         .button {
             width: 100%;
             padding: 10px;
@@ -171,40 +81,20 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         .button:hover {
             background-color: #3F51B5;
         }
-
         .button-container {
             display: flex;
             justify-content: space-between;
             grid-column: span 2;
         }
-
         a.button {
             text-decoration: none;
             text-align: center;
         }
-
-        #searchResults {
-            list-style: none;
-            padding: 0;
-            margin-top: 10px;
-        }
-
-        #searchResults li {
-            background-color: #292C34;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #searchResults li:hover {
-            background-color: #3F51B5;
-        }
-</style>
+    </style>
+</head>
 <body>
     <div class="container">
         <h1>Editar Item Existente</h1>
@@ -215,175 +105,143 @@
         <div id="formContainer" style="display:none;">
             <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
                 <input type="hidden" id="formType" value="edit">
-                
-                <!-- ID do Item -->
-<div class="input-group">
-    <label for="id">ID do Item:</label>
-    <input type="text" id="id" name="id" required>
-</div>
 
-<!-- Nome do Item -->
-<div class="input-group">
-    <label for="name">Nome do Item:</label>
-    <input type="text" id="name" name="name" required>
-</div>
+                <div class="input-group">
+                    <label for="id">ID do Item:</label>
+                    <input type="text" id="id" name="id" required>
+                </div>
+                <div class="input-group">
+                    <label for="name">Nome do Item:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="input-group full-width">
+                    <label for="cover">Imagem (URL):</label>
+                    <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
+                </div>
+                <div class="input-group">
+                    <label for="description">Descrição / Classe:</label>
+                    <input type="text" id="description" name="description">
+                </div>
+                <div class="input-group">
+                    <label for="price">Preço:</label>
+                    <input type="text" id="price" name="price">
+                </div>
+                <div class="input-group">
+                    <label for="update">Data da Atualização:</label>
+                    <input type="date" id="update" name="update" required>
+                </div>
+                <div class="input-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" required>
+                        <option value="Verificado">Verificado</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="quality">Qualidade:</label>
+                    <select id="quality" name="quality" required>
+                        <option value="Comum">Comum</option>
+                        <option value="Incomum">Incomum</option>
+                        <option value="Raro">Raro</option>
+                        <option value="Exótico">Exótico</option>
+                        <option value="Épico">Épico</option>
+                        <option value="Lendário">Lendário</option>
+                        <option value="Sagrado">Sagrado</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="shop">Loja:</label>
+                    <input type="text" id="shop" name="shop">
+                </div>
+                <div class="input-group">
+                    <label for="hunting">Caça:</label>
+                    <input type="text" id="hunting" name="hunting">
+                </div>
+                <div class="input-group">
+                    <label for="recipe">Receita:</label>
+                    <input type="text" id="recipe" name="recipe">
+                </div>
+                <div class="input-group full-width">
+                    <label for="videos">Vídeos:</label>
+                    <input type="url" id="videos" name="videos" pattern="https://.*" title="A URL do vídeo deve começar com 'https://'">
+                </div>
 
-<!-- Imagem do Item (URL) (apenas .png) -->
-<div class="input-group full-width">
-    <label for="cover">Imagem (URL):</label>
-    <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
-</div>
-
-<!-- Descrição / Classe -->
-<div class="input-group">
-    <label for="description">Descrição / Classe:</label>
-    <input type="text" id="description" name="description">
-</div>
-
-<!-- Preço -->
-<div class="input-group">
-    <label for="price">Preço:</label>
-    <input type="text" id="price" name="price">
-</div>
-
-<!-- Data da Atualização (com calendário) -->
-<div class="input-group">
-    <label for="update">Data da Atualização:</label>
-    <input type="date" id="update" name="update" required>
-</div>
-
-<!-- Status (Verificado ou Pendente) -->
-<div class="input-group">
-    <label for="status">Status:</label>
-    <select id="status" name="status" required>
-        <option value="Verificado">Verificado</option>
-        <option value="Pendente">Pendente</option>
-    </select>
-</div>
-
-<!-- Qualidade (várias opções) -->
-<div class="input-group">
-    <label for="quality">Qualidade:</label>
-    <select id="quality" name="quality" required>
-        <option value="Comum">Comum</option>
-        <option value="Incomum">Incomum</option>
-        <option value="Raro">Raro</option>
-        <option value="Exótico">Exótico</option>
-        <option value="Épico">Épico</option>
-        <option value="Lendário">Lendário</option>
-        <option value="Sagrado">Sagrado</option>
-    </select>
-</div>
-
-<!-- Loja -->
-<div class="input-group">
-    <label for="shop">Loja:</label>
-    <input type="text" id="shop" name="shop">
-</div>
-
-<!-- Caça -->
-<div class="input-group">
-    <label for="hunting">Caça:</label>
-    <input type="text" id="hunting" name="hunting">
-</div>
-
-<!-- Receita -->
-<div class="input-group">
-    <label for="recipe">Receita:</label>
-    <input type="text" id="recipe" name="recipe">
-</div>
-
-<!-- Vídeos -->
-<div class="input-group full-width">
-    <label for="videos">Vídeos:</label>
-    <input type="url" id="videos" name="videos" pattern="https://.*" title="A URL do vídeo deve começar com 'https://'">
-</div>
-
-                <button type="submit" class="button">Enviar</button>
-                <a href="/protected.html" class="button">Voltar</a>
+                <div class="button-container">
+                    <button type="submit" class="button">Enviar</button>
+                    <a href="/protected.html" class="button">Voltar</a>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
         async function verifyMembershipOnPageLoad() {
-            // Pegue o token de autenticação e o user_id armazenados
-            const authToken = sessionStorage.getItem('authToken');
-            const user = JSON.parse(localStorage.getItem('user'));
-    
-            if (authToken && user && user.id) {
-                // Chama a função de verificação
+            const user = await getCurrentUser();
+
+            if (user) {
                 try {
                     const response = await fetch('/.netlify/functions/check-membership', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                        body: JSON.stringify({ user_id: user.id, access_token: user.authToken }),
                     });
-    
+
                     const data = await response.json();
-    
+
                     if (response.status === 200) {
-                        console.log('Usuário está no servidor:', data.message);
-                        // Usuário continua no servidor, pode acessar a página
+                        document.getElementById('formContainer').style.display = 'block';
                     } else {
-                        console.log('Erro:', data.message);
                         alert('Você foi removido do servidor do Discord. Acesso negado.');
-                        window.location.href = '/error.html'; // Redireciona para a página de erro
+                        window.location.href = '/error.html';
                     }
                 } catch (error) {
-                    console.error('Erro na verificação da membresia:', error);
                     alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                    window.location.href = '/error.html'; // Redireciona para a página de erro
+                    window.location.href = '/error.html';
                 }
             } else {
-                // Caso não exista um token ou user_id, redireciona para a página de login
                 alert('Autenticação necessária. Redirecionando para login.');
                 window.location.href = '/';
             }
         }
 
         async function verifyBeforeSubmit() {
-            // Pegue o token de autenticação e o user_id armazenados
-            const authToken = sessionStorage.getItem('authToken');
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = await getCurrentUser();
 
-            if (authToken && user && user.id) {
-                // Chama a função de verificação
+            if (user) {
                 try {
                     const response = await fetch('/.netlify/functions/check-membership', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                        body: JSON.stringify({ user_id: user.id, access_token: user.authToken }),
                     });
 
-                    const data = await response.json();
-
                     if (response.status === 200) {
-                        console.log('Usuário está no servidor:', data.message);
-                        return true; // Permite o envio do formulário
+                        return true;
                     } else {
-                        console.log('Erro:', data.message);
                         alert('Você foi removido do servidor do Discord. Acesso negado.');
-                        window.location.href = '/error.html'; // Redireciona para a página de erro
-                        return false; // Bloqueia o envio do formulário
+                        window.location.href = '/error.html';
+                        return false;
                     }
                 } catch (error) {
-                    console.error('Erro na verificação da membresia:', error);
-                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                    return false; // Bloqueia o envio do formulário
+                    alert('Erro ao verificar sua membresia. Tente novamente.');
+                    return false;
                 }
             } else {
                 alert('Autenticação necessária.');
                 window.location.href = '/';
-                return false; // Bloqueia o envio do formulário
+                return false;
             }
         }
 
-        // Chama a verificação assim que a página carregar
+        async function getCurrentUser() {
+            const userDoc = await firebase.firestore().collection('users').doc('currentUserId').get();
+            return userDoc.exists ? userDoc.data() : null;
+        }
+
         window.onload = verifyMembershipOnPageLoad;
     </script>
     
@@ -391,5 +249,6 @@
     <script src="/public/js/edit-item.js"></script>
     <script src="/public/js/send-to-discord.js"></script>
     <script src="/public/js/check-membership.js"></script>
+    <script src="./firebase.js"></script>
 </body>
 </html>

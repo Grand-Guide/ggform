@@ -6,17 +6,19 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Impede o envio padrão do formulário
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
 
-        // Função para obter o valor de um elemento
         const getValue = (id) => {
             const element = document.getElementById(id);
-            return element ? element.value : '';
+            return element ? element.value.trim() : '';
         };
 
-        // Recupera os dados do usuário do localStorage
-        const user = JSON.parse(localStorage.getItem('user')) || {};
+        const authToken = sessionStorage.getItem('authToken');
+        if (!authToken) {
+            alert('Você precisa estar autenticado para enviar os dados.');
+            return;
+        }
 
         const formType = getValue('formType');
         const data = {
@@ -33,24 +35,38 @@ document.addEventListener("DOMContentLoaded", function() {
             recipe: getValue('recipe'),
             videos: getValue('videos'),
             formType: formType,
-            userId: user.id || '',
-            username: user.username || '',
-            avatar: user.avatar || ''
+            userId: '',
+            username: '',
+            avatar: ''
         };
 
-        fetch('/.netlify/functions/send-to-discord', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
+        // Validação
+        if (!data.name || !data.id) {
+            alert('Nome e ID do item são obrigatórios.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/.netlify/functions/send-to-discord', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao enviar os dados. Tente novamente mais tarde.');
+            }
+
+            const result = await response.json();
             console.log('Success:', result);
-            showNotification(); // Exibir notificação
-        })
-        .catch(error => {
+            showNotification();
+        } catch (error) {
             console.error('Error:', error);
-        });
+            alert('Ocorreu um erro: ' + error.message);
+        }
     });
 
     function showNotification() {
@@ -60,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
         notification.style.left = '0';
         notification.style.width = '100%';
         notification.style.height = '100%';
-        notification.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        notification.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
         notification.style.display = 'flex';
         notification.style.flexDirection = 'column';
         notification.style.justifyContent = 'center';
@@ -68,8 +84,8 @@ document.addEventListener("DOMContentLoaded", function() {
         notification.style.zIndex = '1000';
         notification.innerHTML = `
             <h2>Item ${formType === 'add' ? 'adicionado' : 'atualizado'} com sucesso!</h2>
-            <a href="https://discord.gg/GQx5MpX7cA" class="button" style="margin: 10px;">Entrar no Servidor Discord</a>
-            <a href="/protected.html" class="button" style="margin: 10px;">Voltar</a>
+            <a href="https://discord.gg/GQx5MpX7cA" class="button" style="margin: 10px; padding: 10px 20px; background-color: #292C34; color: #fff; border-radius: 5px; text-decoration: none;">Entrar no Servidor Discord</a>
+            <a href="/protected.html" class="button" style="margin: 10px; padding: 10px 20px; background-color: #292C34; color: #fff; border-radius: 5px; text-decoration: none;">Voltar</a>
         `;
         document.body.appendChild(notification);
     }

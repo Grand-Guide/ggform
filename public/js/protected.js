@@ -7,12 +7,18 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const targetSection = document.querySelector(this.getAttribute('href'));
 
-            // Hide all sections
             sections.forEach(section => section.classList.add('hidden'));
 
-            // Show the target section
             if (targetSection) {
                 targetSection.classList.remove('hidden');
+            } else {
+                console.warn('Seção alvo não encontrada:', this.getAttribute('href'));
+            }
+        });
+
+        link.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.click();
             }
         });
     });

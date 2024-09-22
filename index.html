@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameZone Login</title>
+    <title>Grand Guide - WikiForm</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -145,7 +145,6 @@
             color: #000;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body>
@@ -169,6 +168,8 @@
         </div>
     </div>
 
+    <script src="./firebase.js"></script>
+    <script src="app.js"></script>
     <script>
         const TWO_PI = Math.PI * 2;
         const HALF_PI = Math.PI / 2;
@@ -220,7 +221,6 @@
                 c.translate(canvas.width / 300, canvas.height / 10 - 100);
                 c.fillStyle = this.color;
                 c.beginPath();
-                c.moveTo(0, 0);
                 bezierSkin(this.anchors, false);
                 
                 c.lineTo(0, 0);
@@ -275,7 +275,5 @@
             return avg;
         }
     </script>
-
-<script src="app.js"></script>
 </body>
 </html>

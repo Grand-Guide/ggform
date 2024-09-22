@@ -1,4 +1,10 @@
-// profile.js
+const admin = require('firebase-admin');
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+});
+
 exports.handler = async function(event, context) {
     try {
         const userData = {
@@ -13,6 +19,12 @@ exports.handler = async function(event, context) {
             totalAccepted: 4
         };
 
+        const db = admin.firestore();
+        await db.collection('profileAccess').add({
+            userId: userData.id,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
         return {
             statusCode: 200,
             headers: {
@@ -21,7 +33,7 @@ exports.handler = async function(event, context) {
             body: JSON.stringify(userData)
         };
     } catch (error) {
-        console.error('Erro ao recuperar dados do perfil:', error); // Adicione logs
+        console.error('Erro ao recuperar dados do perfil:', error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Erro ao recuperar dados do perfil' })

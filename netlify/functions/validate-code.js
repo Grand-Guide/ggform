@@ -1,6 +1,10 @@
-// functions/validate-code.js
-
 const axios = require('axios');
+const admin = require('firebase-admin');
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+});
 
 exports.handler = async function(event, context) {
     const { code } = JSON.parse(event.body);
@@ -13,7 +17,7 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        // Troca o código pelo token de acesso na API do Discord
+    
         const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
             client_id: process.env.DISCORD_CLIENT_ID,
             client_secret: process.env.DISCORD_CLIENT_SECRET,
@@ -28,7 +32,6 @@ exports.handler = async function(event, context) {
 
         const { access_token } = tokenResponse.data;
 
-        // Valida o token acessando a API do Discord com o token
         const userResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
                 Authorization: `Bearer ${access_token}`
@@ -36,7 +39,14 @@ exports.handler = async function(event, context) {
         });
 
         if (userResponse.data) {
-            // Código válido
+
+            const db = admin.firestore();
+            await db.collection('codeValidations').add({
+                code,
+                userId: userResponse.data.id,
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            });
+
             return {
                 statusCode: 200,
                 body: JSON.stringify({ valid: true })

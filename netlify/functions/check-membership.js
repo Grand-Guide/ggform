@@ -1,13 +1,20 @@
 const fetch = require('node-fetch');
+const admin = require('firebase-admin');
+
+const databaseURL = `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`;
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    databaseURL: databaseURL
+});
+
+const db = admin.firestore();
 
 exports.handler = async function(event) {
     const { user_id, access_token } = JSON.parse(event.body);
-
     const guildId = '819380036351688716';
     const discordApiUrl = `https://discord.com/api/v10/users/@me/guilds`;
 
     try {
-        // Faz a requisição para pegar a lista de guildas do usuário
         const response = await fetch(discordApiUrl, {
             method: 'GET',
             headers: {
@@ -25,10 +32,15 @@ exports.handler = async function(event) {
         }
 
         const guilds = await response.json();
-        console.log('Guildas do usuário:', guilds); // Adicione esta linha para depuração
+        console.log('Guildas do usuário:', guilds);
 
-        // Verifica se o usuário faz parte do seu servidor específico
         const isMember = guilds.some(guild => guild.id === guildId);
+
+        await db.collection('membershipChecks').add({
+            user_id: user_id,
+            isMember,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
 
         if (isMember) {
             return {
@@ -37,15 +49,15 @@ exports.handler = async function(event) {
             };
         } else {
             return {
-                statusCode: 403, // Acesso negado
+                statusCode: 403,
                 body: JSON.stringify({ message: 'Usuário não está no servidor' })
             };
         }
 
     } catch (error) {
-        console.error('Erro ao verificar o servidor:', error.message); // Adicione esta linha para depuração
+        console.error('Erro ao verificar o servidor:', error.message);
         return {
-            statusCode: 500, // Erro interno do servidor
+            statusCode: 500,
             body: JSON.stringify({ message: 'Erro ao verificar o servidor', error: error.message })
         };
     }

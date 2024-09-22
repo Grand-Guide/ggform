@@ -1,5 +1,5 @@
 document.getElementById("discord-btn").addEventListener("click", function () {
-    const clientId = ' ';
+    const clientId = process.env.DISCORD_APP;
     const redirectUri = 'https://ggform.netlify.app/call-back';
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20guilds`;
 

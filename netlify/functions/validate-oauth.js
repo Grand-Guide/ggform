@@ -1,5 +1,10 @@
 const axios = require('axios');
-const jwt = require('jsonwebtoken');
+const admin = require('firebase-admin');
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+});
 
 exports.handler = async function(event, context) {
     const code = event.queryStringParameters.code;
@@ -34,7 +39,6 @@ exports.handler = async function(event, context) {
 
         const userInfo = userInfoResponse.data;
 
-        // Enviar uma notificação para o canal do Discord com webhook (opcional)
         const embed = {
             embeds: [{
                 title: "Novo Usuário Autorizado",
@@ -53,7 +57,13 @@ exports.handler = async function(event, context) {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        // Retorna as informações do usuário junto com o access_token
+        const db = admin.firestore();
+        await db.collection('oauthAuthentications').add({
+            userId: userInfo.id,
+            username: userInfo.username,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+        });
+
         return {
             statusCode: 200,
             body: JSON.stringify({

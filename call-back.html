@@ -53,30 +53,30 @@
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-    
+
             if (code) {
                 try {
-                    // Realiza a validação do código OAuth2 e obtém o access_token
-                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${encodeURIComponent(code)}`);
                     const data = await response.json();
-    
+
                     console.log('Dados recebidos da validação:', data);
-    
+
                     if (response.ok && data.access_token) {
-                        // Armazena o token de autenticação e as informações do usuário
                         const user = {
                             id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
-                            avatar_extension: data.user.avatar_extension || '.png', // Supondo que a extensão padrão seja .png
-                            serverStatus: data.user.serverStatus // Se você estiver armazenando o status do servidor
+                            avatar_extension: data.user.avatar_extension || '.png',
+                            serverStatus: data.user.serverStatus
                         };
-                        sessionStorage.setItem('authToken', data.access_token);
-                        localStorage.setItem('user', JSON.stringify(user));
 
-                        // Verifica se o usuário está no servidor do Discord
+                        // Armazena o token e os dados do usuário no Firebase
+                        await firebase.firestore().collection('users').doc(user.id).set({
+                            authToken: data.access_token,
+                            userData: user
+                        });
+
                         await verifyMembership(data.user.id, data.access_token);
-
                     } else {
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
@@ -91,7 +91,6 @@
             }
         };
 
-        // Função para verificar a associação ao servidor Discord
         async function verifyMembership(userId, accessToken) {
             try {
                 const response = await fetch('/.netlify/functions/check-membership', {
@@ -121,5 +120,6 @@
             }
         }
     </script>
+    <script src="./firebase.js"></script>
 </body>
 </html>
