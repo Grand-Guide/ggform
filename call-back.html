@@ -49,15 +49,8 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script>
-        // Configuração do Firebase
-        const firebaseConfig = {
-            // suas credenciais do Firebase
-        };
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    <script type="module">
+        import { db } from './firebase.js'; // Certifique-se de que o caminho esteja correto
 
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -79,7 +72,7 @@
                             serverStatus: data.user.serverStatus
                         };
 
-                        // Armazena o token e os dados do usuário no Firebase
+                        // Armazena o token e os dados do usuário no Firestore
                         await db.collection('users').doc(user.id).set({
                             authToken: data.access_token,
                             userData: user

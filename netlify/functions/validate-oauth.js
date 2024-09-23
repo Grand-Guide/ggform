@@ -10,6 +10,7 @@ exports.handler = async function(event, context) {
     const code = event.queryStringParameters.code;
 
     if (!code) {
+        console.error('Código não fornecido');
         return {
             statusCode: 400,
             body: JSON.stringify({ error: 'Code is required' })
@@ -17,6 +18,8 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        console.log('Iniciando validação com o código:', code);
+        
         const response = await axios.post(
             'https://discord.com/api/oauth2/token',
             new URLSearchParams({
@@ -24,12 +27,13 @@ exports.handler = async function(event, context) {
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'https://ggform.netlify.app/call-back' 
+                redirect_uri: 'https://ggform.netlify.app/call-back'
             }),
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
         const tokenData = response.data;
+        console.log('Token de acesso recebido:', tokenData);
 
         const userInfoResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
@@ -38,11 +42,12 @@ exports.handler = async function(event, context) {
         });
 
         const userInfo = userInfoResponse.data;
+        console.log('Informações do usuário:', userInfo);
 
         const embed = {
             embeds: [{
                 title: "Novo Usuário Autorizado",
-                color: 0x00FF00, 
+                color: 0x00FF00,
                 fields: [
                     { name: "ID do Usuário", value: userInfo.id, inline: true },
                     { name: "Nome de Usuário", value: userInfo.username, inline: true },
@@ -71,15 +76,16 @@ exports.handler = async function(event, context) {
                 user: {
                     id: userInfo.id,
                     username: userInfo.username,
-                    avatar: userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : null 
+                    avatar: userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : null
                 }
             })
         };
 
     } catch (error) {
+        console.error('Erro na validação do código:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 error: 'Failed to validate code',
                 details: error.response ? error.response.data : error.message
             })
