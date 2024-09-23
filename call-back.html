@@ -49,7 +49,16 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            // suas credenciais do Firebase
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
@@ -71,14 +80,14 @@
                         };
 
                         // Armazena o token e os dados do usuário no Firebase
-                        await firebase.firestore().collection('users').doc(user.id).set({
+                        await db.collection('users').doc(user.id).set({
                             authToken: data.access_token,
                             userData: user
                         });
 
                         await verifyMembership(data.user.id, data.access_token);
                     } else {
-                        alert(`Código inválido: ${data.message || 'Erro desconhecido'}. Redirecionando...`);
+                        alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
                     }
                 } catch (error) {
