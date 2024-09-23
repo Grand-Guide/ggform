@@ -78,7 +78,7 @@
 
                         await verifyMembership(data.user.id, data.access_token);
                     } else {
-                        alert('Código inválido. Redirecionando...');
+                        alert(`Código inválido: ${data.message || 'Erro desconhecido'}. Redirecionando...`);
                         window.location.href = '/';
                     }
                 } catch (error) {
