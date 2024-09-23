@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Chakra Petch', sans-serif;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    position: relative;
+}
+
+.left-panel {
+    width: 40%;
+    background-color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 30px;
+    position: relative;
+    top: 14px;
+    left: -250px;
+}
+
+.brand-name {
+    position: relative;
+    top: 14px;
+    margin-left: -240px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    50% {
+        transform: translateX(20px) rotate(3deg);
+    }
+}
+
+.gyu {
+    animation: float 5s ease-in-out infinite;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.right-panel {
+    width: 65%;
+    background-color: #121212;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.canvas-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.login-box {
+    background-color: rgba(43, 43, 43, 0.9);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+}
+
+h2 {
+    color: white;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.button-group {
+    margin-top: 30px;
+}
+
+.login-btn, .discord-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 5px;
+    border: none;
+    margin-top: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-btn {
+    background-color: #A6C129;
+    color: #121212;
+}
+
+.discord-btn {
+    background-color: #121212;
+    color: #A6C129;
+}
+
+button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    padding: 10px 20px;
+    background-color: #FEFB00;
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    cursor: pointer;
+}
