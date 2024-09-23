@@ -49,8 +49,23 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
-    <script type="module">
-        import { db } from './firebase.js'; // Certifique-se de que o caminho esteja correto
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script>
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID,
+            measurementId: process.env.FIREBASE_MEASUREMENT_ID
+        };
+
+        // Inicializando o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
 
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -58,70 +73,34 @@
 
             if (code) {
                 try {
-                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${encodeURIComponent(code)}`);
+                    // Faz a solicitação para a função serverless de validação
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
 
-                    console.log('Dados recebidos da validação:', data);
-
                     if (response.ok && data.access_token) {
-                        const user = {
-                            id: data.user.id,
-                            username: data.user.username,
-                            avatar: data.user.avatar,
-                            avatar_extension: data.user.avatar_extension || '.png',
-                            serverStatus: data.user.serverStatus
-                        };
-
-                        // Armazena o token e os dados do usuário no Firestore
-                        await db.collection('users').doc(user.id).set({
-                            authToken: data.access_token,
-                            userData: user
+                        // Se a validação for bem-sucedida, armazena o token no Firestore
+                        await db.collection('tokens').add({
+                            token: data.access_token,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
                         });
 
-                        await verifyMembership(data.user.id, data.access_token);
+                        // Redireciona para a página protegida
+                        window.location.href = '/protected.html';
                     } else {
+                        // Se o código não for válido, redireciona para a página inicial
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
                     }
                 } catch (error) {
-                    console.error('Erro na solicitação:', error);
+                    // Em caso de erro no backend, redireciona para a página inicial
                     alert('Erro na validação. Redirecionando...');
                     window.location.href = '/';
                 }
             } else {
+                // Redireciona para a página inicial se não houver código
                 window.location.href = '/';
             }
         };
-
-        async function verifyMembership(userId, accessToken) {
-            try {
-                const response = await fetch('/.netlify/functions/check-membership', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user_id: userId, access_token: accessToken }),
-                });
-
-                const data = await response.json();
-
-                console.log('Resposta da verificação de associação:', data);
-
-                if (response.status === 200 && data.message.includes('está no servidor')) {
-                    console.log('Usuário está no servidor:', data.message);
-                    window.location.href = '/protected.html';
-                } else {
-                    console.log('Erro:', data.message);
-                    alert('Você não está no servidor do Discord. Acesso negado.');
-                    window.location.href = '/error.html';
-                }
-            } catch (error) {
-                console.error('Erro ao verificar associação ao servidor:', error);
-                alert('Erro ao verificar associação. Redirecionando...');
-                window.location.href = '/';
-            }
-        }
     </script>
-    <script type="module" src="./firebase.js"></script>
 </body>
 </html>
