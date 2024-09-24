@@ -1,43 +1,45 @@
-const xata = require('xata'); 
+const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-    const authToken = event.headers.Authorization?.split(' ')[1];
+    const code = event.queryStringParameters.code;
 
-    if (!authToken) {
+    const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'client_id': process.env.DISCORD_CLIENT_ID,
+            'client_secret': process.env.DISCORD_CLIENT_SECRET,
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': process.env.DISCORD_REDIRECT_URI,
+        }),
+    });
+
+    const tokenData = await tokenResponse.json();
+    
+    if (!tokenResponse.ok) {
         return {
-            statusCode: 401,
-            body: JSON.stringify({ message: 'Token de autenticação ausente.' }),
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Failed to retrieve access token' }),
         };
     }
 
-    const userId = await validateToken(authToken);
-    if (!userId) {
-        return {
-            statusCode: 401,
-            body: JSON.stringify({ message: 'Token inválido.' }),
-        };
-    }
+    const userResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+            'Authorization': `Bearer ${tokenData.access_token}`,
+        },
+    });
 
-    try {
-        const userRecord = await xata.db.users.filter({ id: userId }).getFirst();
-        if (!userRecord) {
-            return {
-                statusCode: 404,
-                body: JSON.stringify({ message: 'Usuário não encontrado.' }),
-            };
-        }
+    const userData = await userResponse.json();
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ userId: userRecord.id, username: userRecord.username }),
-        };
-    } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Erro ao buscar dados do usuário.' }),
-        };
-    }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            id: userData.id,
+            username: userData.username,
+            avatar: userData.avatar,
+        }),
+    };
 };
-async function validateToken(token) {
-}
