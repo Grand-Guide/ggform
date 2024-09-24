@@ -1,3 +1,4 @@
+// netlify/functions/validate-oauth.js
 const axios = require('axios');
 const admin = require('firebase-admin');
 
@@ -10,7 +11,6 @@ exports.handler = async function(event, context) {
     const code = event.queryStringParameters.code;
 
     if (!code) {
-        console.error('Código não fornecido');
         return {
             statusCode: 400,
             body: JSON.stringify({ error: 'Code is required' })
@@ -18,8 +18,6 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        console.log('Iniciando validação com o código:', code);
-        
         const response = await axios.post(
             'https://discord.com/api/oauth2/token',
             new URLSearchParams({
@@ -33,7 +31,6 @@ exports.handler = async function(event, context) {
         );
 
         const tokenData = response.data;
-        console.log('Token de acesso recebido:', tokenData);
 
         const userInfoResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
@@ -42,25 +39,6 @@ exports.handler = async function(event, context) {
         });
 
         const userInfo = userInfoResponse.data;
-        console.log('Informações do usuário:', userInfo);
-
-        const embed = {
-            embeds: [{
-                title: "Novo Usuário Autorizado",
-                color: 0x00FF00,
-                fields: [
-                    { name: "ID do Usuário", value: userInfo.id, inline: true },
-                    { name: "Nome de Usuário", value: userInfo.username, inline: true },
-                    { name: "Avatar", value: `[Link do Avatar](https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png)`, inline: false }
-                ],
-                thumbnail: { url: `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` },
-                timestamp: new Date().toISOString()
-            }]
-        };
-
-        await axios.post(process.env.DISCORD_AUTH_URL, embed, {
-            headers: { 'Content-Type': 'application/json' }
-        });
 
         const db = admin.firestore();
         await db.collection('oauthAuthentications').add({
@@ -82,10 +60,9 @@ exports.handler = async function(event, context) {
         };
 
     } catch (error) {
-        console.error('Erro na validação do código:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({
+            body: JSON.stringify({ 
                 error: 'Failed to validate code',
                 details: error.response ? error.response.data : error.message
             })

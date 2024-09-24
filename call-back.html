@@ -73,31 +73,25 @@
 
             if (code) {
                 try {
-                    // Faz a solicitação para a função serverless de validação
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
 
                     if (response.ok && data.access_token) {
-                        // Se a validação for bem-sucedida, armazena o token no Firestore
                         await db.collection('tokens').add({
                             token: data.access_token,
                             timestamp: firebase.firestore.FieldValue.serverTimestamp()
                         });
 
-                        // Redireciona para a página protegida
                         window.location.href = '/protected.html';
                     } else {
-                        // Se o código não for válido, redireciona para a página inicial
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
                     }
                 } catch (error) {
-                    // Em caso de erro no backend, redireciona para a página inicial
                     alert('Erro na validação. Redirecionando...');
                     window.location.href = '/';
                 }
             } else {
-                // Redireciona para a página inicial se não houver código
                 window.location.href = '/';
             }
         };
