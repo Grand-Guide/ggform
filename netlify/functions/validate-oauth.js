@@ -1,77 +1,68 @@
 const { XataClient } = require('@xata.io/client');
-const fetch = require('node-fetch');
-
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    database: process.env.XATA_DATABASE,
-});
 
 exports.handler = async (event) => {
-    const { code } = event.queryStringParameters;
+    console.log('Iniciando validação OAuth...');
+
+    const code = event.queryStringParameters.code;
 
     if (!code) {
-        console.error('Código de autorização não fornecido');
+        console.error('Código de autorização não fornecido.');
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Código de autorização não fornecido' }),
+            body: JSON.stringify({ error: 'Código de autorização não fornecido.' }),
         };
     }
 
     try {
+        console.log('Código de autorização recebido:', code);
+        
         const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
-                'client_id': process.env.DISCORD_CLIENT_ID,
-                'client_secret': process.env.DISCORD_CLIENT_SECRET,
-                'grant_type': 'authorization_code',
-                'code': code,
-                'redirect_uri': process.env.DISCORD_REDIRECT_URI,
+                client_id: process.env.DISCORD_CLIENT_ID,
+                client_secret: process.env.DISCORD_CLIENT_SECRET,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: process.env.REDIRECT_URI,
             }),
         });
 
         const tokenData = await tokenResponse.json();
+        console.log('Token obtido com sucesso:', tokenData);
 
         if (!tokenResponse.ok) {
-            console.error('Falha ao recuperar o token de acesso:', tokenResponse.status, tokenData);
+            console.error('Falha ao obter o token:', tokenData);
             return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Falha ao recuperar o token de acesso' }),
+                statusCode: tokenResponse.status,
+                body: JSON.stringify({ error: 'Falha ao obter o token de acesso.' }),
             };
         }
+        const xata = new XataClient({
+            apiKey: process.env.XATA_API_KEY,
+            database: process.env.XATA_DATABASE,
+        });
+        console.log('Cliente Xata instanciado com sucesso.');
 
-        const userResponse = await fetch('https://discord.com/api/users/@me', {
-            headers: {
-                'Authorization': `Bearer ${tokenData.access_token}`,
+        const userResponse = await xata.db.users.create({
+            data: {
+                accessToken: tokenData.access_token,
             },
         });
 
-        const userData = await userResponse.json();
-
-        if (!userResponse.ok) {
-            console.error('Falha ao recuperar dados do usuário:', userResponse.status, userData);
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Falha ao recuperar dados do usuário' }),
-            };
-        }
+        console.log('Usuário salvo com sucesso:', userResponse);
 
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                id: userData.id,
-                username: userData.username,
-                avatar: userData.avatar,
-                access_token: tokenData.access_token,
-            }),
+            body: JSON.stringify({ success: true }),
         };
     } catch (error) {
         console.error('Erro na validação OAuth:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Erro na validação OAuth' }),
+            body: JSON.stringify({ error: 'Erro interno do servidor.' }),
         };
     }
 };
