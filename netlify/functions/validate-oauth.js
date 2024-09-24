@@ -1,4 +1,4 @@
-const { XataClient } = require('@xata.io/client');
+const XataClient = require('@xata.io/client').XataClient;
 const fetch = require('node-fetch');
 
 const xata = new XataClient({
@@ -8,6 +8,13 @@ const xata = new XataClient({
 
 exports.handler = async (event) => {
     const { code } = event.queryStringParameters;
+
+    if (!code) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Código de autorização não fornecido' }),
+        };
+    }
 
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
         method: 'POST',
@@ -28,7 +35,7 @@ exports.handler = async (event) => {
     if (!tokenResponse.ok) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Failed to retrieve access token' }),
+            body: JSON.stringify({ error: 'Falha ao recuperar o token de acesso' }),
         };
     }
 
@@ -43,7 +50,7 @@ exports.handler = async (event) => {
     if (!userResponse.ok) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Failed to retrieve user data' }),
+            body: JSON.stringify({ error: 'Falha ao recuperar dados do usuário' }),
         };
     }
 
