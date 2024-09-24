@@ -50,44 +50,61 @@
     </div>
 
     <script>
-        window.onload = async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
+        window.onload = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-            if (code) {
-                try {
-                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
-                    const data = await response.json();
+    if (!code) {
+        console.error('Código não fornecido na URL.');
+        alert('Código inválido. Redirecionando...');
+        window.location.href = '/';
+        return;
+    }
 
-                    if (response.ok && data.access_token) {
-                        const xataResponse = await fetch('/.netlify/functions/save-token', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                token: data.access_token,
-                            })
-                        });
+    try {
+        const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+        const data = await response.json();
 
-                        if (xataResponse.ok) {
-                            window.location.href = '/protected.html';
-                        } else {
-                            alert('Erro ao salvar o token. Redirecionando...');
-                            window.location.href = '/';
-                        }
-                    } else {
-                        alert('Código inválido. Redirecionando...');
-                        window.location.href = '/';
-                    }
-                } catch (error) {
-                    alert('Erro na validação. Redirecionando...');
-                    window.location.href = '/';
-                }
-            } else {
-                window.location.href = '/';
-            }
-        };
+        if (response.ok && data.access_token) {
+            await saveToken(data.access_token);
+            window.location.href = '/profile.html';
+        } else {
+            console.error('Erro na validação OAuth:', response.status, data);
+            alert('Código inválido. Redirecionando...');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Erro na requisição validate-oauth:', error);
+        alert('Erro na validação. Redirecionando...');
+        window.location.href = '/';
+    }
+};
+
+async function saveToken(token) {
+    try {
+        const xataResponse = await fetch('/.netlify/functions/save-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+            })
+        });
+
+        if (xataResponse.ok) {
+            console.log('Token salvo com sucesso!');
+        } else {
+            console.error('Erro ao salvar o token:', xataResponse.status, await xataResponse.text());
+            alert('Erro ao salvar o token. Redirecionando...');
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Erro na requisição save-token:', error);
+        alert('Erro ao salvar o token. Redirecionando...');
+        window.location.href = '/';
+    }
+}
     </script>
 </body>
 </html>
