@@ -1,16 +1,17 @@
 const fetch = require('node-fetch');
-const admin = require('firebase-admin');
+const { XataClient } = require('@xata.io/client');
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    database: process.env.XATA_DATABASE_URL,
 });
 
 exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
         try {
             const { 
-                id, name, cover, description, price, update, status, quality, shop, 
+                messageId,
+                name, cover, description, price, update, status, quality, shop, 
                 hunting, recipe, videos, formType, userId, username, avatar 
             } = JSON.parse(event.body);
 
@@ -36,12 +37,11 @@ exports.handler = async (event) => {
                 tts: false,
                 embeds: [
                     {
-                        id: 652627557,
                         title: `Sugestão de item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
                         description: "O pedido será revisado pela equipe responsável, Aguarde.",
                         color: formType === 'add' ? 0x00FF00 : 0xFF0000,
                         fields: [
-                            { name: "ID", value: id, inline: true },
+                            { name: "ID", value: messageId, inline: true }, // Mude para messageId
                             { name: "Nome", value: name, inline: true },
                             { name: "Descrição", value: description || 'Não fornecido', inline: false },
                             { name: "Preço", value: price || 'Não fornecido', inline: true },
@@ -69,7 +69,6 @@ exports.handler = async (event) => {
                         timestamp: new Date().toISOString()
                     },
                     {
-                        id: 386768945,
                         description: "",
                         fields: [
                             { name: "ID", value: userIdToUse, inline: true },
@@ -95,13 +94,12 @@ exports.handler = async (event) => {
                 throw new Error('Network response was not ok');
             }
 
-            const db = admin.firestore();
-            await db.collection('discordMessages').add({
-                id,
+            await xata.db.discordMessages.create({
+                messageId,
                 userId: userIdToUse,
                 username: usernameToUse,
-                timestamp: admin.firestore.FieldValue.serverTimestamp(),
-                embed
+                timestamp: new Date().toISOString(),
+                embed: JSON.stringify(embed)
             });
 
             return {

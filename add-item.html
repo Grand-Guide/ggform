@@ -93,7 +93,7 @@
     <div class="container">
         <h1>Adicionar Novo Item</h1>
         <div id="formContainer">
-            <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
+            <form id="itemForm" class="grid-form">
                 <input type="hidden" id="formType" value="add">
                 
                 <!-- ID do Item -->
@@ -110,10 +110,9 @@
 
                 <!-- Imagem do Item (URL) (apenas .png) -->
                 <div class="input-group full-width">
-                <label for="cover">Imagem (URL):</label>
-                <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
+                    <label for="cover">Imagem (URL):</label>
+                    <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
                 </div>
-
 
                 <!-- Classe -->
                 <div class="input-group">
@@ -190,22 +189,21 @@
 
     <script>
         async function verifyMembershipOnPageLoad() {
-            const user = firebase.auth().currentUser;
+            const userId = await getUserId();
 
-            if (!user) {
+            if (!userId) {
                 alert('Autenticação necessária. Redirecionando para login.');
                 window.location.href = '/';
                 return;
             }
 
-            // Verificação da membresia no servidor
             try {
                 const response = await fetch('/.netlify/functions/check-membership', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ user_id: user.uid }),
+                    body: JSON.stringify({ user_id: userId }),
                 });
 
                 if (response.status === 200) {
@@ -220,37 +218,61 @@
             }
         }
 
-        async function verifyBeforeSubmit() {
-            const user = firebase.auth().currentUser;
+        async function verifyBeforeSubmit(event) {
+            event.preventDefault();
 
-            if (!user) {
+            const userId = await getUserId();
+
+            if (!userId) {
                 alert('Autenticação necessária.');
                 window.location.href = '/';
                 return false;
             }
 
-            // Verificação da membresia no servidor
             try {
                 const response = await fetch('/.netlify/functions/check-membership', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ user_id: user.uid }),
+                    body: JSON.stringify({ user_id: userId }),
                 });
 
-                return response.status === 200;
+                if (response.status === 200) {
+                    document.getElementById('itemForm').submit();
+                } else {
+                    alert('Você não está autorizado a enviar itens.');
+                    return false;
+                }
             } catch (error) {
                 alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
                 return false;
             }
         }
 
+        async function getUserId() {
+            try {
+                const response = await fetch('/.netlify/functions/get-user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Não foi possível obter informações do usuário');
+                }
+
+                const userData = await response.json();
+                return userData.userId;
+            } catch (error) {
+                console.error('Error ao obter userId:', error);
+                return null;
+            }
+        }
+
         window.onload = verifyMembershipOnPageLoad;
+        document.getElementById('itemForm').onsubmit = verifyBeforeSubmit;
     </script>
-    <script src="/public/js/auth-check.js"></script>
-    <script src="/public/js/send-to-discord.js"></script>
-    <script src="/public/js/check-membership.js"></script>
-    <script type="module" src="./firebase.js"></script>
 </body>
 </html>

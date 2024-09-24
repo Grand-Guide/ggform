@@ -1,13 +1,11 @@
 const fetch = require('node-fetch');
-const admin = require('firebase-admin');
+const { XataClient } = require('@xata.io/client');
+require('dotenv').config();
 
-const databaseURL = `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`;
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: databaseURL
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    databaseUrl: process.env.XATA_DATABASE_URL
 });
-
-const db = admin.firestore();
 
 exports.handler = async function(event) {
     const { user_id, access_token } = JSON.parse(event.body);
@@ -36,10 +34,10 @@ exports.handler = async function(event) {
 
         const isMember = guilds.some(guild => guild.id === guildId);
 
-        await db.collection('membershipChecks').add({
+        await xata.db.membershipChecks.create({
             user_id: user_id,
-            isMember,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
+            isMember: isMember,
+            timestamp: new Date().toISOString()
         });
 
         if (isMember) {

@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return element ? element.value.trim() : '';
         };
 
-        const authToken = sessionStorage.getItem('authToken');
-        if (!authToken) {
+        const userId = await getUserId();
+        if (!userId) {
             alert('Você precisa estar autenticado para enviar os dados.');
             return;
         }
@@ -35,9 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
             recipe: getValue('recipe'),
             videos: getValue('videos'),
             formType: formType,
-            userId: '',
-            username: '',
-            avatar: ''
+            userId: userId
         };
 
         // Validação
@@ -50,8 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch('/.netlify/functions/send-to-discord', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
@@ -68,6 +65,27 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Ocorreu um erro: ' + error.message);
         }
     });
+
+    async function getUserId() {
+        try {
+            const response = await fetch('/.netlify/functions/get-user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Não foi possível obter informações do usuário');
+            }
+
+            const userData = await response.json();
+            return userData.userId;
+        } catch (error) {
+            console.error('Error ao obter userId:', error);
+            return null;
+        }
+    }
 
     function showNotification() {
         const notification = document.createElement('div');

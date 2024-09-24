@@ -1,8 +1,8 @@
-const admin = require('firebase-admin');
+const { XataClient } = require('@xata.io/client');
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    database: process.env.XATA_DATABASE_URL,
 });
 
 exports.handler = async function(event, context) {
@@ -19,10 +19,9 @@ exports.handler = async function(event, context) {
             totalAccepted: 4
         };
 
-        const db = admin.firestore();
-        await db.collection('profileAccess').add({
+        await xata.db.profileAccess.create({
             userId: userData.id,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
+            timestamp: new Date().toISOString()
         });
 
         return {

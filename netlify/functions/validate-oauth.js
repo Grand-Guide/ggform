@@ -1,10 +1,11 @@
 // netlify/functions/validate-oauth.js
 const axios = require('axios');
-const admin = require('firebase-admin');
+const { XataClient } = require('@xata.io/client');
+require('dotenv').config();
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    databaseUrl: process.env.XATA_DATABASE_URL
 });
 
 exports.handler = async function(event, context) {
@@ -40,11 +41,10 @@ exports.handler = async function(event, context) {
 
         const userInfo = userInfoResponse.data;
 
-        const db = admin.firestore();
-        await db.collection('oauthAuthentications').add({
+        await xata.db.oauthAuthentications.create({
             userId: userInfo.id,
             username: userInfo.username,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
+            timestamp: new Date().toISOString()
         });
 
         return {

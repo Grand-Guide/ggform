@@ -1,9 +1,9 @@
 const axios = require('axios');
-const admin = require('firebase-admin');
+const { XataClient } = require('@xata.io/client');
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    databaseURL: process.env.XATA_DATABASE_URL,
 });
 
 exports.handler = async function(event, context) {
@@ -17,7 +17,6 @@ exports.handler = async function(event, context) {
     }
 
     try {
-    
         const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
             client_id: process.env.DISCORD_CLIENT_ID,
             client_secret: process.env.DISCORD_CLIENT_SECRET,
@@ -39,12 +38,10 @@ exports.handler = async function(event, context) {
         });
 
         if (userResponse.data) {
-
-            const db = admin.firestore();
-            await db.collection('codeValidations').add({
+            await xata.db.codeValidations.create({
                 code,
                 userId: userResponse.data.id,
-                timestamp: admin.firestore.FieldValue.serverTimestamp()
+                timestamp: new Date().toISOString()
             });
 
             return {

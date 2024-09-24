@@ -238,17 +238,57 @@
         }
 
         async function getCurrentUser() {
-            const userDoc = await firebase.firestore().collection('users').doc('currentUserId').get();
-            return userDoc.exists ? userDoc.data() : null;
+            const response = await fetch('/.netlify/functions/get-user'); // Endpoint para obter usuário atual
+            if (response.ok) {
+                const user = await response.json();
+                return user;
+            } else {
+                return null;
+            }
         }
 
-        window.onload = verifyMembershipOnPageLoad;
+        async function loadItems() {
+            const response = await fetch('https://raw.githubusercontent.com/seu-usuario/seu-repositorio/main/items.json');
+            if (response.ok) {
+                const items = await response.json();
+                const searchResults = document.getElementById('searchResults');
+                
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.name; // Supondo que cada item tem um campo 'name'
+                    li.onclick = () => fillForm(item); // Preencher o formulário ao clicar
+                    searchResults.appendChild(li);
+                });
+            } else {
+                console.error('Erro ao carregar itens:', response.statusText);
+            }
+        }
+
+        function fillForm(item) {
+            document.getElementById('id').value = item.id; // Supondo que cada item tem um campo 'id'
+            document.getElementById('name').value = item.name;
+            document.getElementById('cover').value = item.cover;
+            document.getElementById('description').value = item.description;
+            document.getElementById('price').value = item.price;
+            document.getElementById('update').value = item.update; // Formato YYYY-MM-DD
+            document.getElementById('status').value = item.status;
+            document.getElementById('quality').value = item.quality;
+            document.getElementById('shop').value = item.shop;
+            document.getElementById('hunting').value = item.hunting;
+            document.getElementById('recipe').value = item.recipe;
+            document.getElementById('videos').value = item.videos;
+
+            document.getElementById('formContainer').style.display = 'block';
+        }
+
+        window.onload = async function() {
+            await verifyMembershipOnPageLoad();
+            await loadItems();
+        };
     </script>
-    
-    <script src="/public/js/auth-check.js"></script>
-    <script src="/public/js/edit-item.js"></script>
-    <script src="/public/js/send-to-discord.js"></script>
-    <script src="/public/js/check-membership.js"></script>
-    <script type="module" src="./firebase.js"></script>
+     <script src="/public/js/auth-check.js"></script>
+     <script src="/public/js/edit-item.js"></script>
+     <script src="/public/js/send-to-discord.js"></script>
+     <script src="/public/js/check-membership.js"></script>
 </body>
 </html>

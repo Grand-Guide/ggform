@@ -49,24 +49,7 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script>
-        // Configurações do Firebase
-        const firebaseConfig = {
-            apiKey: process.env.FIREBASE_API_KEY,
-            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-            appId: process.env.FIREBASE_APP_ID,
-            measurementId: process.env.FIREBASE_MEASUREMENT_ID
-        };
-
-        // Inicializando o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
-
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
@@ -77,12 +60,22 @@
                     const data = await response.json();
 
                     if (response.ok && data.access_token) {
-                        await db.collection('tokens').add({
-                            token: data.access_token,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        const xataResponse = await fetch('/.netlify/functions/save-token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                token: data.access_token,
+                            })
                         });
 
-                        window.location.href = '/protected.html';
+                        if (xataResponse.ok) {
+                            window.location.href = '/protected.html';
+                        } else {
+                            alert('Erro ao salvar o token. Redirecionando...');
+                            window.location.href = '/';
+                        }
                     } else {
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
