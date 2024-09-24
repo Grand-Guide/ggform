@@ -1,44 +1,29 @@
-// netlify/functions/save-token.js
-const { XataClient } = require('@xata.io/client');
-require('dotenv').config();
-
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    database: process.env.XATA_DATABASE_URL
-});
+const { XataClient } = require('@xata.io/client'); 
+const xata = new XataClient();
 
 exports.handler = async (event) => {
-    if (event.httpMethod === 'POST') {
-        const { token, userId } = JSON.parse(event.body);
+    try {
+        const { token } = JSON.parse(event.body);
+        
+        console.log('Iniciando o processo de salvar o token no Xata...', token);
 
-        if (!token || !userId) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Token and userId are required' })
-            };
-        }
+        const response = await xata.db.tokens.create({
+            token: token, 
+            createdAt: new Date().toISOString(),
+        });
 
-        try {
-            await xata.db.tokens.create({
-                token: token,
-                userId: userId,
-                timestamp: new Date().toISOString()
-            });
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'Token saved successfully' })
-            };
-        } catch (error) {
-            console.error('Error saving token:', error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ error: 'Error saving token' })
-            };
-        }
+        console.log('Resposta do Xata:', response);
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Token salvo com sucesso!' }),
+        };
+    } catch (error) {
+        console.error('Erro ao salvar o token no Xata:', error);
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Falha ao salvar o token no banco de dados.' }),
+        };
     }
-
-    return {
-        statusCode: 405,
-        body: JSON.stringify({ error: 'Method not allowed' })
-    };
 };
