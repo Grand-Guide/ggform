@@ -1,4 +1,10 @@
+const { XataClient } = require('@xata.io/client');
 const fetch = require('node-fetch');
+
+const xata = new XataClient({
+    apiKey: process.env.XATA_API_KEY,
+    database: process.env.XATA_DATABASE,
+});
 
 exports.handler = async (event) => {
     const { code } = event.queryStringParameters;
