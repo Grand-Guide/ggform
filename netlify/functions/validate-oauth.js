@@ -1,71 +1,52 @@
-// netlify/functions/validate-oauth.js
-const axios = require('axios');
-const { XataClient } = require('@xata.io/client');
-require('dotenv').config();
+const fetch = require('node-fetch');
 
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    databaseUrl: process.env.XATA_DATABASE_URL
-});
+exports.handler = async (event) => {
+    const { code } = event.queryStringParameters;
 
-exports.handler = async function(event, context) {
-    const code = event.queryStringParameters.code;
+    const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'client_id': process.env.DISCORD_CLIENT_ID,
+            'client_secret': process.env.DISCORD_CLIENT_SECRET,
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': process.env.DISCORD_REDIRECT_URI,
+        }),
+    });
 
-    if (!code) {
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenResponse.ok) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Code is required' })
+            body: JSON.stringify({ error: 'Failed to retrieve access token' }),
         };
     }
 
-    try {
-        const response = await axios.post(
-            'https://discord.com/api/oauth2/token',
-            new URLSearchParams({
-                client_id: process.env.DISCORD_CLIENT_ID,
-                client_secret: process.env.DISCORD_CLIENT_SECRET,
-                grant_type: 'authorization_code',
-                code: code,
-                redirect_uri: 'https://ggform.netlify.app/call-back'
-            }),
-            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-        );
+    const userResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+            'Authorization': `Bearer ${tokenData.access_token}`,
+        },
+    });
 
-        const tokenData = response.data;
+    const userData = await userResponse.json();
 
-        const userInfoResponse = await axios.get('https://discord.com/api/users/@me', {
-            headers: {
-                Authorization: `Bearer ${tokenData.access_token}`
-            }
-        });
-
-        const userInfo = userInfoResponse.data;
-
-        await xata.db.oauthAuthentications.create({
-            userId: userInfo.id,
-            username: userInfo.username,
-            timestamp: new Date().toISOString()
-        });
-
+    if (!userResponse.ok) {
         return {
-            statusCode: 200,
-            body: JSON.stringify({
-                access_token: tokenData.access_token,
-                user: {
-                    id: userInfo.id,
-                    username: userInfo.username,
-                    avatar: userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : null
-                }
-            })
-        };
-
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ 
-                error: 'Failed to validate code',
-                details: error.response ? error.response.data : error.message
-            })
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Failed to retrieve user data' }),
         };
     }
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            id: userData.id,
+            username: userData.username,
+            avatar: userData.avatar,
+        }),
+    };
 };
