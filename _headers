@@ -1,5 +1,7 @@
 /*
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://ggform.netlify.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; report-uri https://ggform.netlify.app/csp-report;
+  /* 
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net
+
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer-when-downgrade
   Permissions-Policy: geolocation=(self), microphone=()
