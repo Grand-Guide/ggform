@@ -1,8 +1,0 @@
-{
-  "databaseURL": "https://KasynBR-s-workspace-gfca90.us-east-1.xata.sh/db/ggform",
-  "codegen": {
-    "output": "src/xata.js",
-    "moduleType": "esm",
-    "declarations": true
-  }
-}

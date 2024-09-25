@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", checkAuth);
 
 async function checkAuth() {
-    const user = await getCurrentUser();
+    const user = supabase.auth.user();
 
     if (!user) {
         alert('Você precisa estar autenticado para acessar esta página.');
@@ -11,25 +11,10 @@ async function checkAuth() {
     }
 }
 
-async function getCurrentUser() {
-    const response = await fetch('/.netlify/functions/get-user');
-    if (response.ok) {
-        return await response.json();
-    }
-    return null;
-}
-
 async function validateToken(user) {
     try {
-        const response = await fetch('/.netlify/functions/validate-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ token: user.authToken })
-        });
-
-        if (!response.ok) {
+        const { error } = await supabase.auth.api.getUser(user.id);
+        if (error) {
             throw new Error('Token inválido');
         }
     } catch (error) {

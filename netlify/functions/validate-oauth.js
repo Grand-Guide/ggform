@@ -1,4 +1,8 @@
-const { XataClient } = require('@xata.io/client');
+const fetch = require('node-fetch');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 exports.handler = async (event) => {
     console.log('Iniciando validação OAuth...');
@@ -40,19 +44,23 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ error: 'Falha ao obter o token de acesso.' }),
             };
         }
-        const xata = new XataClient({
-            apiKey: process.env.XATA_API_KEY,
-            database: process.env.XATA_DATABASE,
-        });
-        console.log('Cliente Xata instanciado com sucesso.');
 
-        const userResponse = await xata.db.users.create({
-            data: {
-                accessToken: tokenData.access_token,
-            },
-        });
+        const { error: insertError } = await supabase
+            .from('users')
+            .insert([
+                {
+                    access_token: tokenData.access_token,
+                    refresh_token: tokenData.refresh_token,
+                    token_type: tokenData.token_type,
+                    expires_in: tokenData.expires_in,
+                }
+            ]);
 
-        console.log('Usuário salvo com sucesso:', userResponse);
+        if (insertError) {
+            throw new Error(insertError.message);
+        }
+
+        console.log('Usuário salvo com sucesso no Supabase.');
 
         return {
             statusCode: 200,

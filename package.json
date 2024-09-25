@@ -2,12 +2,14 @@
   "name": "ggform",
   "version": "1.0.0",
   "description": "Aplicação OAuth2 GGForm",
+  "type": "module",
   "scripts": {
     "start": "npm run build",
     "build": "echo 'Undefined'"
   },
   "dependencies": {
-    "@xata.io/client": "^0.0.0-next.v403cdd55cb26b69c074dbc07b44daa0c2a0a77b6",
+    "@supabase/supabase-js": "^2.45.4",
+    "@xata.io/client": "^0.30.0",
     "axios": "^1.7.7",
     "discord.js": "^14.16.1",
     "dotenv": "^16.4.5",

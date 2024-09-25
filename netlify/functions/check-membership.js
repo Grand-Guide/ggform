@@ -1,11 +1,8 @@
 const fetch = require('node-fetch');
-const { XataClient } = require('@xata.io/client');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    databaseUrl: process.env.XATA_DATABASE_URL
-});
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 exports.handler = async function(event) {
     const { user_id, access_token } = JSON.parse(event.body);
@@ -22,38 +19,35 @@ exports.handler = async function(event) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Erro ao obter guildas:', errorText);
             return {
                 statusCode: 500,
-                body: JSON.stringify({ message: 'Erro ao obter guildas do usuário' })
+                body: JSON.stringify({ message: 'Erro ao obter guildas do usuário', error: errorText })
             };
         }
 
         const guilds = await response.json();
-        console.log('Guildas do usuário:', guilds);
-
         const isMember = guilds.some(guild => guild.id === guildId);
 
-        await xata.db.membershipChecks.create({
-            user_id: user_id,
-            isMember: isMember,
-            timestamp: new Date().toISOString()
-        });
+        const { error: insertError } = await supabase
+            .from('membershipChecks')
+            .insert([
+                {
+                    user_id: user_id,
+                    is_member: isMember,
+                    timestamp: new Date().toISOString()
+                }
+            ]);
 
-        if (isMember) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'Usuário está no servidor' })
-            };
-        } else {
-            return {
-                statusCode: 403,
-                body: JSON.stringify({ message: 'Usuário não está no servidor' })
-            };
+        if (insertError) {
+            throw new Error(insertError.message);
         }
 
+        return {
+            statusCode: isMember ? 200 : 403,
+            body: JSON.stringify({ message: isMember ? 'Usuário está no servidor' : 'Usuário não está no servidor' })
+        };
+
     } catch (error) {
-        console.error('Erro ao verificar o servidor:', error.message);
         return {
             statusCode: 500,
             body: JSON.stringify({ message: 'Erro ao verificar o servidor', error: error.message })

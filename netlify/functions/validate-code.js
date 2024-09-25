@@ -1,12 +1,10 @@
 const axios = require('axios');
-const { XataClient } = require('@xata.io/client');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    databaseURL: process.env.XATA_DATABASE_URL,
-});
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-exports.handler = async function(event, context) {
+exports.handler = async function(event) {
     const { code } = JSON.parse(event.body);
 
     if (!code) {
@@ -38,11 +36,19 @@ exports.handler = async function(event, context) {
         });
 
         if (userResponse.data) {
-            await xata.db.codeValidations.create({
-                code,
-                userId: userResponse.data.id,
-                timestamp: new Date().toISOString()
-            });
+            const { error: insertError } = await supabase
+                .from('codeValidations')
+                .insert([
+                    {
+                        code: code,
+                        user_id: userResponse.data.id,
+                        timestamp: new Date().toISOString()
+                    }
+                ]);
+
+            if (insertError) {
+                throw new Error(insertError.message);
+            }
 
             return {
                 statusCode: 200,

@@ -1,15 +1,6 @@
 /*
-  Content-Security-Policy: 
-    default-src 'self';
-    img-src 'self' data:; 
-    script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; 
-    style-src 'self' https://cdn.jsdelivr.net;
-    connect-src 'self' https://ggform.netlify.app; 
-    frame-ancestors 'none'; 
-    base-uri 'self'; 
-    form-action 'self';
-    report-uri https://ggform.netlify.app/csp-report;
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://ggform.netlify.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; report-uri https://ggform.netlify.app/csp-report;
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer-when-downgrade
   Permissions-Policy: geolocation=(self), microphone=()
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload 
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload

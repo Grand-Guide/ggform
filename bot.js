@@ -1,12 +1,8 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { XataClient } = require('@xata.io/client');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    databaseUrl: process.env.XATA_DATABASE_URL
-});
-
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 
 client.once('ready', () => {
@@ -25,14 +21,25 @@ async function isUserInServer(userId, guildId) {
 
 async function addUserToDatabase(user) {
     try {
-        await xata.db.oauthAuthentications.create({
-            userId: user.id,
-            username: user.username,
-            avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
-            timestamp: new Date().toISOString()
-        });
+        const { data, error } = await supabase
+            .from('users')
+            .insert({
+                discord_id: user.id,
+                username: user.username,
+                avatar_url: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
+                access_token: null,
+                refresh_token: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            });
+
+        if (error) {
+            throw new Error('Erro ao adicionar usuário ao banco de dados: ' + error.message);
+        }
+
+        console.log('Usuário adicionado com sucesso:', data);
     } catch (error) {
-        console.error('Erro ao adicionar usuário ao banco de dados:', error);
+        console.error(error.message);
     }
 }
 

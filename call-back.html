@@ -16,7 +16,6 @@
             align-items: center;
             height: 100vh;
         }
-
         .container {
             text-align: center;
             background: #fff;
@@ -26,17 +25,14 @@
             width: 90%;
             max-width: 500px;
         }
-
         h1 {
             color: #4CAF50;
             margin-bottom: 20px;
         }
-
         p {
             font-size: 1.2em;
             margin: 10px 0;
         }
-
         .loading {
             font-size: 1em;
             color: #666;
@@ -50,61 +46,58 @@
     </div>
 
     <script>
-        window.onload = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+        const { createClient } = supabase;
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_ANON_KEY;
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (!code) {
-        console.error('Código não fornecido na URL.');
-        alert('Código inválido. Redirecionando...');
-        window.location.href = '/';
-        return;
-    }
+        window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
 
-    try {
-        const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
-        const data = await response.json();
+            if (code) {
+                try {
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+                    const data = await response.json();
 
-        if (response.ok && data.access_token) {
-            await saveToken(data.access_token);
-            window.location.href = '/profile.html';
-        } else {
-            console.error('Erro na validação OAuth:', response.status, data);
-            alert('Código inválido. Redirecionando...');
-            window.location.href = '/';
-        }
-    } catch (error) {
-        console.error('Erro na requisição validate-oauth:', error);
-        alert('Erro na validação. Redirecionando...');
-        window.location.href = '/';
-    }
-};
+                    if (response.ok && data.access_token) {
+                        const user = {
+                            id: data.user.id,
+                            username: data.user.username,
+                            avatar: data.user.avatar,
+                            access_token: data.access_token,
+                            refresh_token: data.refresh_token
+                        };
 
-async function saveToken(token) {
-    try {
-        const xataResponse = await fetch('/.netlify/functions/save-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                token: token,
-            })
-        });
+                        const { error } = await supabase
+                            .from('users')
+                            .insert({
+                                discord_id: user.id,
+                                username: user.username,
+                                avatar_url: user.avatar,
+                                access_token: user.access_token,
+                                refresh_token: user.refresh_token,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            });
 
-        if (xataResponse.ok) {
-            console.log('Token salvo com sucesso!');
-        } else {
-            console.error('Erro ao salvar o token:', xataResponse.status, await xataResponse.text());
-            alert('Erro ao salvar o token. Redirecionando...');
-            window.location.href = '/';
-        }
-    } catch (error) {
-        console.error('Erro na requisição save-token:', error);
-        alert('Erro ao salvar o token. Redirecionando...');
-        window.location.href = '/';
-    }
-}
+                        if (error) {
+                            throw new Error('Erro ao adicionar usuário ao banco de dados: ' + error.message);
+                        }
+
+                        window.location.href = '/protected.html';
+                    } else {
+                        alert('Código inválido. Redirecionando...');
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    alert('Erro na validação. Redirecionando...');
+                    window.location.href = '/';
+                }
+            } else {
+                window.location.href = '/';
+            }
+        };
     </script>
 </body>
 </html>
