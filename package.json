@@ -8,8 +8,8 @@
     "build": "echo 'Undefined'"
   },
   "dependencies": {
-  "@xata.io/client": "latest",
     "@supabase/supabase-js": "^2.45.4",
+    "@xata.io/client": "latest",
     "axios": "^1.7.7",
     "discord.js": "^14.16.1",
     "dotenv": "^16.4.5",
