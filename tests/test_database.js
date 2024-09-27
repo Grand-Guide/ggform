@@ -1,10 +1,34 @@
 import { createClient } from '@supabase/supabase-js';
-import 'dotenv/config'; // Carrega as variáveis de ambiente do arquivo .env
+import 'dotenv/config';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+function formatDateForBrazil(utcDate) {
+  const options = {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+
+  const formatter = new Intl.DateTimeFormat('pt-BR', options);
+  return formatter.format(new Date(utcDate));
+}
+
 async function testDatabase() {
-  const discordId = 123456789012345680; // ID de teste
+  const discordId = 123456789012345680;
+  
+  // Simulação dos dados do usuário
+  const newUserData = {
+    discord_id: discordId,
+    username: 'NovoUsuarioTeste',
+    avatar_url: 'https://example.com/avatar_novo.png',
+    access_token: 'novo_token_de_acesso',
+    refresh_token: 'novo_token_de_refresh'
+  };
 
   try {
     // Verificar se o usuário já existe
@@ -19,43 +43,24 @@ async function testDatabase() {
     }
 
     if (existingUsers.length === 0) {
-      // Inserir um novo usuário se não existir
+      // Se o usuário não existir, insere um novo
+      console.log('Usuário não existe, inserindo novo usuário...');
       const { data, error: insertError } = await supabase
         .from('users')
-        .insert([{
-          discord_id: discordId,
-          username: 'TesteUser',
-          avatar_url: 'https://example.com/avatar.png',
-          access_token: 'token_de_acesso',
-          refresh_token: 'token_de_refresh'
-          // Não precisa incluir created_at e updated_at, o Supabase cuidará disso
-        }]);
+        .insert([newUserData]);
 
       if (insertError) {
-        console.error('Erro ao inserir usuário de teste:', insertError.message);
+        console.error('Erro ao inserir usuário:', insertError.message);
         return;
       }
 
       console.log('Usuário inserido com sucesso:', data);
     } else {
-      console.log('Usuário já existe:', existingUsers);
-    }
+      const existingUser = existingUsers[0];
 
-    // Buscar todos os usuários
-    const { data: users, error: fetchError2 } = await supabase
-      .from('users')
-      .select('*');
-
-    if (fetchError2) {
-      console.error('Erro ao buscar usuários:', fetchError2.message);
-      return;
-    }
-
-    if (users.length === 0) {
-      console.log('A tabela "users" está vazia.');
-    } else {
-      console.log('A tabela "users" contém os seguintes registros:');
-      console.table(users);
+      // Exibir a data formatada no horário do Brasil
+      const createdAtInBrazil = formatDateForBrazil(existingUser.created_at);
+      console.log('Data de criação formatada:', createdAtInBrazil);
     }
 
   } catch (error) {
