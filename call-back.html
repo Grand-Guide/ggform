@@ -83,10 +83,12 @@
                 body: JSON.stringify(userData),
             });
 
-            const result = await response.json();
-            console.log(result);
-            if (!response.ok) {
-                alert('Erro ao enviar dados para o Supabase.');
+            if (response.ok) {
+                console.log('Dados enviados com sucesso');
+                window.location.href = '/protected.html';
+            } else {
+                const result = await response.json();
+                console.error('Erro ao enviar dados para Supabase:', result);
             }
         }
     </script>
