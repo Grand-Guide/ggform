@@ -53,11 +53,10 @@
 
                     if (response.ok && data.access_token) {
                         const user = {
-                            discord_id: data.user.discord_id,
+                            discord_id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
                         };
-                        console.log('Dados recebidos da validação:', data);
                         localStorage.setItem('user', JSON.stringify(user));
 
                         await sendDataToSupabase(user);
@@ -86,6 +85,9 @@
 
             const result = await response.json();
             console.log(result);
+            if (!response.ok) {
+                alert('Erro ao enviar dados para o Supabase.');
+            }
         }
     </script>
 </body>
