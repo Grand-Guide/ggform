@@ -16,7 +16,6 @@
             align-items: center;
             height: 100vh;
         }
-
         .container {
             text-align: center;
             background: #fff;
@@ -26,20 +25,13 @@
             width: 90%;
             max-width: 500px;
         }
-
         h1 {
             color: #4CAF50;
             margin-bottom: 20px;
         }
-
         p {
             font-size: 1.2em;
             margin: 10px 0;
-        }
-
-        .loading {
-            font-size: 1em;
-            color: #666;
         }
     </style>
 </head>
@@ -49,38 +41,25 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Inicializar Supabase
-        const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_KEY;
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-    
+
             if (code) {
                 try {
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
-    
+
                     if (response.ok && data.access_token) {
-                        // Substituir sessionStorage por localStorage
                         const user = {
                             id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
-                            avatar_extension: data.user.avatar_extension || '.png',
-                            serverStatus: data.user.serverStatus
                         };
-                        localStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(user));
 
-                        // Enviar dados para o Supabase
                         await sendDataToSupabase(user);
-                        await verifyMembership(data.user.id, data.access_token);
-
                     } else {
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
@@ -95,43 +74,17 @@
             }
         };
 
-        // Função para enviar dados para o Supabase
-        async function sendDataToSupabase(user) {
-            const { data, error } = await supabase
-                .from('users')  // Certifique-se de que a tabela 'users' existe no Supabase
-                .insert([user]);
+        async function sendDataToSupabase(userData) {
+            const response = await fetch('/.netlify/functions/sendUserData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
 
-            if (error) {
-                console.error('Erro ao enviar os dados para o Supabase:', error);
-            } else {
-                console.log('Dados enviados com sucesso para o Supabase:', data);
-            }
-        }
-
-        // Função para verificar a associação ao servidor Discord
-        async function verifyMembership(userId, accessToken) {
-            try {
-                const response = await fetch('/.netlify/functions/check-membership', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user_id: userId, access_token: accessToken }),
-                });
-
-                const data = await response.json();
-
-                if (response.status === 200 && data.message.includes('está no servidor')) {
-                    window.location.href = '/protected.html';
-                } else {
-                    alert('Você não está no servidor do Discord. Acesso negado.');
-                    window.location.href = '/error.html';
-                }
-            } catch (error) {
-                console.error('Erro ao verificar associação ao servidor:', error);
-                alert('Erro ao verificar associação. Redirecionando...');
-                window.location.href = '/';
-            }
+            const result = await response.json();
+            console.log(result);
         }
     </script>
 </body>
