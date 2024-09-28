@@ -1,76 +1,78 @@
-const fetch = require('node-fetch');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-
-exports.handler = async (event) => {
-    console.log('Iniciando validação OAuth...');
-
+exports.handler = async function(event, context) {
     const code = event.queryStringParameters.code;
 
     if (!code) {
-        console.error('Código de autorização não fornecido.');
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Código de autorização não fornecido.' }),
+            body: JSON.stringify({ error: 'Code is required' })
         };
     }
 
     try {
-        console.log('Código de autorização recebido:', code);
-        
-        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
+        const response = await axios.post(
+            'https://discord.com/api/oauth2/token',
+            new URLSearchParams({
                 client_id: process.env.DISCORD_CLIENT_ID,
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: process.env.REDIRECT_URI,
+                redirect_uri: 'https://ggform.netlify.app/call-back' 
             }),
+            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+
+        const tokenData = response.data;
+
+        const userInfoResponse = await axios.get('https://discord.com/api/users/@me', {
+            headers: {
+                Authorization: `Bearer ${tokenData.access_token}`
+            }
         });
 
-        const tokenData = await tokenResponse.json();
-        console.log('Token obtido com sucesso:', tokenData);
+        const userInfo = userInfoResponse.data;
 
-        if (!tokenResponse.ok) {
-            console.error('Falha ao obter o token:', tokenData);
-            return {
-                statusCode: tokenResponse.status,
-                body: JSON.stringify({ error: 'Falha ao obter o token de acesso.' }),
-            };
-        }
+        // Enviar uma notificação para o canal do Discord com webhook (opcional)
+        const embed = {
+            embeds: [{
+                title: "Novo Usuário Autorizado",
+                color: 0x00FF00, 
+                fields: [
+                    { name: "ID do Usuário", value: userInfo.id, inline: true },
+                    { name: "Nome de Usuário", value: userInfo.username, inline: true },
+                    { name: "Avatar", value: `[Link do Avatar](https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png)`, inline: false }
+                ],
+                thumbnail: { url: `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` },
+                timestamp: new Date().toISOString()
+            }]
+        };
 
-        const { error: insertError } = await supabase
-            .from('users')
-            .insert([
-                {
-                    access_token: tokenData.access_token,
-                    refresh_token: tokenData.refresh_token,
-                    token_type: tokenData.token_type,
-                    expires_in: tokenData.expires_in,
-                }
-            ]);
+        await axios.post(process.env.DISCORD_AUTH_URL, embed, {
+            headers: { 'Content-Type': 'application/json' }
+        });
 
-        if (insertError) {
-            throw new Error(insertError.message);
-        }
-
-        console.log('Usuário salvo com sucesso no Supabase.');
-
+        // Retorna as informações do usuário junto com o access_token
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true }),
+            body: JSON.stringify({
+                access_token: tokenData.access_token,
+                user: {
+                    id: userInfo.id,
+                    username: userInfo.username,
+                    avatar: userInfo.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png` : null 
+                }
+            })
         };
+
     } catch (error) {
-        console.error('Erro na validação OAuth:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Erro interno do servidor.' }),
+            body: JSON.stringify({ 
+                error: 'Failed to validate code',
+                details: error.response ? error.response.data : error.message
+            })
         };
     }
 };

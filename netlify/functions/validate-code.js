@@ -1,10 +1,8 @@
+// functions/validate-code.js
+
 const axios = require('axios');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-
-exports.handler = async function(event) {
+exports.handler = async function(event, context) {
     const { code } = JSON.parse(event.body);
 
     if (!code) {
@@ -15,6 +13,7 @@ exports.handler = async function(event) {
     }
 
     try {
+        // Troca o código pelo token de acesso na API do Discord
         const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', new URLSearchParams({
             client_id: process.env.DISCORD_CLIENT_ID,
             client_secret: process.env.DISCORD_CLIENT_SECRET,
@@ -29,6 +28,7 @@ exports.handler = async function(event) {
 
         const { access_token } = tokenResponse.data;
 
+        // Valida o token acessando a API do Discord com o token
         const userResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
                 Authorization: `Bearer ${access_token}`
@@ -36,20 +36,7 @@ exports.handler = async function(event) {
         });
 
         if (userResponse.data) {
-            const { error: insertError } = await supabase
-                .from('codeValidations')
-                .insert([
-                    {
-                        code: code,
-                        user_id: userResponse.data.id,
-                        timestamp: new Date().toISOString()
-                    }
-                ]);
-
-            if (insertError) {
-                throw new Error(insertError.message);
-            }
-
+            // Código válido
             return {
                 statusCode: 200,
                 body: JSON.stringify({ valid: true })

@@ -49,7 +49,77 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="callback.js"></script>
+    <script>
+        window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+    
+            if (code) {
+                try {
+                    // Realiza a validação do código OAuth2 e obtém o access_token
+                    const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
+                    const data = await response.json();
+    
+                    console.log('Dados recebidos da validação:', data);
+    
+                    if (response.ok && data.access_token) {
+                        // Armazena o token de autenticação e as informações do usuário
+                        const user = {
+                            id: data.user.id,
+                            username: data.user.username,
+                            avatar: data.user.avatar,
+                            avatar_extension: data.user.avatar_extension || '.png', // Supondo que a extensão padrão seja .png
+                            serverStatus: data.user.serverStatus // Se você estiver armazenando o status do servidor
+                        };
+                        sessionStorage.setItem('authToken', data.access_token);
+                        localStorage.setItem('user', JSON.stringify(user));
+
+                        // Verifica se o usuário está no servidor do Discord
+                        await verifyMembership(data.user.id, data.access_token);
+
+                    } else {
+                        alert('Código inválido. Redirecionando...');
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Erro na solicitação:', error);
+                    alert('Erro na validação. Redirecionando...');
+                    window.location.href = '/';
+                }
+            } else {
+                window.location.href = '/';
+            }
+        };
+
+        // Função para verificar a associação ao servidor Discord
+        async function verifyMembership(userId, accessToken) {
+            try {
+                const response = await fetch('/.netlify/functions/check-membership', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_id: userId, access_token: accessToken }),
+                });
+
+                const data = await response.json();
+
+                console.log('Resposta da verificação de associação:', data);
+
+                if (response.status === 200 && data.message.includes('está no servidor')) {
+                    console.log('Usuário está no servidor:', data.message);
+                    window.location.href = '/protected.html';
+                } else {
+                    console.log('Erro:', data.message);
+                    alert('Você não está no servidor do Discord. Acesso negado.');
+                    window.location.href = '/error.html';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar associação ao servidor:', error);
+                alert('Erro ao verificar associação. Redirecionando...');
+                window.location.href = '/';
+            }
+        }
+    </script>
 </body>
 </html>

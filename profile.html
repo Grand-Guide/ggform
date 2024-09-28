@@ -83,6 +83,34 @@
             color: #c4c4c4;
         }
 
+        .contribution-section {
+            background-color: #1c1c1c;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .contribution-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .contribution-stats {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .contribution-stat {
+            text-align: center;
+        }
+
+        .contribution-stat h3 {
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .contribution-stat p {
+            color: #c4c4c4;
+        }
+
         .button-back {
             display: inline-block;
             margin-top: 20px;
@@ -127,50 +155,31 @@
         <a href="/protected.html" class="button-back">Voltar à Página Inicial</a>
     </div>
     
-    <script type="module">
-        document.addEventListener("DOMContentLoaded", async function() {
-            const user = await getCurrentUser();
-
-            if (!user) {
-                alert('Dados do perfil não encontrados. Redirecionando...');
-                window.location.href = '/';
-                return;
-            }
-
-            const userId = user.id;
-
-            try {
-                const response = await fetch(`/.netlify/functions/get-user-data?userId=${userId}`); // Endpoint para obter dados do usuário
-                if (!response.ok) {
-                    throw new Error('Usuário não encontrado.');
-                }
-                const data = await response.json();
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+    
+            if (user) {
                 document.getElementById("username").textContent = user.username;
-                document.getElementById("discord-id").textContent = userId;
-
-                const avatarUrl = user.avatar ? user.avatar : `https://cdn.discordapp.com/avatars/${userId}/default.png`;
+                document.getElementById("discord-id").textContent = user.id;
+    
+                const avatarUrl = user.avatar ? user.avatar : `https://cdn.discordapp.com/avatars/${user.id}/default.png`;
                 document.getElementById("avatar").src = avatarUrl;
 
-                document.getElementById("server-status").textContent = data.serverStatus || 'Desconhecido';
+                document.getElementById("server-status").textContent = isInServer ? 'Membro' : 'Não Está Presente';
+                document.getElementById("server-status").textContent = data.serverStatus;
                 document.getElementById("total-contributions").textContent = data.totalContributions || 0;
                 document.getElementById("accepted-contributions").textContent = data.acceptedContributions || 0;
-            } catch (error) {
-                console.error('Erro ao recuperar dados do usuário:', error);
-                alert('Erro ao carregar os dados do perfil.');
+                document.getElementById("total-enviadas").textContent = data.totalSubmitted || 0;
+                document.getElementById("total-aceitas").textContent = data.totalAccepted || 0;
+            } else {
+                alert('Dados do perfil não encontrados. Redirecionando...');
                 window.location.href = '/';
             }
         });
-
-        async function getCurrentUser() {
-            const response = await fetch('/.netlify/functions/get-user');
-            if (response.ok) {
-                return await response.json();
-            }
-            return null;
-        }
     </script>
     <script src="/public/js/auth-check.js"></script>
     <script src="/public/js/check-membership.js"></script>
-</body>
-</html>
+
+    </body>
+    </html

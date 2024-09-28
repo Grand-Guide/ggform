@@ -93,7 +93,7 @@
     <div class="container">
         <h1>Adicionar Novo Item</h1>
         <div id="formContainer">
-            <form id="itemForm" class="grid-form">
+            <form id="itemForm" class="grid-form" onsubmit="return verifyBeforeSubmit();">
                 <input type="hidden" id="formType" value="add">
                 
                 <!-- ID do Item -->
@@ -110,9 +110,10 @@
 
                 <!-- Imagem do Item (URL) (apenas .png) -->
                 <div class="input-group full-width">
-                    <label for="cover">Imagem (URL):</label>
-                    <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
+                <label for="cover">Imagem (URL):</label>
+                <input type="url" id="cover" name="cover" pattern="https://.*\.png" title="A URL da imagem deve começar com 'https://' e terminar com '.png'" required>
                 </div>
+
 
                 <!-- Classe -->
                 <div class="input-group">
@@ -179,6 +180,7 @@
                     <input type="text" id="videos" name="videos">
                 </div>
 
+                <!-- Botões -->
                 <div class="buttons-container full-width">
                     <button type="submit" class="button">Enviar</button>
                     <a href="/protected.html" class="button">Voltar</a>
@@ -189,90 +191,76 @@
 
     <script>
         async function verifyMembershipOnPageLoad() {
-            const userId = await getUserId();
+            const authToken = sessionStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
 
-            if (!userId) {
-                alert('Autenticação necessária. Redirecionando para login.');
-                window.location.href = '/';
-                return;
-            }
+            if (authToken && user && user.id) {
+                try {
+                    const response = await fetch('/.netlify/functions/check-membership', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                    });
 
-            try {
-                const response = await fetch('/.netlify/functions/check-membership', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_id: userId }),
-                });
+                    const data = await response.json();
 
-                if (response.status === 200) {
-                    console.log('Usuário está no servidor');
-                } else {
-                    alert('Você foi removido do servidor do Discord. Acesso negado.');
+                    if (response.status === 200) {
+                        console.log('Usuário está no servidor:', data.message);
+                    } else {
+                        alert('Você foi removido do servidor do Discord. Acesso negado.');
+                        window.location.href = '/error.html';
+                    }
+                } catch (error) {
+                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
                     window.location.href = '/error.html';
                 }
-            } catch (error) {
-                alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                window.location.href = '/error.html';
+            } else {
+                alert('Autenticação necessária. Redirecionando para login.');
+                window.location.href = '/';
             }
         }
 
-        async function verifyBeforeSubmit(event) {
-            event.preventDefault();
+        async function verifyBeforeSubmit() {
+            const authToken = sessionStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
 
-            const userId = await getUserId();
+            if (authToken && user && user.id) {
+                try {
+                    const response = await fetch('/.netlify/functions/check-membership', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ user_id: user.id, access_token: authToken }),
+                    });
 
-            if (!userId) {
+                    const data = await response.json();
+
+                    if (response.status === 200) {
+                        return true;
+                    } else {
+                        alert('Você foi removido do servidor do Discord. Acesso negado.');
+                        window.location.href = '/error.html';
+                        return false;
+                    }
+                } catch (error) {
+                    alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
+                    return false;
+                }
+            } else {
                 alert('Autenticação necessária.');
                 window.location.href = '/';
                 return false;
             }
-
-            try {
-                const response = await fetch('/.netlify/functions/check-membership', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_id: userId }),
-                });
-
-                if (response.status === 200) {
-                    document.getElementById('itemForm').submit();
-                } else {
-                    alert('Você não está autorizado a enviar itens.');
-                    return false;
-                }
-            } catch (error) {
-                alert('Erro ao verificar sua membresia no servidor Discord. Tente novamente.');
-                return false;
-            }
-        }
-
-        async function getUserId() {
-            try {
-                const response = await fetch('/.netlify/functions/get-user', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Não foi possível obter informações do usuário');
-                }
-
-                const userData = await response.json();
-                return userData.userId;
-            } catch (error) {
-                console.error('Error ao obter userId:', error);
-                return null;
-            }
         }
 
         window.onload = verifyMembershipOnPageLoad;
-        document.getElementById('itemForm').onsubmit = verifyBeforeSubmit;
     </script>
+    
+    <script src="/public/js/auth-check.js"></script>
+    <script src="/public/js/send-to-discord.js"></script>
+    <script src="/public/js/check-membership.js"></script>
 </body>
 </html>

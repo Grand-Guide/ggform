@@ -1,24 +1,14 @@
 const fetch = require('node-fetch');
-const { XataClient } = require('@xata.io/client');
-
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    database: process.env.XATA_DATABASE_URL,
-});
 
 exports.handler = async (event) => {
     if (event.httpMethod === 'POST') {
         try {
             const { 
-                messageId,
-                name, cover, description, price, update, status, quality, shop, 
+                id, name, cover, description, price, update, status, quality, shop, 
                 hunting, recipe, videos, formType, userId, username, avatar 
             } = JSON.parse(event.body);
 
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-            if (!webhookUrl) {
-                throw new Error('Webhook URL não está configurado.');
-            }
 
             const userIdToUse = userId || event.queryStringParameters.userId || 'Não fornecido';
             const usernameToUse = username || event.queryStringParameters.username || 'Não fornecido';
@@ -28,20 +18,24 @@ exports.handler = async (event) => {
                 avatarToUse = 'https://cdn.discordapp.com/embed/avatars/0.png';
             }
 
+            // Verificação da URL do cover
             const coverToUse = cover && cover.match(/^https:\/\/.*\.(png|jpg|jpeg)$/i) 
                 ? cover 
-                : 'https://cdn-icons-png.flaticon.com/512/17568/17568020.png';
+                : 'https://cdn-icons-png.flaticon.com/512/17568/17568020.png'; // URL padrão se não for fornecida
+
+            console.log("Thumbnail URL:", coverToUse); // Log da URL para verificar se está correta
 
             const embed = {
                 content: "",
                 tts: false,
                 embeds: [
                     {
+                        id: 652627557,
                         title: `Sugestão de item ${formType === 'add' ? 'Adicionado' : 'Atualizado'}`,
                         description: "O pedido será revisado pela equipe responsável, Aguarde.",
-                        color: formType === 'add' ? 0x00FF00 : 0xFF0000,
+                        color: formType === 'add' ? 0x00FF00 : 0xFF0000, // Verde para adição, vermelho para atualização
                         fields: [
-                            { name: "ID", value: messageId, inline: true }, // Mude para messageId
+                            { name: "ID", value: id, inline: true },
                             { name: "Nome", value: name, inline: true },
                             { name: "Descrição", value: description || 'Não fornecido', inline: false },
                             { name: "Preço", value: price || 'Não fornecido', inline: true },
@@ -60,7 +54,7 @@ exports.handler = async (event) => {
                         },
                         url: "https://google.com",
                         thumbnail: {
-                            url: coverToUse
+                            url: coverToUse // Força a exibição da imagem fornecida
                         },
                         footer: {
                             icon_url: "https://cdn.discordapp.com/attachments/955735634662785044/1281899440176762930/cropped_image_1.png?ex=66dd6563&is=66dc13e3&hm=2c790c2b0df64eed7d72721b6639339c58580bf796c6fe9f5507c3a80d30ed73&",
@@ -69,6 +63,7 @@ exports.handler = async (event) => {
                         timestamp: new Date().toISOString()
                     },
                     {
+                        id: 386768945,
                         description: "",
                         fields: [
                             { name: "ID", value: userIdToUse, inline: true },
@@ -84,6 +79,7 @@ exports.handler = async (event) => {
                 actions: {}
             };
 
+            // Envio da solicitação para o webhook do Discord
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -94,20 +90,11 @@ exports.handler = async (event) => {
                 throw new Error('Network response was not ok');
             }
 
-            await xata.db.discordMessages.create({
-                messageId,
-                userId: userIdToUse,
-                username: usernameToUse,
-                timestamp: new Date().toISOString(),
-                embed: JSON.stringify(embed)
-            });
-
             return {
                 statusCode: 200,
                 body: JSON.stringify({ message: 'Mensagem enviada com sucesso!' })
             };
         } catch (error) {
-            console.error('Erro:', error.message);
             return {
                 statusCode: 500,
                 body: JSON.stringify({ error: error.message })

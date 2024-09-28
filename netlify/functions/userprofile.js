@@ -1,10 +1,4 @@
-const { XataClient } = require('@xata.io/client');
-
-const xata = new XataClient({
-    apiKey: process.env.XATA_API_KEY,
-    database: process.env.XATA_DATABASE_URL,
-});
-
+// profile.js
 exports.handler = async function(event, context) {
     try {
         const userData = {
@@ -19,11 +13,6 @@ exports.handler = async function(event, context) {
             totalAccepted: 4
         };
 
-        await xata.db.profileAccess.create({
-            userId: userData.id,
-            timestamp: new Date().toISOString()
-        });
-
         return {
             statusCode: 200,
             headers: {
@@ -32,7 +21,7 @@ exports.handler = async function(event, context) {
             body: JSON.stringify(userData)
         };
     } catch (error) {
-        console.error('Erro ao recuperar dados do perfil:', error);
+        console.error('Erro ao recuperar dados do perfil:', error); // Adicione logs
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Erro ao recuperar dados do perfil' })

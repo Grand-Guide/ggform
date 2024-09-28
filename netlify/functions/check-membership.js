@@ -1,15 +1,13 @@
 const fetch = require('node-fetch');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 exports.handler = async function(event) {
     const { user_id, access_token } = JSON.parse(event.body);
+
     const guildId = '819380036351688716';
     const discordApiUrl = `https://discord.com/api/v10/users/@me/guilds`;
 
     try {
+        // Faz a requisição para pegar a lista de guildas do usuário
         const response = await fetch(discordApiUrl, {
             method: 'GET',
             headers: {
@@ -19,37 +17,35 @@ exports.handler = async function(event) {
 
         if (!response.ok) {
             const errorText = await response.text();
+            console.error('Erro ao obter guildas:', errorText);
             return {
                 statusCode: 500,
-                body: JSON.stringify({ message: 'Erro ao obter guildas do usuário', error: errorText })
+                body: JSON.stringify({ message: 'Erro ao obter guildas do usuário' })
             };
         }
 
         const guilds = await response.json();
+        console.log('Guildas do usuário:', guilds); // Adicione esta linha para depuração
+
+        // Verifica se o usuário faz parte do seu servidor específico
         const isMember = guilds.some(guild => guild.id === guildId);
 
-        const { error: insertError } = await supabase
-            .from('membershipChecks')
-            .insert([
-                {
-                    user_id: user_id,
-                    is_member: isMember,
-                    timestamp: new Date().toISOString()
-                }
-            ]);
-
-        if (insertError) {
-            throw new Error(insertError.message);
+        if (isMember) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Usuário está no servidor' })
+            };
+        } else {
+            return {
+                statusCode: 403, // Acesso negado
+                body: JSON.stringify({ message: 'Usuário não está no servidor' })
+            };
         }
 
-        return {
-            statusCode: isMember ? 200 : 403,
-            body: JSON.stringify({ message: isMember ? 'Usuário está no servidor' : 'Usuário não está no servidor' })
-        };
-
     } catch (error) {
+        console.error('Erro ao verificar o servidor:', error.message); // Adicione esta linha para depuração
         return {
-            statusCode: 500,
+            statusCode: 500, // Erro interno do servidor
             body: JSON.stringify({ message: 'Erro ao verificar o servidor', error: error.message })
         };
     }

@@ -1,24 +1,7 @@
-document.addEventListener("DOMContentLoaded", checkAuth);
+document.addEventListener("DOMContentLoaded", function() {
+    const authToken = sessionStorage.getItem('authToken');
 
-async function checkAuth() {
-    const user = supabase.auth.user();
-
-    if (!user) {
-        alert('Você precisa estar autenticado para acessar esta página.');
-        window.location.href = '/';
-    } else {
-        await validateToken(user);
+    if (!authToken) {
+        window.location.href = '/'; // Redireciona para a página de login
     }
-}
-
-async function validateToken(user) {
-    try {
-        const { error } = await supabase.auth.api.getUser(user.id);
-        if (error) {
-            throw new Error('Token inválido');
-        }
-    } catch (error) {
-        alert('Sessão expirada. Redirecionando para login.');
-        window.location.href = '/';
-    }
-}
+});
