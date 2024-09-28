@@ -49,32 +49,36 @@
         <p class="loading">Please wait while we validate your credentials.</p>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
+        // Inicializar Supabase
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_KEY;
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
     
             if (code) {
                 try {
-                    // Realiza a validação do código OAuth2 e obtém o access_token
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
     
-                    console.log('Dados recebidos da validação:', data);
-    
                     if (response.ok && data.access_token) {
-                        // Armazena o token de autenticação e as informações do usuário
+                        // Substituir sessionStorage por localStorage
                         const user = {
                             id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
-                            avatar_extension: data.user.avatar_extension || '.png', // Supondo que a extensão padrão seja .png
-                            serverStatus: data.user.serverStatus // Se você estiver armazenando o status do servidor
+                            avatar_extension: data.user.avatar_extension || '.png',
+                            serverStatus: data.user.serverStatus
                         };
-                        sessionStorage.setItem('authToken', data.access_token);
+                        localStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(user));
 
-                        // Verifica se o usuário está no servidor do Discord
+                        // Enviar dados para o Supabase
+                        await sendDataToSupabase(user);
                         await verifyMembership(data.user.id, data.access_token);
 
                     } else {
@@ -91,6 +95,19 @@
             }
         };
 
+        // Função para enviar dados para o Supabase
+        async function sendDataToSupabase(user) {
+            const { data, error } = await supabase
+                .from('users')  // Certifique-se de que a tabela 'users' existe no Supabase
+                .insert([user]);
+
+            if (error) {
+                console.error('Erro ao enviar os dados para o Supabase:', error);
+            } else {
+                console.log('Dados enviados com sucesso para o Supabase:', data);
+            }
+        }
+
         // Função para verificar a associação ao servidor Discord
         async function verifyMembership(userId, accessToken) {
             try {
@@ -104,13 +121,9 @@
 
                 const data = await response.json();
 
-                console.log('Resposta da verificação de associação:', data);
-
                 if (response.status === 200 && data.message.includes('está no servidor')) {
-                    console.log('Usuário está no servidor:', data.message);
                     window.location.href = '/protected.html';
                 } else {
-                    console.log('Erro:', data.message);
                     alert('Você não está no servidor do Discord. Acesso negado.');
                     window.location.href = '/error.html';
                 }
