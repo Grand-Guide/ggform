@@ -1,48 +1,49 @@
-// netlify/functions/sendUserData.js
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.SUPABASE_URL; // Acesse a variável de ambiente
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use a chave de serviço
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 exports.handler = async (event) => {
-    console.log("Iniciando a função sendUserData...");
+    console.log('Iniciando a função sendUserData...');
 
-    if (event.httpMethod !== 'POST') {
-        console.error('Método não permitido');
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ message: 'Method not allowed' }),
-        };
-    }
-
-    let userData;
     try {
-        userData = JSON.parse(event.body);
-        console.log("Dados do usuário recebidos:", userData);
-    } catch (error) {
-        console.error('Erro ao parsear dados do usuário:', error);
+        const userData = JSON.parse(event.body);
+        console.log('Dados do usuário recebidos:', userData);
+
+        const { discord_id, username, avatar } = userData;
+
+        if (!discord_id) {
+            console.error('Erro: discord_id é obrigatório.');
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ message: 'discord_id é obrigatório' }),
+            };
+        }
+
+        const { data, error } = await supabase
+            .from('users')
+            .insert([{ discord_id, username, avatar }]);
+
+        if (error) {
+            console.error('Erro ao inserir dados no Supabase:', error);
+            return {
+                statusCode: 500,
+                body: JSON.stringify(error),
+            };
+        }
+
+        console.log('Usuário inserido com sucesso:', data);
+
         return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Dados inválidos' }),
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Usuário inserido com sucesso!', data }),
         };
-    }
-
-    const { data, error } = await supabase
-        .from('users')
-        .insert([userData]); // Insira os dados do usuário
-
-    if (error) {
-        console.error('Erro ao inserir dados no Supabase:', error);
+    } catch (error) {
+        console.error('Erro ao processar a requisição:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ message: 'Erro interno do servidor', error }),
         };
     }
-
-    console.log('Dados inseridos com sucesso:', data);
-    return {
-        statusCode: 200,
-        body: JSON.stringify(data),
-    };
 };

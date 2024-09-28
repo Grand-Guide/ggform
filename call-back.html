@@ -57,6 +57,7 @@
                             username: data.user.username,
                             avatar: data.user.avatar,
                         };
+                        console.log('Dados recebidos da validação:', data);
                         localStorage.setItem('user', JSON.stringify(user));
 
                         await sendDataToSupabase(user);
