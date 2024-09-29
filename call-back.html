@@ -42,6 +42,20 @@
     </div>
 
     <script>
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; Secure; SameSite=Strict";
+        }
+
+        function encryptData(data) {
+            return btoa(JSON.stringify(data));
+        }
+
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
@@ -58,6 +72,8 @@
                             avatar: data.user.avatar,
                         };
                         await sendDataToSupabase(user);
+                        const encryptedUserData = encryptData(user);
+                        setCookie('user_data', encryptedUserData, 1);
                     } else {
                         alert('Código inválido. Redirecionando...');
                         window.location.href = '/';
