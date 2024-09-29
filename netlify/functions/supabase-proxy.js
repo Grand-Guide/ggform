@@ -9,7 +9,6 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Função para gerar token JWT
 function generateToken(discordId, isAdmin = false) {
     return jwt.sign({ discord_id: discordId, is_admin: isAdmin }, JWT_SECRET, { expiresIn: '1h' });
 }
