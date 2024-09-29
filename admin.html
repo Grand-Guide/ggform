@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Guide - AdminPanel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Painel de Administração</h1>
+    </header>
+    <div class="container">
+        <h2>Usuários</h2>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>Discord ID</th>
+                    <th>Nome</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data Users -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const allowedUserId = '854060317905911879';
+
+        async function verifyAdminAccess() {
+            const response = await fetch('/.netlify/functions/supabase-proxy', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (!data || data.discord_id !== allowedUserId) {
+                alert('Acesso negado. Você não tem permissão para acessar esta página.');
+                window.location.href = '/';
+            }
+        }
+
+        async function fetchUsers() {
+            const response = await fetch('/.netlify/functions/supabase-proxy');
+            const users = await response.json();
+            const userTable = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+
+            users.forEach(user => {
+                const row = userTable.insertRow();
+                row.innerHTML = `
+                    <td>${user.discord_id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.is_banned ? 'Banido' : 'Ativo'}</td>
+                    <td>
+                        <button onclick="updateUserStatus('${user.discord_id}', ${user.is_banned})">
+                            ${user.is_banned ? 'Remover Ban' : 'Banir'}
+                        </button>
+                    </td>
+                `;
+            });
+        }
+
+        async function updateUserStatus(discord_id, currentStatus) {
+            const newStatus = !currentStatus;
+
+            const response = await fetch('/.netlify/functions/supabase-proxy', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ discord_id, is_banned: newStatus }),
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            location.reload();
+        }
+
+        window.onload = async function() {
+            await verifyAdminAccess();
+            fetchUsers();
+        };
+    </script>
+</body>
+</html>
