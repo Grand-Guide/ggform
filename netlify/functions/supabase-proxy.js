@@ -111,9 +111,21 @@ exports.handler = async (event) => {
                         body: JSON.stringify({ message: 'Acesso negado. Você não tem permissão para acessar esta página.' }),
                     };
                 }
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('discord_id, username, is_banned');
+
+                if (error) {
+                    return {
+                        statusCode: 500,
+                        body: JSON.stringify({ message: 'Erro ao buscar usuários', error: error.message }),
+                    };
+                }
+
                 return {
                     statusCode: 200,
-                    body: JSON.stringify({ discord_id: decoded.discord_id }),
+                    body: JSON.stringify(data),
                 };
             } catch (error) {
                 return {
