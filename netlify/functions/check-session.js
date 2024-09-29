@@ -1,8 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
 const cookie = require('cookie');
-const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.handler = async (event) => {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -15,18 +12,17 @@ exports.handler = async (event) => {
     if (!token) {
         return {
             statusCode: 401,
-            body: JSON.stringify({ message: 'Token não encontrado. Você não está logado.' }),
+            body: JSON.stringify({ message: 'Não autorizado' }),
         };
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const discord_id = decoded.discord_id;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const { data: user, error } = await supabase
             .from('users')
             .select('discord_id, username, avatar, is_banned')
-            .eq('discord_id', discord_id)
+            .eq('discord_id', decoded.discord_id)
             .single();
 
         if (error) {
@@ -46,8 +42,8 @@ exports.handler = async (event) => {
         };
     } catch (error) {
         return {
-            statusCode: 500,
-            body: JSON.stringify({ message: error.message }),
+            statusCode: 401,
+            body: JSON.stringify({ message: 'Token inválido ou expirado' }),
         };
     }
 };

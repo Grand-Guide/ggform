@@ -112,20 +112,17 @@ exports.handler = async (event) => {
                     };
                 }
 
-                const { data, error } = await supabase
+                const { data: users, error: fetchUsersError } = await supabase
                     .from('users')
-                    .select('discord_id, username, is_banned');
+                    .select('*');
 
-                if (error) {
-                    return {
-                        statusCode: 500,
-                        body: JSON.stringify({ message: 'Erro ao buscar usuários', error: error.message }),
-                    };
+                if (fetchUsersError) {
+                    throw new Error('Erro ao buscar usuários');
                 }
 
                 return {
                     statusCode: 200,
-                    body: JSON.stringify(data),
+                    body: JSON.stringify(users),
                 };
             } catch (error) {
                 return {
