@@ -45,19 +45,18 @@
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-    
+
             if (code) {
                 try {
                     const response = await fetch(`/.netlify/functions/validate-oauth?code=${code}`);
                     const data = await response.json();
-    
+
                     if (response.ok && data.access_token) {
                         const user = {
                             discord_id: data.user.id,
                             username: data.user.username,
                             avatar: data.user.avatar,
                         };
-    
                         await sendDataToSupabase(user);
                     } else {
                         alert('Código inválido. Redirecionando...');
@@ -72,7 +71,7 @@
                 window.location.href = '/';
             }
         };
-    
+
         async function sendDataToSupabase(userData) {
             const response = await fetch('/.netlify/functions/supabase-proxy', {
                 method: 'POST',
@@ -81,7 +80,7 @@
                 },
                 body: JSON.stringify(userData),
             });
-    
+
             if (response.ok) {
                 console.log('Dados enviados com sucesso');
                 window.location.href = 'protected.html';
@@ -91,6 +90,6 @@
                 alert('Erro ao enviar dados. Tente novamente.');
             }
         }
-    </script>    
+    </script>
 </body>
 </html>
