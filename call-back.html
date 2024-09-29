@@ -82,8 +82,14 @@
             });
 
             if (response.ok) {
-                console.log('Dados enviados com sucesso');
-                window.location.href = 'protected.html';
+                const result = await response.json();
+                
+                if (result.is_banned) {
+                    alert('Usuário banido. Redirecionando para a página inicial.');
+                    window.location.href = '/';
+                } else {
+                    window.location.href = 'protected.html';
+                }
             } else {
                 const result = await response.json();
                 console.error('Erro ao enviar dados para Supabase:', result);

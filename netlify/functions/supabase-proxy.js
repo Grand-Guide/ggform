@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const cookie = require('cookie');
 
 exports.handler = async (event) => {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -11,7 +12,7 @@ exports.handler = async (event) => {
         try {
             const { data: existingUser, error: fetchError } = await supabase
                 .from('users')
-                .select('*')
+                .select('*, is_banned')
                 .eq('discord_id', discord_id)
                 .single();
 
@@ -20,6 +21,13 @@ exports.handler = async (event) => {
             }
 
             if (existingUser) {
+                if (existingUser.is_banned) {
+                    return {
+                        statusCode: 403,
+                        body: JSON.stringify({ message: 'Usuário banido', is_banned: true }),
+                    };
+                }
+
                 const { error: updateError } = await supabase
                     .from('users')
                     .update({
@@ -40,6 +48,7 @@ exports.handler = async (event) => {
                             discord_id,
                             username,
                             avatar,
+                            is_banned: false,
                             created_at: new Date(),
                             updated_at: new Date(),
                         },
@@ -52,7 +61,16 @@ exports.handler = async (event) => {
 
             return {
                 statusCode: 200,
-                body: JSON.stringify({ message: 'Usuário processado com sucesso' }),
+                headers: {
+                    'Set-Cookie': cookie.serialize('session', discord_id, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        maxAge: 60 * 60 * 24,
+                        sameSite: 'Strict',
+                        path: '/',
+                    }),
+                },
+                body: JSON.stringify({ message: 'Usuário autenticado com sucesso', is_banned: false }),
             };
         } catch (error) {
             return {
