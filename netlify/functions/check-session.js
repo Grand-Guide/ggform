@@ -1,56 +1,53 @@
-async function verifyAdminAccess() {
-        const response = await fetch('/.netlify/functions/check-admin', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+const { createClient } = require('@supabase/supabase-js');
+const cookie = require('cookie');
+const jwt = require('jsonwebtoken');
 
-        const data = await response.json();
+const JWT_SECRET = process.env.JWT_SECRET;
 
-        if (!data || data.discord_id !== '854060317905911879') {
-            alert('Acesso negado. Você não tem permissão para acessar esta página.');
-            window.location.href = '/';
+exports.handler = async (event) => {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const cookies = cookie.parse(event.headers.cookie || '');
+    const token = cookies.session;
+
+    if (!token) {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({ message: 'Token não encontrado. Você não está logado.' }),
+        };
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const discord_id = decoded.discord_id;
+
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('discord_id, username, avatar, is_banned')
+            .eq('discord_id', discord_id)
+            .single();
+
+        if (error) {
+            throw new Error('Erro ao buscar o usuário');
         }
+
+        if (user.is_banned) {
+            return {
+                statusCode: 403,
+                body: JSON.stringify({ message: 'Usuário banido' }),
+            };
+        }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(user),
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: error.message }),
+        };
     }
-
-    async function fetchUsers() {
-        const response = await fetch('/.netlify/functions/supabase-proxy');
-        const users = await response.json();
-        const userTable = document.getElementById('userTable').getElementsByTagName('tbody')[0];
-
-        users.forEach(user => {
-            const row = userTable.insertRow();
-            row.innerHTML = `
-                <td>${user.discord_id}</td>
-                <td>${user.username}</td>
-                <td>${user.is_banned ? 'Banido' : 'Ativo'}</td>
-                <td>
-                    <button onclick="updateUserStatus('${user.discord_id}', ${user.is_banned})">
-                        ${user.is_banned ? 'Remover Ban' : 'Banir'}
-                    </button>
-                </td>
-            `;
-        });
-    }
-
-    async function updateUserStatus(discord_id, currentStatus) {
-        const newStatus = !currentStatus;
-
-        const response = await fetch('/.netlify/functions/supabase-proxy', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ discord_id, is_banned: newStatus }),
-        });
-
-        const result = await response.json();
-        alert(result.message);
-        location.reload();
-    }
-
-    window.onload = async function() {
-        await verifyAdminAccess();
-        fetchUsers();
-    };
+};
