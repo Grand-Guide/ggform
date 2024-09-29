@@ -68,10 +68,8 @@
         </table>
     </div>
     <script>
-        const allowedUserId = '854060317905911879';
-
         async function verifyAdminAccess() {
-            const response = await fetch('/.netlify/functions/check-session', {
+            const response = await fetch('/.netlify/functions/check-admin', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -80,8 +78,8 @@
 
             const data = await response.json();
 
-            if (!data || data.discord_id !== allowedUserId) {
-                alert('Acesso negado. Você não tem permissão para acessar esta página.');
+            if (response.status !== 200) {
+                alert(data.message || 'Erro ao verificar acesso.');
                 window.location.href = '/';
             }
         }

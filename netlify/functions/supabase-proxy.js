@@ -111,18 +111,9 @@ exports.handler = async (event) => {
                         body: JSON.stringify({ message: 'Acesso negado. Você não tem permissão para acessar esta página.' }),
                     };
                 }
-
-                const { data: users, error: fetchUsersError } = await supabase
-                    .from('users')
-                    .select('*');
-
-                if (fetchUsersError) {
-                    throw new Error('Erro ao buscar usuários');
-                }
-
                 return {
                     statusCode: 200,
-                    body: JSON.stringify(users),
+                    body: JSON.stringify({ discord_id: decoded.discord_id }),
                 };
             } catch (error) {
                 return {
