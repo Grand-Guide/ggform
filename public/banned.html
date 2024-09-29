@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Você está Banido</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8d7da;
+            color: #721c24;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #721c24;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .info {
+            font-size: 1em;
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            background: #f5c6cb;
+            border-radius: 5px;
+        }
+        .icon {
+            font-size: 50px;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class="fas fa-ban icon"></i>
+        <h1>Você foi Banido</h1>
+        <p>Infelizmente, você não pode acessar o conteúdo neste momento.</p>
+        <p class="info">
+            Razões do banimento: <br>
+            - [Razão do banimento aqui] <br>
+            - [Duração do banimento aqui] <br>
+            - [Data do banimento aqui] <br>
+            - [Admin que aplicou o banimento aqui]
+        </p>
+        <button onclick="goHome()">Voltar para a Página Inicial</button>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

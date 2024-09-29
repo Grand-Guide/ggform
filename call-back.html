@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Guide - WikiForm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,17 +84,18 @@
 
             if (response.ok) {
                 const result = await response.json();
-                
+
                 if (result.is_banned) {
-                    alert('Usuário banido. Redirecionando para a página inicial.');
-                    window.location.href = '/';
+                    alert('Você está banido. Contate o suporte para mais informações.');
+                    window.location.href = '/public/banned.html';
                 } else {
                     window.location.href = 'protected.html';
                 }
             } else {
                 const result = await response.json();
                 console.error('Erro ao enviar dados para Supabase:', result);
-                alert('Erro ao enviar dados. Tente novamente.');
+                alert('Erro ao processar seus dados. Tente novamente.');
+                window.location.href = '/'; 
             }
         }
     </script>
