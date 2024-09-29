@@ -3,70 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Você está Banido</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Banido - Grand Guide</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f8d7da;
-            color: #721c24;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            color: #333;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
         .container {
-            text-align: center;
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 30px;
             width: 90%;
             max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         h1 {
-            color: #721c24;
+            color: #FF0000;
             margin-bottom: 20px;
+            animation: fadeIn 1s ease-in-out;
         }
         p {
             font-size: 1.2em;
             margin: 10px 0;
         }
-        .info {
-            font-size: 1em;
-            margin-top: 20px;
-            text-align: left;
-            padding: 10px;
-            background: #f5c6cb;
-            border-radius: 5px;
-        }
         .icon {
             font-size: 50px;
-            color: #721c24;
+            color: #FF0000;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: pulse 6s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(0.8); }
         }
     </style>
 </head>
 <body>
+    <div class="circle" style="width: 200px; height: 200px; background: #FF0000; top: 10%; left: 5%;"></div>
+    <div class="circle" style="width: 150px; height: 150px; background: #FF0000; top: 70%; right: 10%;"></div>
+    
     <div class="container">
         <i class="fas fa-ban icon"></i>
-        <h1>Você foi Banido</h1>
-        <p>Infelizmente, você não pode acessar o conteúdo neste momento.</p>
-        <p class="info">
-            Razões do banimento: <br>
-            - [Razão do banimento aqui] <br>
-            - [Duração do banimento aqui] <br>
-            - [Data do banimento aqui] <br>
-            - [Admin que aplicou o banimento aqui]
-        </p>
-        <button onclick="goHome()">Voltar para a Página Inicial</button>
+        <h1>Você está banido!</h1>
+        <p>Infelizmente, você foi banido da plataforma.</p>
+        <p><strong>Razão do banimento:</strong> [Razão do banimento aqui]</p>
+        <p><strong>Duração do banimento:</strong> [Duração do banimento aqui]</p>
+        <p><strong>Data do banimento:</strong> [Data do banimento aqui]</p>
+        <p><strong>Administradora:</strong> [Nome da administradora aqui]</p>
+        <button class="btn" onclick="window.location.href='/'">Voltar para a página inicial</button>
     </div>
-
-    <script>
-        function goHome() {
-            window.location.href = '/';
-        }
-    </script>
 </body>
 </html>

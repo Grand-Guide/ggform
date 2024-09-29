@@ -43,34 +43,33 @@ exports.handler = async (event) => {
             } else {
                 const { error: insertError } = await supabase
                     .from('users')
-                    .insert([
-                        {
-                            discord_id,
-                            username,
-                            avatar,
-                            is_banned: false,
-                            created_at: new Date(),
-                            updated_at: new Date(),
-                        },
-                    ]);
+                    .insert([{
+                        discord_id,
+                        username,
+                        avatar,
+                        is_banned: false,
+                        created_at: new Date(),
+                        updated_at: new Date(),
+                    }]);
 
                 if (insertError) {
                     throw new Error('Erro ao inserir novo usuário');
                 }
             }
 
+            // Configura o cookie de sessão
             return {
                 statusCode: 200,
                 headers: {
                     'Set-Cookie': cookie.serialize('session', discord_id, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
-                        maxAge: 60 * 60 * 24,
+                        maxAge: 60 * 60 * 24, // 1 dia
                         sameSite: 'Strict',
                         path: '/',
                     }),
                 },
-                body: JSON.stringify({ message: 'Usuário autenticado com sucesso', is_banned: false }),
+                body: JSON.stringify({ message: 'Usuário autenticado com sucesso', is_banned: existingUser ? existingUser.is_banned : false }),
             };
         } catch (error) {
             return {
