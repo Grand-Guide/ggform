@@ -14,102 +14,123 @@ function generateToken(discordId, isAdmin = false) {
 }
 
 exports.handler = async (event) => {
-    if (event.httpMethod === 'POST') {
-        const { username, avatar, discord_id } = JSON.parse(event.body);
+    try {
+        if (event.httpMethod === 'POST') {
+            const { username, avatar, discord_id } = JSON.parse(event.body);
 
-        const { data: existingUser, error: fetchError } = await supabase
-            .from('users')
-            .select('*, is_banned')
-            .eq('discord_id', discord_id)
-            .single();
+            const { data: existingUser, error: fetchError } = await supabase
+                .from('users')
+                .select('*, is_banned')
+                .eq('discord_id', discord_id)
+                .single();
 
-        if (fetchError && fetchError.code !== 'PGRST116') {
-            throw new Error('Erro ao buscar usuário existente');
-        }
-
-        if (existingUser) {
-            if (existingUser.is_banned) {
+            if (fetchError && fetchError.code !== 'PGRST116') {
                 return {
-                    statusCode: 403,
-                    body: JSON.stringify({ message: 'Usuário banido', is_banned: true }),
+                    statusCode: 500,
+                    body: JSON.stringify({ message: 'Erro ao buscar usuário existente', error: fetchError.message }),
                 };
             }
 
-            const { error: updateError } = await supabase
-                .from('users')
-                .update({
-                    username,
-                    avatar,
-                    updated_at: new Date(),
-                })
-                .eq('discord_id', discord_id);
+            if (existingUser) {
+                if (existingUser.is_banned) {
+                    return {
+                        statusCode: 403,
+                        body: JSON.stringify({ message: 'Usuário banido', is_banned: true }),
+                    };
+                }
 
-            if (updateError) {
-                throw new Error('Erro ao atualizar usuário');
-            }
+                const { error: updateError } = await supabase
+                    .from('users')
+                    .update({
+                        username,
+                        avatar,
+                        updated_at: new Date(),
+                    })
+                    .eq('discord_id', discord_id);
 
-        } else {
-            const { error: insertError } = await supabase
-                .from('users')
-                .insert([
-                    {
+                if (updateError) {
+                    return {
+                        statusCode: 500,
+                        body: JSON.stringify({ message: 'Erro ao atualizar usuário', error: updateError.message }),
+                    };
+                }
+
+            } else {
+                const { error: insertError } = await supabase
+                    .from('users')
+                    .insert([{
                         discord_id,
                         username,
                         avatar,
                         is_banned: false,
                         created_at: new Date(),
                         updated_at: new Date(),
-                    },
-                ]);
+                    }]);
 
-            if (insertError) {
-                throw new Error('Erro ao inserir novo usuário');
+                if (insertError) {
+                    return {
+                        statusCode: 500,
+                        body: JSON.stringify({ message: 'Erro ao inserir novo usuário', error: insertError.message }),
+                    };
+                }
             }
-        }
 
-        const token = generateToken(discord_id, discord_id === adminDiscordId);
+            const token = generateToken(discord_id, discord_id === adminDiscordId);
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Set-Cookie': cookie.serialize('session', token, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    maxAge: 60 * 60,
-                    sameSite: 'Strict',
-                    path: '/',
-                }),
-            },
-            body: JSON.stringify({ message: 'Usuário autenticado com sucesso', is_banned: false }),
-        };
-    }
-
-    if (event.httpMethod === 'GET') {
-        const cookies = cookie.parse(event.headers.cookie || '');
-        const token = cookies.session;
-
-        try {
-            const decoded = jwt.verify(token, JWT_SECRET);
-            if (!decoded.is_admin) {
-                return {
-                    statusCode: 403,
-                    body: JSON.stringify({ message: 'Acesso negado. Você não tem permissão para acessar esta página.' }),
-                };
-            }
             return {
                 statusCode: 200,
-                body: JSON.stringify({ discord_id: decoded.discord_id }),
-            };
-        } catch (error) {
-            return {
-                statusCode: 401,
-                body: JSON.stringify({ message: 'Token inválido ou expirado' }),
+                headers: {
+                    'Set-Cookie': cookie.serialize('session', token, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        maxAge: 60 * 60,
+                        sameSite: 'Strict',
+                        path: '/',
+                    }),
+                },
+                body: JSON.stringify({ message: 'Usuário autenticado com sucesso', is_banned: false }),
             };
         }
-    }
 
-    return {
-        statusCode: 405,
-        body: JSON.stringify({ message: 'Método não permitido' }),
-    };
+        if (event.httpMethod === 'GET') {
+            const cookies = cookie.parse(event.headers.cookie || '');
+            const token = cookies.session;
+
+            if (!token) {
+                return {
+                    statusCode: 401,
+                    body: JSON.stringify({ message: 'Token não encontrado. Você não está logado.' }),
+                };
+            }
+
+            try {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                if (decoded.discord_id !== adminDiscordId) {
+                    return {
+                        statusCode: 403,
+                        body: JSON.stringify({ message: 'Acesso negado. Você não tem permissão para acessar esta página.' }),
+                    };
+                }
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({ discord_id: decoded.discord_id }),
+                };
+            } catch (error) {
+                return {
+                    statusCode: 401,
+                    body: JSON.stringify({ message: 'Token inválido ou expirado' }),
+                };
+            }
+        }
+
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ message: 'Método não permitido' }),
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Erro interno do servidor', error: error.message }),
+        };
+    }
 };
